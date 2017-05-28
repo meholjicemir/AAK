@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AAK", "AAK\AAK.csproj", "{498CF5F9-EE2F-4E25-A397-0ACA46B857A9}"
+EndProject
+Project("{159641D6-6404-4A2A-AE62-294DE0FE8301}") = "Access2SQL", "Access2SQL\Access2SQL.dtproj", "{C09DFE53-5C19-4E8B-8C9D-412E087ADDCD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Development|Any CPU = Development|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{498CF5F9-EE2F-4E25-A397-0ACA46B857A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{498CF5F9-EE2F-4E25-A397-0ACA46B857A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{498CF5F9-EE2F-4E25-A397-0ACA46B857A9}.Development|Any CPU.ActiveCfg = Debug|Any CPU
+		{498CF5F9-EE2F-4E25-A397-0ACA46B857A9}.Development|Any CPU.Build.0 = Debug|Any CPU
+		{498CF5F9-EE2F-4E25-A397-0ACA46B857A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{498CF5F9-EE2F-4E25-A397-0ACA46B857A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C09DFE53-5C19-4E8B-8C9D-412E087ADDCD}.Debug|Any CPU.ActiveCfg = Development
+		{C09DFE53-5C19-4E8B-8C9D-412E087ADDCD}.Debug|Any CPU.Build.0 = Development
+		{C09DFE53-5C19-4E8B-8C9D-412E087ADDCD}.Development|Any CPU.ActiveCfg = Development
+		{C09DFE53-5C19-4E8B-8C9D-412E087ADDCD}.Development|Any CPU.Build.0 = Development
+		{C09DFE53-5C19-4E8B-8C9D-412E087ADDCD}.Release|Any CPU.ActiveCfg = Development
+		{C09DFE53-5C19-4E8B-8C9D-412E087ADDCD}.Release|Any CPU.Build.0 = Development
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
