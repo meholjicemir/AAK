@@ -251,7 +251,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\PredmetController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="DataProviders\Predmeti.cs" />
     <Compile Include="Desk.aspx.cs">
       <DependentUpon>Desk.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -269,6 +271,7 @@
     <Compile Include="LogIn.aspx.designer.cs">
       <DependentUpon>LogIn.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Models\Helper\UserWithData.cs" />
     <Compile Include="Models\Predmet.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,6 +1,7 @@
 ﻿/// <reference path="Scripts/Utilities.js" />
 
 var appPath = window.location.protocol + "//" + window.location.host + "/";
+var CurrentUser = null;
 
 $(document).ready(function () {
     //$(".g-signin2").click();
@@ -27,6 +28,11 @@ function ValidateUser(email) {
             //var expiry = new Date();
             //expiry.setTime(expiry.getTime() + (10 * 60 * 1000 * 1008));
             //document.cookie = 'AccessToken=' + data.AccessToken + ';expires=' + expiry.toGMTString() + ';path=/';
+
+            CurrentUser = {
+                Id: data.Id,
+                Email: data.Email
+            };
 
             RenderApp(data);
             HideLoaderCenter();
@@ -88,6 +94,63 @@ function MenuCases() {
     $("#liMenuCases").addClass("active");
     $(".menu-div").hide();
     $("#divCases").show();
+
+    ShowLoaderCenter();
+    $.get(appPath + "api/predmet", {
+        UserId: CurrentUser.Id,
+        Filter: "test"
+    })
+    .done(function (data) {
+        if (data != null && data.length > 0) {
+
+            $(data).each(function (index, _case) {
+                if (Date.parse(_case.Iniciran))
+                    _case.Iniciran = moment(_case.Iniciran).format("LLL");
+                
+                if (Date.parse(_case.DatumStanjaPredmeta))
+                    _case.DatumStanjaPredmeta = moment(_case.DatumStanjaPredmeta).format("LLL");
+
+                if (Date.parse(_case.DatumArhiviranja))
+                    _case.DatumArhiviranja = moment(_case.DatumArhiviranja).format("LLL");
+
+                if (index == data.length - 1) {
+                    var _columns = [
+                        { field: 'NasBroj', title: 'Naš broj', titleTooltip: 'Naš broj', sortable: true },
+                        { field: 'BrojPredmeta', title: 'Broj predmeta', titleTooltip: 'Broj predmeta', sortable: true },
+                        { field: 'Sudija', title: 'Sudija', titleTooltip: 'Sudija', sortable: true },
+                        { field: 'Iniciran', title: 'Iniciran', titleTooltip: 'Iniciran', sortable: true },
+                        { field: 'VrijednostSpora', title: 'Vrijednost spora', titleTooltip: 'Vrijednost spora', sortable: true },
+                        { field: 'Kategorija', title: 'Kategorija', titleTooltip: 'Kategorija', sortable: true },
+                        { field: 'Uloga', title: 'Uloga', titleTooltip: 'Uloga', sortable: true },
+                        { field: 'VrstaPredmeta', title: 'Vrsta predmeta', titleTooltip: 'Vrsta predmeta', sortable: true },
+                        { field: 'Uspjeh', title: 'Uspjeh', titleTooltip: 'Uspjeh', sortable: true },
+                        { field: 'PravniOsnov', title: 'Pravni osnov', titleTooltip: 'Pravni osnov', sortable: true },
+                        { field: 'DatumStanjaPredmeta', title: 'Datum stanja predmeta', titleTooltip: 'Datum stanja predmeta', sortable: true },
+                        { field: 'StanjePredmeta', title: 'Stanje predmeta', titleTooltip: 'Stanje predmeta', sortable: true },
+                        { field: 'DatumArhiviranja', title: 'Datum arhiviranja', titleTooltip: 'Datum arhiviranja', sortable: true }
+                    ];
+
+                    $("#tblCases").bootstrapTable("destroy");
+                    $("#tblCases").bootstrapTable({
+                        data: data,
+                        striped: true,
+                        showColumns: true,
+                        showRefresh: false,
+                        showToggle: true,
+                        columns: _columns,
+                        search: true
+                    });
+                    HideLoaderCenter();
+                }
+            });
+        }
+        else
+            HideLoaderCenter();
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+        HideLoaderCenter();
+        alert("error");
+    });
 }
 
 function MenuParties() {

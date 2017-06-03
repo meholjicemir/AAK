@@ -12,13 +12,16 @@
     <meta name="google-signin-client_id" content="304849379317-d7tvq3acv8ukdpi30ntgvinbcuekf9n2.apps.googleusercontent.com" />
 
     <link type="text/css" rel="stylesheet" href="Libraries/Bootstrap/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="Libraries/Bootstrap/bootstrap-table/dist/bootstrap-table.min.css" />
     <link type="text/css" rel="stylesheet" href="Styles/NewStyle.css" />
 </head>
 <body>
-    <script type="text/javascript" src="Libraries/jQuery/jquery-1.12.0.min.js"></script>
-    <script type="text/javascript" src="Libraries/jQuery/jquery-ui.min.js"></script>
+    <script src="Libraries/jQuery/jquery-1.12.0.min.js"></script>
+    <script src="Libraries/jQuery/jquery-ui.min.js"></script>
     <script src="Libraries/Bootstrap/js/bootstrap.min.js"></script>
+    <script src="Libraries/Bootstrap/bootstrap-table/dist/bootstrap-table.min.js"></script>
     <script src="Scripts/Utilities.js"></script>
+    <script src="Libraries/Moment/moment.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer="defer"></script>
     <script src="Desk.aspx.js" defer="defer"></script>
 
@@ -82,7 +85,7 @@
                         <span class="glyphicon glyphicon-refresh"></span>&nbsp;Refresh
                     </button>
                 </form>
-                <table id="tblCases" style="word-break: break-all;"></table>
+                <table id="tblCases" class="table table-condensed" style="word-break: break-all;"></table>
             </div>
         </div>
 
@@ -97,5 +100,8 @@
         </div>
     </div>
 
+    <div class="pull-right" style="position: absolute; top: 0; right: 0; margin: 2px; font-size: xx-small; z-index: 1000;">
+        v1.0 DEV
+    </div>
 </body>
 </html>
