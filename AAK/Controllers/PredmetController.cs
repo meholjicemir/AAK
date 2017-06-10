@@ -17,7 +17,7 @@ namespace AAK.Controllers
         {
             try
             {
-                List<Predmet> result = Predmeti.Predmeti_GetAll(data.UserId);
+                List<Predmet> result = Predmeti.Predmeti_GetAll(data.UserId, data.Filter, data.RowCount);
                 return Request.CreateResponse<List<Predmet>>(System.Net.HttpStatusCode.OK, result);
             }
             catch (Exception ex)

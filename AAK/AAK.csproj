@@ -247,12 +247,16 @@
     <Content Include="Scripts\Utilities.js" />
     <Content Include="Styles\NewStyle.css" />
     <Content Include="Users.aspx" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\CodeTableController.cs" />
     <Compile Include="Controllers\PredmetController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="DataProviders\CodeTables.cs" />
     <Compile Include="DataProviders\Predmeti.cs" />
     <Compile Include="Desk.aspx.cs">
       <DependentUpon>Desk.aspx</DependentUpon>
@@ -271,6 +275,8 @@
     <Compile Include="LogIn.aspx.designer.cs">
       <DependentUpon>LogIn.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Models\CodeTableData.cs" />
+    <Compile Include="Models\Helper\CodeTable.cs" />
     <Compile Include="Models\Helper\UserWithData.cs" />
     <Compile Include="Models\Predmet.cs" />
     <Compile Include="Models\User.cs" />

@@ -10,18 +10,12 @@ namespace AAK.Models
         public int Id { get; set; }
         public int NasBroj { get; set; }
         public string BrojPredmeta { get; set; }
-        public string Sudija { get; set; }
         public DateTime? Iniciran { get; set; }
-        public decimal VrijednostSpora { get; set; }
-        public string Kategorija { get; set; }
-        public string Uloga { get; set; } // Uloga u postupku
-        public string VrstaPredmeta { get; set; }
+        public decimal? VrijednostSpora { get; set; }
         public string Uspjeh { get; set; } // Uspjeh u postupku
         public string PravniOsnov { get; set; }
         public DateTime DatumStanjaPredmeta { get; set; }
-        public string StanjePredmeta { get; set; }
         public DateTime? DatumArhiviranja { get; set; }
-        public string NacinOkoncanja { get; set; }
         public string BrojArhive { get; set; }
         public string BrojArhiveRegistrator { get; set; }
         public int? SkontroDan { get; set; }
@@ -36,23 +30,36 @@ namespace AAK.Models
         public int? SudId { get; set; }
         public string SudName { get; set; }
 
+        public int KategorijaPredmetaId { get; set; }
+        public string KategorijaPredmetaName { get; set; }
+
+        public int SudijaId { get; set; }
+        public string SudijaName { get; set; }
+
+        public int VrstaPredmetaId { get; set; }
+        public string VrstaPredmetaName { get; set; }
+
+        // Uloga u postupku
+        public int UlogaId { get; set; }
+        public string UlogaName { get; set; }
+
+        public int NacinOkoncanjaId { get; set; }
+        public string NacinOkoncanjaString { get; set; }
+
+        public int StanjePredmetaId { get; set; }
+        public string StanjePredmetaName { get; set; }
+
         public Predmet()
         {
             this.Id = -1;
             this.NasBroj = -1;
             this.BrojPredmeta = string.Empty;
-            this.Sudija = string.Empty;
             this.Iniciran = null;
-            this.VrijednostSpora = 0.0M;
-            this.Kategorija = string.Empty;
-            this.Uloga = string.Empty;
-            this.VrstaPredmeta = string.Empty;
+            this.VrijednostSpora = null;
             this.Uspjeh = string.Empty;
             this.PravniOsnov = string.Empty;
             this.DatumStanjaPredmeta = new DateTime(1970, 1, 1);
-            this.StanjePredmeta = string.Empty;
             this.DatumArhiviranja = null;
-            this.NacinOkoncanja = string.Empty;
             this.BrojArhive = string.Empty;
             this.BrojArhiveRegistrator = string.Empty;
             this.SkontroDan = null;
@@ -65,6 +72,24 @@ namespace AAK.Models
 
             this.SudId = null;
             this.SudName = string.Empty;
+
+            this.KategorijaPredmetaId = -1;
+            this.KategorijaPredmetaName = string.Empty;
+
+            this.SudijaId = -1;
+            this.SudijaName = string.Empty;
+
+            this.VrstaPredmetaId = -1;
+            this.VrstaPredmetaName = string.Empty;
+
+            this.UlogaId = -1;
+            this.UlogaName = string.Empty;
+
+            this.NacinOkoncanjaId = -1;
+            this.NacinOkoncanjaString = string.Empty;
+
+            this.StanjePredmetaId = -1;
+            this.StanjePredmetaName = string.Empty;
         }
     }
 }

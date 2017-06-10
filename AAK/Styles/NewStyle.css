@@ -304,3 +304,23 @@ li > a.menu-item {
 .menu-div {
     margin: 10px;
 }
+
+
+.modal-admin {
+    width: 96%;
+    margin-left: 2%;
+    margin-top: 85px;
+}
+
+.fixed-width-label {
+    width: 200px;
+}
+
+.form-control {
+    max-width: 500px;
+}
+
+.alert {
+    margin-left: 1%;
+    margin-right: 1%;
+}
