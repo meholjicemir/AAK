@@ -324,3 +324,11 @@ li > a.menu-item {
     margin-left: 1%;
     margin-right: 1%;
 }
+
+.custom-table-button-edit {
+    color: black;
+}
+
+.custom-table-button-delete {
+    color: red;    
+}

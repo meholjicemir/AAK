@@ -114,6 +114,36 @@
 
         <div id="divParties" class="panel panel-default menu-div" style="display: none;">
             <div class="panel-body">
+                <button id="btnNewParty" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalParty"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj novo lice</button>
+                <hr />
+                <form class="form-inline pull-left" role="form">
+                    <div class="form-group">
+                        <label for="txtPartiesFilter">Traži:</label>
+                        <input type="text" class="form-control" id="txtPartiesFilter" />
+                    </div>
+                    <div class="form-group">
+                        <label for="ddlCasesRowCount">Broj redova:</label>
+                        <select class="form-control" id="ddlPartiesRowCount">
+                            <option value="10">10</option>
+                            <option value="50" selected="selected">50</option>
+                            <option value="100">100</option>
+                            <option value="1000">1000</option>
+                            <option value="5000">5000</option>
+                            <option value="2147483647">Sve</option>
+                        </select>
+                    </div>
+                    <button id="btnRefreshParties" class="btn btn-default" onclick="LoadParties(); return false;">
+                        <span class="glyphicon glyphicon-refresh"></span>&nbsp;Osvježi
+                    </button>
+                </form>
+                <table id="tblParties" class="table table-condensed" style="word-break: break-word;"></table>
+            </div>
+        </div>
+
+        <div id="divSudovi" class="panel panel-default menu-div" style="display: none;">
+            <div class="panel-body">
+                <button id="btnNewSud" type="button" class="btn btn-primary pull-left" data-toggle="modal" data-target="#modalSud" onclick="ClearModalSud(); return false;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj novi sud</button>
+                <table id="tblSudovi" class="table table-condensed" style="word-break: break-word;"></table>
             </div>
         </div>
 
@@ -126,7 +156,7 @@
             <div class="panel-heading">
             </div>
             <div class="panel-body">
-                <button id="btnNewCodeTableRecord" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCodeTableRecord"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj</button>
+                <button id="btnNewCodeTableRecord" type="button" class="btn btn-primary pull-left" data-toggle="modal" data-target="#modalCodeTableRecord" onclick="NewCodeTableRecord(); return false;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj</button>
                 <table id="tblCodeTableData" class="table table-condensed" style="word-break: break-word;"></table>
             </div>
         </div>
@@ -201,12 +231,77 @@
         </div>
     </div>
 
+    <div id="modalParty" class="modal fade" role="dialog">
+        <div class="modal-admin">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Novo lice</h4>
+                </div>
+                <div class="modal-body row">
+                    <div class="col-lg-6">
+                    </div>
+                    <div class="col-lg-6">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="SaveParty(); return false;">Spasi</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="SaveParty(); return false;">Spasi i zatvori</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Odustani</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalSud" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Novi sud</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-inline" role="form">
+                        <label for="txtSud_Naziv" class="fixed-width-label">Naziv:</label>
+                        <input type="text" class="form-control" id="txtSud_Naziv" />
+                        <br />
+                        <label for="txtSud_Adresa" class="fixed-width-label">Adresa:</label>
+                        <input type="text" class="form-control" id="txtSud_Adresa" />
+                        <br />
+                        <label for="txtSud_PostanskiBroj" class="fixed-width-label">Poštanski broj:</label>
+                        <input type="text" class="form-control" id="txtSud_PostanskiBroj" />
+                        <br />
+                        <label for="txtSud_Grad" class="fixed-width-label">Grad:</label>
+                        <input type="text" class="form-control" id="txtSud_Grad" />
+                        <br />
+                        <label for="txtSud_Telefon" class="fixed-width-label">Telefon:</label>
+                        <input type="text" class="form-control" id="txtSud_Telefon" />
+                        <br />
+                        <label for="txtSud_Fax" class="fixed-width-label">Fax:</label>
+                        <input type="text" class="form-control" id="txtSud_Fax" />
+                        <hr />
+                        <h4>Računi za uplate</h4>
+                        <label for="txtSud_RacunTakse" class="fixed-width-label">Sudske takse:</label>
+                        <input type="text" class="form-control" id="txtSud_RacunTakse" />
+                        <br />
+                        <label for="txtSud_RacunVjestacenja" class="fixed-width-label">Vještačenja:</label>
+                        <input type="text" class="form-control" id="txtSud_RacunVjestacenja" />
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="SaveSud(); return false;">Spasi i zatvori</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Odustani</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="modalCodeTableRecord" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Dodaj</h4>
+                    <h4 class="modal-title"></h4>
                 </div>
                 <div class="modal-body">
                     <label for="txtCodeTableRecord_Name" class="fixed-width-label">Naziv:</label>
@@ -219,6 +314,31 @@
             </div>
 
         </div>
+    </div>
+
+    <div id="modalPrompt" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" id="promptTitle"></h4>
+                </div>
+                <div class="modal-body">
+                    <label id="promptMessage"></label>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnPromptYes" type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
+                    <button id="btnPromptNo" type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="divHidden" style="display: none;">
+        <button id="btnOpenModalEditCodeTableRecord" data-toggle='modal' data-target='#modalCodeTableRecord'></button>
+        <button id="btnOpenModalEditSud" data-toggle='modal' data-target='#modalSud'></button>
+
+        <button id="btnOpenModalPrompt" data-toggle='modal' data-target='#modalPrompt'></button>
     </div>
 
     <div class="pull-right" style="position: absolute; top: 0; right: 0; margin: 2px; font-size: xx-small; z-index: 1000;">

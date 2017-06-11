@@ -1,8 +1,10 @@
 ﻿/// <reference path="Scripts/Utilities.js" />
 
-var appPath = window.location.protocol + "//" + window.location.host + "/";
+var AppPath = window.location.protocol + "//" + window.location.host + "/";
 var CurrentUser = null;
 var CurrentCodeTable = null;
+var Sudovi = null;
+var Lica = null;
 
 $(document).ready(function () {
     //$(".g-signin2").click();
@@ -19,7 +21,7 @@ function onSignIn(googleUser) {
 function ValidateUser(email) {
     ShowLoaderCenter();
 
-    $.post(appPath + "api/user", {
+    $.post(AppPath + "api/user", {
         Email: email
     })
     .done(function (data) {
@@ -32,7 +34,8 @@ function ValidateUser(email) {
 
             CurrentUser = {
                 Id: data.Id,
-                Email: data.Email
+                Email: data.Email,
+                UserGroupCodes: data.UserGroupCodes
             };
 
             RenderApp(data);
@@ -116,7 +119,7 @@ function MenuCases() {
 
 function LoadCases() {
     ShowLoaderCenter();
-    $.get(appPath + "api/predmet", {
+    $.get(AppPath + "api/predmet", {
         UserId: CurrentUser.Id,
         Filter: $("#txtCasesFilter").val(),
         RowCount: $("#ddlCasesRowCount").val()
@@ -202,6 +205,108 @@ function MenuParties() {
     $("#liMenuParties").addClass("active");
     $(".menu-div").hide();
     $("#divParties").show();
+
+    LoadParties();
+}
+
+function LoadParties() {
+    ShowLoaderCenter();
+    $.get(AppPath + "api/lice", {
+        UserId: CurrentUser.Id,
+        Filter: $("#txtPartiesFilter").val(),
+        RowCount: $("#ddlPartiesRowCount").val()
+    })
+    .done(function (data) {
+        if (data != null && data.length > 0) {
+            Lica = data;
+            $(data).each(function (index, _party) {
+                if (Date.parse(_party.Created))
+                    _party.Created = moment(_party.Created).format("lll");
+
+                if (Date.parse(_party.Modified))
+                    _party.Modified = moment(_party.Modified).format("lll");
+
+                _party.IsMinorString = _party.IsMinor ? "Da" : "Ne";
+
+                if (index == data.length - 1) {
+                    var _columns = [
+                        { field: 'Id' },
+                        { field: 'Naziv', title: 'Ime / Naziv', titleTooltip: 'Ime / Naziv', sortable: true },
+                        { field: 'Ime', title: 'Ime', titleTooltip: 'Ime', sortable: true, visible: false },
+                        { field: 'Prezime', title: 'Prezime', titleTooltip: 'Prezime', sortable: true, visible: false },
+                        { field: 'PravnoLice', title: 'Pravno lice', titleTooltip: 'Pravno lice', sortable: true, visible: false },
+                        { field: 'IsMinorString', title: 'Mldb', titleTooltip: 'Malodobno lice', sortable: true },
+                        { field: 'ZakonskiZastupnik', title: 'Z. zastupnik', titleTooltip: 'Zakonski zastupnik', sortable: true },
+                        { field: 'Adresa', title: 'Adresa', titleTooltip: 'Adresa', sortable: true, visible: false },
+                        { field: 'PostanskiBroj', title: 'Poštanski broj', titleTooltip: 'Poštanski broj', sortable: true, align: "right", visible: false },
+                        { field: 'Grad', title: 'Grad', titleTooltip: 'Grad', sortable: true },
+                        { field: 'Drzava', title: 'Država', titleTooltip: 'Država', sortable: true, visible: false },
+                        { field: 'Telefon', title: 'Telefon', titleTooltip: 'Telefon', sortable: true },
+                        { field: 'Fax', title: 'Fax', titleTooltip: 'Fax', sortable: true },
+                        { field: 'Email', title: 'Email', titleTooltip: 'Email', sortable: true },
+                        { field: 'JMBG_IDBroj', title: 'JMBG / ID broj', titleTooltip: 'JMBG / ID broj', sortable: true },
+                        { field: 'CreatedByName', title: 'Kreirao/la', titleTooltip: 'Kreirao/la', sortable: true, visible: false },
+                        { field: 'Created', title: 'Datum kreiranja', titleTooltip: 'Datum kreiranja', sortable: true, visible: false },
+                        { field: 'ModifiedByName', title: 'Izmijenio/la', titleTooltip: 'Izmijenio/la', sortable: true, visible: false },
+                        { field: 'Modified', title: 'Datum zadnje izmjene', titleTooltip: 'Datum zadnje izmjene', sortable: true, visible: false }
+                    ];
+
+                    $("#tblParties").bootstrapTable("destroy");
+                    $("#tblParties").bootstrapTable({
+                        data: data,
+                        striped: true,
+                        showColumns: true,
+                        showRefresh: false,
+                        showToggle: true,
+                        columns: _columns,
+                        search: false,
+                        onPostBody: function () {
+                            AfterBindParties();
+                            return false;
+                        }
+                    });
+                    HideLoaderCenter();
+                }
+            });
+        }
+        else
+            HideLoaderCenter();
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+        HideLoaderCenter();
+        alert("error");
+    });
+}
+
+function AfterBindParties() {
+    $("#tblParties").find("tr").each(function (index, element) {
+        if (index == 0) {
+            $(element).find("th:first-child").hide();
+            if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0)
+                if ($("#partiesEmptyHeader").length == 0)
+                    $(element).append("<th id='partiesEmptyHeader'></th>");
+        }
+        else {
+            var tempId = parseInt($(element).find("td:first-child").html());
+            $(element).find("td:first-child").hide();
+
+            if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
+                var buttonsHTML = "<td style='width: 100px;'><div class='btn-group pull-right'>";
+                buttonsHTML +=
+                            "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Izmijeni podatke o licu' onclick='EditParty(" + tempId.toString() + "); return false;'>"
+                            + "<span class='glyphicon glyphicon-pencil'></span>"
+                            + "</button>";
+
+                buttonsHTML +=
+                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši lice' onclick='DeleteParty(" + tempId.toString() + "); return false;'>"
+                            + "<span class='glyphicon glyphicon-remove'></span>"
+                            + "</button>";
+                buttonsHTML += "</div></td>"
+
+                $(element).append(buttonsHTML);
+            }
+        }
+    });
 }
 
 function MenuUsers() {
@@ -214,6 +319,149 @@ function MenuUsers() {
 function MenuSudovi() {
     DeactivateAllMenuItems();
     $("#liMenuSudovi").addClass("active");
+    $(".menu-div").hide();
+    $("#divSudovi").show();
+
+    LoadSudovi();
+}
+
+
+function LoadSudovi() {
+    ShowLoaderCenter();
+    $.get(AppPath + "api/sud", {
+        UserId: CurrentUser.Id
+    })
+    .done(function (data) {
+        if (data != null && data.length > 0) {
+            Sudovi = data;
+            $(data).each(function (index, _sud) {
+
+                if (Date.parse(_sud.Created))
+                    _sud.Created = moment(_sud.Created).format("lll");
+
+                if (Date.parse(_sud.Modified))
+                    _sud.Modified = moment(_sud.Modified).format("lll");
+
+                if (index == data.length - 1) {
+                    var _columns = [
+                        { field: 'Id' },
+                        { field: 'Naziv', title: 'Naziv', titleTooltip: 'Naziv', sortable: true },
+                        { field: 'Adresa', title: 'Adresa', titleTooltip: 'Adresa', sortable: true },
+                        { field: 'PostanskiBroj', title: 'Poštanski broj', titleTooltip: 'Poštanski broj', sortable: true, align: "right" },
+                        { field: 'Grad', title: 'Grad', titleTooltip: 'Grad', sortable: true },
+                        { field: 'Telefon', title: 'Telefon', titleTooltip: 'Telefon', sortable: true },
+                        { field: 'Fax', title: 'Fax', titleTooltip: 'Fax', sortable: true },
+                        { field: 'RacunTakse', title: 'Račun takse', titleTooltip: 'Račun takse', sortable: true },
+                        { field: 'RacunVjestacenja', title: 'Račun vještačenja', titleTooltip: 'Račun vještačenja', sortable: true },
+                        { field: 'CreatedByName', title: 'Kreirao/la', titleTooltip: 'Kreirao/la', sortable: true, visible: false },
+                        { field: 'Created', title: 'Datum kreiranja', titleTooltip: 'Datum kreiranja', sortable: true, visible: false },
+                        { field: 'ModifiedByName', title: 'Izmijenio/la', titleTooltip: 'Izmijenio/la', sortable: true, visible: false },
+                        { field: 'Modified', title: 'Datum zadnje izmjene', titleTooltip: 'Datum zadnje izmjene', sortable: true, visible: false }
+                    ];
+
+                    $("#tblSudovi").bootstrapTable("destroy");
+                    $("#tblSudovi").bootstrapTable({
+                        data: data,
+                        striped: true,
+                        showColumns: true,
+                        showRefresh: false,
+                        columns: _columns,
+                        search: true,
+                        onPostBody: function () {
+                            AfterBindSudovi();
+                            return false;
+                        }
+                    });
+                    HideLoaderCenter();
+                }
+            });
+        }
+        else
+            HideLoaderCenter();
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+        HideLoaderCenter();
+        alert("error");
+    });
+}
+
+function AfterBindSudovi() {
+    $("#tblSudovi").find("tr").each(function (index, element) {
+        if (index == 0) {
+            $(element).find("th:first-child").hide();
+            if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0)
+                if ($("#sudoviEmptyHeader").length == 0)
+                    $(element).append("<th id='sudoviEmptyHeader'></th>");
+        }
+        else {
+            var tempId = parseInt($(element).find("td:first-child").html());
+            $(element).find("td:first-child").hide();
+
+            if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
+                var buttonsHTML = "<td style='width: 100px;'><div class='btn-group pull-right'>";
+                buttonsHTML +=
+                            "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Izmijeni podatke o sudu' onclick='EditSud(" + tempId.toString() + "); return false;'>"
+                            + "<span class='glyphicon glyphicon-pencil'></span>"
+                            + "</button>";
+
+                buttonsHTML +=
+                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši sud' onclick='DeleteSud(" + tempId.toString() + "); return false;'>"
+                            + "<span class='glyphicon glyphicon-remove'></span>"
+                            + "</button>";
+                buttonsHTML += "</div></td>"
+
+                $(element).append(buttonsHTML);
+            }
+        }
+    });
+}
+
+function EditSud(id) {
+    $("#modalSud").attr("edit_id", id);
+
+    $(Sudovi).each(function (index, obj) {
+        if (obj.Id == id) {
+            $("#txtSud_Naziv").val(obj.Naziv);
+            $("#txtSud_Adresa").val(obj.Adresa);
+            $("#txtSud_PostanskiBroj").val(obj.PostanskiBroj);
+            $("#txtSud_Grad").val(obj.Grad);
+            $("#txtSud_Telefon").val(obj.Telefon);
+            $("#txtSud_Fax").val(obj.Fax);
+            $("#txtSud_RacunTakse").val(obj.RacunTakse);
+            $("#txtSud_RacunVjestacenja").val(obj.RacunVjestacenja);
+
+            $("#modalSud").find(".modal-title").html("Izmijeni sud: <span style='font-style: italic; color: gray;'>" + obj.Naziv + "</span>");
+            $("#btnOpenModalEditSud").click();
+        }
+    });
+}
+
+function DeleteSud(id) {
+    $(Sudovi).each(function (index, obj) {
+        if (obj.Id == id) {
+            ShowPrompt(
+                "Da li ste sigurni da želite izbrisati sud?",
+                "<span style='font-style: italic; color: gray;'>" + obj.Naziv + "</span>",
+                function () {
+                    ShowLoaderCenter();
+                    $.ajax({
+                        url: AppPath + "api/sud?Id=" + id.toString(),
+                        type: "DELETE",
+                        success: function () {
+                            LoadSudovi();
+                            HideLoaderCenter();
+                            ShowAlert("success", "Uspješno izbrisan sud.");
+                        },
+                        error: function () {
+                            HideLoaderCenter();
+                            ShowAlert("danger", "Greška pri brisanju suda.");
+                        }
+                    });
+                },
+                function () { }
+            );
+        }
+    });
 }
 
 function DeactivateAllMenuItems() {
@@ -225,12 +473,65 @@ function SaveCase() {
 
 }
 
+function ClearModalSud() {
+    $("#modalSud").removeAttr("edit_id");
+    $("#txtSud_Naziv").val("");
+    $("#txtSud_Adresa").val("");
+    $("#txtSud_PostanskiBroj").val("");
+    $("#txtSud_Grad").val("");
+    $("#txtSud_Telefon").val("");
+    $("#txtSud_Fax").val("");
+    $("#txtSud_RacunTakse").val("");
+    $("#txtSud_RacunVjestacenja").val("");
+    $("#modalSud").find(".modal-title").html("Novi sud");
+}
+
+function SaveSud() {
+    ShowLoaderCenter();
+
+    var reqObj = {
+        CreatedBy: CurrentUser.Id,
+        Naziv: $("#txtSud_Naziv").val(),
+        Adresa: $("#txtSud_Adresa").val(),
+        PostanskiBroj: $("#txtSud_PostanskiBroj").val(),
+        Grad: $("#txtSud_Grad").val(),
+        Telefon: $("#txtSud_Telefon").val(),
+        Fax: $("#txtSud_Fax").val(),
+        RacunTakse: $("#txtSud_RacunTakse").val(),
+        RacunVjestacenja: $("#txtSud_RacunVjestacenja").val()
+    };
+
+    var tempId = $("#modalSud").attr("edit_id");
+
+    if (tempId != undefined) {
+        reqObj.Id = tempId;
+        reqObj.ModifiedBy = CurrentUser.Id;
+    }
+
+    $.post(AppPath + "api/sud", reqObj)
+    .done(function (data) {
+        if (data && data > 0) {
+            ShowAlert("success", "Uspješno spašen sud.");
+            HideLoaderCenter();
+            LoadSudovi();
+        }
+        else {
+            HideLoaderCenter();
+            ShowAlert("danger", "Greška pri spašavanju suda.");
+        }
+    })
+    .fail(function (response) {
+        HideLoaderCenter();
+        ShowAlert("danger", "Greška pri spašavanju suda.");
+    });
+}
+
 function LoadCodeTableData(tableName, dropDown, columnName) {
     if (columnName == undefined)
         columnName = "Name";
 
     ShowLoaderCenter();
-    $.get(appPath + "api/codetable", {
+    $.get(AppPath + "api/codetable", {
         Name: tableName,
         ColumnName: columnName
     })
@@ -274,26 +575,31 @@ function LoadCodeTableUI(element, title, tableName, columnName) {
 
     $("#tblCodeTableData").bootstrapTable("destroy");
 
-    $.get(appPath + "api/codetable", {
+    $.get(AppPath + "api/codetable", {
         Name: tableName,
         ColumnName: columnName
     })
     .done(function (data) {
         if (data) {
+            CurrentCodeTable.Data = data;
             var _columns = [
-                { field: 'Name', sortable: true }
+                { field: 'Id' },
+                { field: 'OrdinalNo', width: 100 },
+                { field: 'Name' }
             ];
 
             $("#tblCodeTableData").bootstrapTable("destroy");
             $("#tblCodeTableData").bootstrapTable({
                 data: data,
                 striped: true,
-                showColumns: true,
                 showRefresh: false,
-                showToggle: true,
                 columns: _columns,
-                search: false,
-                showHeader: false
+                search: true,
+                showHeader: false,
+                onPostBody: function () {
+                    AfterBindCodeTableData();
+                    return false;
+                }
             });
 
             HideLoaderCenter();
@@ -307,25 +613,115 @@ function LoadCodeTableUI(element, title, tableName, columnName) {
     });
 }
 
+function AfterBindCodeTableData() {
+    $("#tblCodeTableData").find("tr").each(function (index, element) {
+        var tempId = parseInt($(element).find("td:first-child").html());
+        $(element).find("td:first-child").hide();
+
+        if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
+            var buttonsHTML = "<td style='width: 100px;'><div class='btn-group pull-right'>";
+            buttonsHTML +=
+                        "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Izmijeni' onclick='EditCodeTableRecord(" + tempId.toString() + "); return false;'>"
+                        + "<span class='glyphicon glyphicon-pencil'></span>"
+                        + "</button>";
+
+            buttonsHTML +=
+                        "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši' onclick='DeleteCodeTableRecord(" + tempId.toString() + "); return false;'>"
+                        + "<span class='glyphicon glyphicon-remove'></span>"
+                        + "</button>";
+            buttonsHTML += "</div></td>"
+
+            $(element).append(buttonsHTML);
+        }
+    });
+}
+
+function EditCodeTableRecord(id) {
+    $("#modalCodeTableRecord").attr("edit_id", id);
+
+    $(CurrentCodeTable.Data).each(function (index, obj) {
+        if (obj.Id == id) {
+            $("#txtCodeTableRecord_Name").val(obj.Name);
+            $("#modalCodeTableRecord").find(".modal-title").html(CurrentCodeTable.Title + " - Izmijeni: <span style='font-style: italic; color: gray;'>" + obj.Name + "</span>");
+            $("#btnOpenModalEditCodeTableRecord").click();
+        }
+    });
+}
+
+function NewCodeTableRecord() {
+    $("#modalCodeTableRecord").removeAttr("edit_id");
+
+    $("#txtCodeTableRecord_Name").val("");
+    $("#modalCodeTableRecord").find(".modal-title").html(CurrentCodeTable.Title + " - Novi unos");
+}
+
+function DeleteCodeTableRecord(id) {
+    $(CurrentCodeTable.Data).each(function (index, obj) {
+        if (obj.Id == id) {
+            ShowPrompt(
+                "Da li ste sigurni da želite izbrisati?",
+                "<span style='font-style: italic; color: gray;'>" + obj.Name + "</span>",
+                function () {
+                    ShowLoaderCenter();
+                    $.ajax({
+                        url: AppPath + "api/codetable?TableName=" + CurrentCodeTable.TableName + "&Id=" + id.toString(),
+                        type: "DELETE",
+                        success: function () {
+                            LoadCodeTableUI(CurrentCodeTable.Element, CurrentCodeTable.Title, CurrentCodeTable.TableName, CurrentCodeTable.ColumnName);
+                            HideLoaderCenter();
+                            ShowAlert("success", "Uspješno izbrisano.");
+                        },
+                        error: function () {
+                            HideLoaderCenter();
+                            ShowAlert("danger", "Greška pri brisanju.");
+                        }
+                    });
+                },
+                function () { }
+            );
+        }
+    });
+}
+
 function SaveCodeTableRecord() {
     ShowLoaderCenter();
-    $.post(appPath + "api/codetable", {
+
+    var reqObj = {
         TableName: CurrentCodeTable.TableName,
         Name: $("#txtCodeTableRecord_Name").val()
-    })
+    };
+
+    var tempId = $("#modalCodeTableRecord").attr("edit_id");
+
+    if (tempId != undefined)
+        reqObj.Id = tempId;
+
+    $.post(AppPath + "api/codetable", reqObj)
     .done(function (data) {
         if (data && data > 0) {
-            ShowAlert("success", "Uspješno unesen podatak.");
-            HideLoaderCenter();
             LoadCodeTableUI(CurrentCodeTable.Element, CurrentCodeTable.Title, CurrentCodeTable.TableName, CurrentCodeTable.ColumnName);
+            HideLoaderCenter();
+            ShowAlert("success", "Uspješno spašen podatak.");
         }
         else {
             HideLoaderCenter();
-            ShowAlert("danger", "Greška pri spašavanju unesenog podatka.");
+            ShowAlert("danger", "Greška pri spašavanju podatka.");
         }
     })
     .fail(function (response) {
         HideLoaderCenter();
-        alert("error");
+        ShowAlert("danger", "Greška pri spašavanju podatka.");
     });
+}
+
+function SaveParty() {
+
+}
+
+function EditParty() {
+
+}
+
+function DeleteParty() {
+
 }

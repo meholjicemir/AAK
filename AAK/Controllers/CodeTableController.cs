@@ -28,16 +28,41 @@ namespace AAK.Controllers
         }
 
         [HttpPost]
-        public HttpResponseMessage CodeTable_InsertRecord([FromBody]CodeTableData codeTableData)
+        public HttpResponseMessage CodeTable_InsertUpdateRecord([FromBody]CodeTableData codeTableData)
         {
             try
             {
-                int? insertedId = CodeTables.CodeTable_InsertRecord(codeTableData);
-                return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
+                if (codeTableData.Id > 0)
+                {
+                    // Edit
+                    CodeTables.CodeTable_UpdateRecord(codeTableData);
+                    return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, codeTableData.Id);
+                }
+                else
+                {
+                    // Insert
+                    int? insertedId = CodeTables.CodeTable_InsertRecord(codeTableData);
+                    return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
+                }
             }
             catch (Exception ex)
             {
-                LoggerUtility.Logger.LogException(ex, "CodeTable_InsertRecord");
+                LoggerUtility.Logger.LogException(ex, "CodeTable_InsertUpdateRecord");
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+            }
+        }
+
+        [HttpDelete]
+        public HttpResponseMessage CodeTable_DeleteRecord([FromUri] CodeTableData codeTableData)
+        {
+            try
+            {
+                CodeTables.CodeTable_DeleteRecord(codeTableData);
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                LoggerUtility.Logger.LogException(ex, "CodeTable_DeleteRecord");
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
             }
         }

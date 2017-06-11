@@ -1,1 +1,10 @@
++ CRUD code table data
++ CRUD sudovi
++ R lica
+CRUD lica
+
+
+add foreign keys to columns, to prevent deleting stuff unsafely
+add created, created by, modified, modified by across db
+handle alert("error");
 - Security: AccessToken, sessions, cookies
