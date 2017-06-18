@@ -1,7 +1,11 @@
 + CRUD code table data
 + CRUD sudovi
 + R lica
-CRUD lica
+
++ CRUD lica
+- CRUD predmeta (sa licima)
+
+
 
 
 add foreign keys to columns, to prevent deleting stuff unsafely

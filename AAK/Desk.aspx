@@ -23,6 +23,7 @@
     <script src="Libraries/Moment/moment.js"></script>
     <script src="Libraries/Bootstrap/js/bootstrap.min.js"></script>
     <script src="Libraries/Bootstrap/bootstrap-table/dist/bootstrap-table.min.js"></script>
+    <script src="Libraries/Bootstrap/bootstrap-table/dist/locale/bootstrap-table-hr-HR.min.js"></script>
     <script src="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
     <script src="Scripts/Utilities.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer="defer"></script>
@@ -60,6 +61,7 @@
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Kategorije predmeta', 'KategorijePredmeta'); return false;">Kategorije predmeta</a></li>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Vrste predmeta', 'VrstePredmeta'); return false;">Vrste predmeta</a></li>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Stanja predmeta', 'StanjaPredmeta'); return false;">Stanja predmeta</a></li>
+                            <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Države', 'Drzave'); return false;">Države</a></li>
                         </ul>
                     </li>
 
@@ -114,7 +116,7 @@
 
         <div id="divParties" class="panel panel-default menu-div" style="display: none;">
             <div class="panel-body">
-                <button id="btnNewParty" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalParty"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj novo lice</button>
+                <button id="btnNewParty" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalParty" onclick="ClearModalParty(); return false;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj novo lice</button>
                 <hr />
                 <form class="form-inline pull-left" role="form">
                     <div class="form-group">
@@ -178,7 +180,7 @@
                         <input type="text" class="form-control" id="txtCase_NasBroj" disabled="disabled" />
                         <br />
                         <label for="ddlCase_Kategorija">Kategorija:</label>
-                        <select class="form-control" id="ddlCase_Kategorija">
+                        <select class="form-control fixed-width-field" id="ddlCase_Kategorija">
                             <option>-----</option>
                         </select>
                         <br />
@@ -186,20 +188,20 @@
                     <div class="col-lg-8">
                         <form class="form-inline pull-left" role="form">
                             <label for="txtCase_BrojPredmeta" class="fixed-width-label">Broj predmeta:</label>
-                            <input type="text" class="form-control" id="txtCase_BrojPredmeta" />
+                            <input type="text" class="form-control fixed-width-field" id="txtCase_BrojPredmeta" />
                             <br />
                             <label for="ddlCase_Sud" class="fixed-width-label">Sud:</label>
-                            <select class="form-control" id="ddlCase_Sud">
+                            <select class="form-control fixed-width-field" id="ddlCase_Sud">
                                 <option value="-1">-----</option>
                             </select>
                             <br />
                             <label for="ddlCase_Sudija" class="fixed-width-label">Sudija:</label>
-                            <select class="form-control" id="ddlCase_Sudija">
+                            <select class="form-control fixed-width-field" id="ddlCase_Sudija">
                                 <option value="-1">-----</option>
                             </select>
                             <br />
                             <label for="txtCase_VrijednostSpora" class="fixed-width-label">Vrijednost spora:</label>
-                            <input type="text" class="form-control" id="txtCase_VrijednostSpora" />
+                            <input type="text" class="form-control fixed-width-field" id="txtCase_VrijednostSpora" />
                             <br />
                             <label for="ddlCase_VrstaPredmeta" class="fixed-width-label">Vrsta predmeta:</label>
                             <select class="form-control" id="ddlCase_VrstaPredmeta">
@@ -216,7 +218,7 @@
                             </div>
                             <br />
                             <label for="ddlCase_StanjePredmeta" class="fixed-width-label">Stanje:</label>
-                            <select class="form-control" id="ddlCase_StanjePredmeta">
+                            <select class="form-control fixed-width-field" id="ddlCase_StanjePredmeta">
                                 <option value="-1">-----</option>
                             </select>
                         </form>
@@ -240,8 +242,57 @@
                 </div>
                 <div class="modal-body row">
                     <div class="col-lg-6">
+                        <form class="form-inline pull-left" role="form">
+                            <label for="txtParty_Prezime" class="fixed-width-label">Prezime:</label>
+                            <input type="text" class="form-control fixed-width-field" id="txtParty_Prezime" />
+                            <br />
+                            <label for="txtParty_Ime" class="fixed-width-label">Ime:</label>
+                            <input type="text" class="form-control fixed-width-field" id="txtParty_Ime" />
+                            <br />
+                            <label for="cbParty_IsMinor" class="fixed-width-label">Malodobno lice</label>
+                            <input id="cbParty_IsMinor" type="checkbox" />
+                            <br />
+                            <label for="txtParty_ZakonskiZastupnik" class="fixed-width-label">Zakonski zastupnik:</label>
+                            <input type="text" class="form-control fixed-width-field" id="txtParty_ZakonskiZastupnik" />
+                            <br />
+                            <label for="txtParty_PravnoLice" class="fixed-width-label">Pravno Lice ili Institucija:</label>
+                            <input type="text" class="form-control fixed-width-field" id="txtParty_PravnoLice" />
+                            <br />
+                            <br />
+                            <label for="txtParty_Adresa" class="fixed-width-label">Adresa:</label>
+                            <input type="text" class="form-control fixed-width-field" id="txtParty_Adresa" />
+                            <br />
+                            <label for="txtParty_PostanskiBroj" class="fixed-width-label">Poštanski broj:</label>
+                            <input type="text" class="form-control fixed-width-field" id="txtParty_PostanskiBroj" />
+                            <br />
+                            <label for="txtParty_Grad" class="fixed-width-label">Grad:</label>
+                            <input type="text" class="form-control fixed-width-field" id="txtParty_Grad" />
+                            <br />
+                            <label for="ddlParty_Drzava" class="fixed-width-label">Država:</label>
+                            <select class="form-control fixed-width-field" id="ddlParty_Drzava">
+                                <option value="-1">-----</option>
+                            </select>
+                            <br />
+                            <label for="txtParty_Email" class="fixed-width-label">Email:</label>
+                            <input type="text" class="form-control fixed-width-field" id="txtParty_Email" />
+                            <br />
+                        </form>
                     </div>
                     <div class="col-lg-6">
+                        <form class="form-inline pull-left" role="form">
+                            <label for="txtParty_Biljeske" class="fixed-width-label">Bilješke:</label>
+                            <textarea class="form-control fixed-width-field" rows="8" id="txtParty_Biljeske"></textarea>
+                            <br />
+                            <label for="txtParty_Telefon" class="fixed-width-label">Telefon:</label>
+                            <textarea class="form-control fixed-width-field" rows="2" id="txtParty_Telefon"></textarea>
+                            <br />
+                            <label for="txtParty_Fax" class="fixed-width-label">Fax:</label>
+                            <input type="text" class="form-control fixed-width-field" id="txtParty_Fax" />
+                            <br />
+                            <label for="txtParty_JMBG_IDBroj" class="fixed-width-label">JMBG / ID broj:</label>
+                            <input type="text" class="form-control fixed-width-field" id="txtParty_JMBG_IDBroj" />
+                            <br />
+                        </form>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -263,29 +314,29 @@
                 <div class="modal-body">
                     <form class="form-inline" role="form">
                         <label for="txtSud_Naziv" class="fixed-width-label">Naziv:</label>
-                        <input type="text" class="form-control" id="txtSud_Naziv" />
+                        <input type="text" class="form-control fixed-width-field" id="txtSud_Naziv" />
                         <br />
                         <label for="txtSud_Adresa" class="fixed-width-label">Adresa:</label>
-                        <input type="text" class="form-control" id="txtSud_Adresa" />
+                        <input type="text" class="form-control fixed-width-field" id="txtSud_Adresa" />
                         <br />
                         <label for="txtSud_PostanskiBroj" class="fixed-width-label">Poštanski broj:</label>
-                        <input type="text" class="form-control" id="txtSud_PostanskiBroj" />
+                        <input type="text" class="form-control fixed-width-field" id="txtSud_PostanskiBroj" />
                         <br />
                         <label for="txtSud_Grad" class="fixed-width-label">Grad:</label>
-                        <input type="text" class="form-control" id="txtSud_Grad" />
+                        <input type="text" class="form-control fixed-width-field" id="txtSud_Grad" />
                         <br />
                         <label for="txtSud_Telefon" class="fixed-width-label">Telefon:</label>
-                        <input type="text" class="form-control" id="txtSud_Telefon" />
+                        <input type="text" class="form-control fixed-width-field" id="txtSud_Telefon" />
                         <br />
                         <label for="txtSud_Fax" class="fixed-width-label">Fax:</label>
-                        <input type="text" class="form-control" id="txtSud_Fax" />
+                        <input type="text" class="form-control fixed-width-field" id="txtSud_Fax" />
                         <hr />
                         <h4>Računi za uplate</h4>
                         <label for="txtSud_RacunTakse" class="fixed-width-label">Sudske takse:</label>
-                        <input type="text" class="form-control" id="txtSud_RacunTakse" />
+                        <input type="text" class="form-control fixed-width-field" id="txtSud_RacunTakse" />
                         <br />
                         <label for="txtSud_RacunVjestacenja" class="fixed-width-label">Vještačenja:</label>
-                        <input type="text" class="form-control" id="txtSud_RacunVjestacenja" />
+                        <input type="text" class="form-control fixed-width-field" id="txtSud_RacunVjestacenja" />
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -337,6 +388,7 @@
     <div id="divHidden" style="display: none;">
         <button id="btnOpenModalEditCodeTableRecord" data-toggle='modal' data-target='#modalCodeTableRecord'></button>
         <button id="btnOpenModalEditSud" data-toggle='modal' data-target='#modalSud'></button>
+        <button id="btnOpenModalEditParty" data-toggle='modal' data-target='#modalParty'></button>
 
         <button id="btnOpenModalPrompt" data-toggle='modal' data-target='#modalPrompt'></button>
     </div>

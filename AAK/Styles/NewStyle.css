@@ -316,6 +316,10 @@ li > a.menu-item {
     width: 200px;
 }
 
+.fixed-width-field {
+    min-width: 300px;
+}
+
 .form-control {
     max-width: 500px;
 }
@@ -330,5 +334,5 @@ li > a.menu-item {
 }
 
 .custom-table-button-delete {
-    color: red;    
+    color: red;
 }

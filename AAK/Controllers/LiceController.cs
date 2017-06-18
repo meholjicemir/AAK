@@ -26,5 +26,45 @@ namespace AAK.Controllers
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
             }
         }
+
+        [HttpPost]
+        public HttpResponseMessage Lice_InsertUpdate([FromBody]Lice lice)
+        {
+            try
+            {
+                if (lice.Id > 0)
+                {
+                    // Edit
+                    Lica.Lica_Update(lice);
+                    return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, lice.Id);
+                }
+                else
+                {
+                    // Insert
+                    int? insertedId = Lica.Lica_Insert(lice);
+                    return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerUtility.Logger.LogException(ex, "Lice_InsertUpdate");
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+            }
+        }
+
+        [HttpDelete]
+        public HttpResponseMessage Lica_Delete([FromUri] Lice lice)
+        {
+            try
+            {
+                Lica.Lica_Delete(lice.Id);
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                LoggerUtility.Logger.LogException(ex, "Lica_Delete");
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+            }
+        }
     }
 }

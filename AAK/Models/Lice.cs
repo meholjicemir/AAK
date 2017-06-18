@@ -14,14 +14,16 @@ namespace AAK.Models
         public string Biljeske { get; set; }
         public string PravnoLice { get; set; }
         public string Adresa { get; set; }
-        public string PostaskiBroj { get; set; }
+        public string PostanskiBroj { get; set; }
         public string Grad { get; set; }
-        public string Drzava { get; set; }
         public string Telefon { get; set; }
         public string Fax { get; set; }
         public string Email { get; set; }
         public string JMBG_IDBroj { get; set; }
         public bool? IsMinor { get; set; }
+
+        public int? DrzavaId { get; set; }
+        public string DrzavaName { get; set; }
 
         public int? CreatedBy { get; set; }
         public string CreatedByName { get; set; }
@@ -42,14 +44,16 @@ namespace AAK.Models
             this.Biljeske = string.Empty;
             this.PravnoLice = string.Empty;
             this.Adresa = string.Empty;
-            this.PostaskiBroj = string.Empty;
+            this.PostanskiBroj = string.Empty;
             this.Grad = string.Empty;
-            this.Drzava = string.Empty;
             this.Telefon = string.Empty;
             this.Fax = string.Empty;
             this.Email = string.Empty;
             this.JMBG_IDBroj = string.Empty;
             this.IsMinor = null;
+
+            this.DrzavaId = -1;
+            this.DrzavaName = string.Empty;
 
             this.CreatedBy = null;
             this.CreatedByName = string.Empty;
