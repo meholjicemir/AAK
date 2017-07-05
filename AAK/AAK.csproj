@@ -177,6 +177,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\CodeTableController.cs" />
     <Compile Include="Controllers\LiceController.cs" />
+    <Compile Include="Controllers\NasBrojController.cs" />
     <Compile Include="Controllers\PredmetController.cs" />
     <Compile Include="Controllers\SudController.cs" />
     <Compile Include="Controllers\UserController.cs" />

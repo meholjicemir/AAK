@@ -120,11 +120,12 @@ function ConvertDateToUSFormatString(input, dateOnly) {
 }
 
 function ShowPrompt(title, message, yesFunction, noFunction) {
-    $("#btnPromptYes").unbind("click");
-    $("#btnPromptNo").unbind("click");
-
     $("#promptTitle").html(title);
     $("#promptMessage").html(message);
+
+    $("#btnPromptYes").off("click");
+    $("#btnPromptNo").off("click");
+
     $("#btnPromptYes").click(yesFunction);
     $("#btnPromptNo").click(noFunction);
 

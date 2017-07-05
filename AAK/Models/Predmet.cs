@@ -49,6 +49,17 @@ namespace AAK.Models
         public int StanjePredmetaId { get; set; }
         public string StanjePredmetaName { get; set; }
 
+        public bool PrivremeniZastupnici { get; set; }
+
+
+        public int? CreatedBy { get; set; }
+        public string CreatedByName { get; set; }
+        public DateTime? Created { get; set; }
+
+        public int? ModifiedBy { get; set; }
+        public string ModifiedByName { get; set; }
+        public DateTime? Modified { get; set; }
+
         public Predmet()
         {
             this.Id = -1;
@@ -90,6 +101,17 @@ namespace AAK.Models
 
             this.StanjePredmetaId = -1;
             this.StanjePredmetaName = string.Empty;
+
+            this.PrivremeniZastupnici = false;
+
+
+            this.CreatedBy = null;
+            this.CreatedByName = string.Empty;
+            this.Created = null;
+
+            this.ModifiedBy = null;
+            this.ModifiedByName = string.Empty;
+            this.Modified = null;
         }
     }
 }

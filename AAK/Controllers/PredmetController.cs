@@ -26,5 +26,45 @@ namespace AAK.Controllers
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
             }
         }
+
+        [HttpPost]
+        public HttpResponseMessage Predmet_InsertUpdate([FromBody]Predmet predmet)
+        {
+            try
+            {
+                if (predmet.Id > 0)
+                {
+                    // Edit
+                    Predmeti.Predmeti_Update(predmet);
+                    return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, predmet.Id);
+                }
+                else
+                {
+                    // Insert
+                    int? insertedId = Predmeti.Predmeti_Insert(predmet);
+                    return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerUtility.Logger.LogException(ex, "Predmet_InsertUpdate");
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+            }
+        }
+
+        [HttpDelete]
+        public HttpResponseMessage Predmeti_Delete([FromUri] Predmet predmet)
+        {
+            try
+            {
+                Predmeti.Predmeti_Delete(predmet.Id);
+                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                LoggerUtility.Logger.LogException(ex, "Predmeti_Delete");
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+            }
+        }
     }
 }

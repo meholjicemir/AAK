@@ -88,7 +88,7 @@
 
         <div id="divCases" class="panel panel-default menu-div" style="display: none;">
             <div class="panel-body">
-                <button id="btnNewCase" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCase"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj novi predmet</button>
+                <button id="btnNewCase" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCase" onclick="StartBuildingNewCase(); return false;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj novi predmet</button>
                 <hr />
                 <form class="form-inline pull-left" role="form">
                     <div class="form-group">
@@ -99,7 +99,8 @@
                         <label for="ddlCasesRowCount">Broj redova:</label>
                         <select class="form-control" id="ddlCasesRowCount">
                             <option value="10">10</option>
-                            <option value="50" selected="selected">50</option>
+                            <option value="20" selected="selected">20</option>
+                            <option value="50">50</option>
                             <option value="100">100</option>
                             <option value="1000">1000</option>
                             <option value="5000">5000</option>
@@ -127,7 +128,8 @@
                         <label for="ddlCasesRowCount">Broj redova:</label>
                         <select class="form-control" id="ddlPartiesRowCount">
                             <option value="10">10</option>
-                            <option value="50" selected="selected">50</option>
+                            <option value="20" selected="selected">20</option>
+                            <option value="50">50</option>
                             <option value="100">100</option>
                             <option value="1000">1000</option>
                             <option value="5000">5000</option>
@@ -174,54 +176,107 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Novi predmet</h4>
                 </div>
-                <div class="modal-body row">
-                    <div class="col-lg-4">
-                        <label for="txtCase_NasBroj">Naš broj:</label>
-                        <input type="text" class="form-control" id="txtCase_NasBroj" disabled="disabled" />
-                        <br />
-                        <label for="ddlCase_Kategorija">Kategorija:</label>
-                        <select class="form-control fixed-width-field" id="ddlCase_Kategorija">
-                            <option>-----</option>
-                        </select>
-                        <br />
+                <div class="modal-body">
+                    <div id="divNewCaseModalBodyTop">
                     </div>
-                    <div class="col-lg-8">
-                        <form class="form-inline pull-left" role="form">
-                            <label for="txtCase_BrojPredmeta" class="fixed-width-label">Broj predmeta:</label>
-                            <input type="text" class="form-control fixed-width-field" id="txtCase_BrojPredmeta" />
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <label for="txtCase_NasBroj">Naš broj:</label>
+                            <input type="text" class="form-control" id="txtCase_NasBroj" disabled="disabled" value="" />
                             <br />
-                            <label for="ddlCase_Sud" class="fixed-width-label">Sud:</label>
-                            <select class="form-control fixed-width-field" id="ddlCase_Sud">
+                            <label for="ddlCase_Kategorija">Kategorija:</label>
+                            <select class="form-control fixed-width-field" id="ddlCase_Kategorija">
+                                <option>-----</option>
+                            </select>
+                            <br />
+                            <label for="ddlCase_Uloga">Uloga u postupku:</label>
+                            <select class="form-control fixed-width-field" id="ddlCase_Uloga">
                                 <option value="-1">-----</option>
                             </select>
                             <br />
-                            <label for="ddlCase_Sudija" class="fixed-width-label">Sudija:</label>
-                            <select class="form-control fixed-width-field" id="ddlCase_Sudija">
-                                <option value="-1">-----</option>
-                            </select>
-                            <br />
-                            <label for="txtCase_VrijednostSpora" class="fixed-width-label">Vrijednost spora:</label>
-                            <input type="text" class="form-control fixed-width-field" id="txtCase_VrijednostSpora" />
-                            <br />
-                            <label for="ddlCase_VrstaPredmeta" class="fixed-width-label">Vrsta predmeta:</label>
-                            <select class="form-control" id="ddlCase_VrstaPredmeta">
-                                <option value="-1">-----</option>
-                            </select>
+                            <label for="cbCase_PrivremeniZastupnici">Privremeni zastupnici</label>
+                            <input id="cbCase_PrivremeniZastupnici" type="checkbox" />
+                        </div>
+                        <div class="col-lg-8">
+                            <form class="form-inline pull-left" role="form">
+                                <label for="txtCase_BrojPredmeta" class="fixed-width-label">Broj predmeta:</label>
+                                <input type="text" class="form-control fixed-width-field" id="txtCase_BrojPredmeta" />
+                                <br />
+                                <label for="ddlCase_Sud" class="fixed-width-label">Sud:</label>
+                                <select class="form-control fixed-width-field" id="ddlCase_Sud">
+                                    <option value="-1">-----</option>
+                                </select>
+                                <br />
+                                <label for="ddlCase_Sudija" class="fixed-width-label">Sudija:</label>
+                                <select class="form-control fixed-width-field" id="ddlCase_Sudija">
+                                    <option value="-1">-----</option>
+                                </select>
+                                <br />
+                                <label for="txtCase_VrijednostSpora" class="fixed-width-label">Vrijednost spora:</label>
+                                <input type="text" class="form-control fixed-width-field" id="txtCase_VrijednostSpora" />
+                                <br />
+                                <label for="ddlCase_VrstaPredmeta" class="fixed-width-label">Vrsta predmeta:</label>
+                                <select class="form-control" id="ddlCase_VrstaPredmeta">
+                                    <option value="-1">-----</option>
+                                </select>
+                                <hr />
+                                <h4>Stanje predmeta</h4>
+                                <label for="dateTimePicker_DatumStanjaPredmeta" class="fixed-width-label">Datum stanja:</label>
+                                <div class="input-group date" id="dateTimePicker_DatumStanjaPredmeta">
+                                    <input type="text" class="form-control" id="txtCase_DatumStanjaPredmeta" />
+                                    <span class="input-group-addon btn">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                                <br />
+                                <label for="ddlCase_StanjePredmeta" class="fixed-width-label">Stanje:</label>
+                                <select class="form-control fixed-width-field" id="ddlCase_StanjePredmeta">
+                                    <option value="-1">-----</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-lg-12" style="text-align: center;">
+                            <h4>Lica u postupku</h4>
                             <hr />
-                            <h4>Stanje predmeta</h4>
-                            <label for="dateTimePicker_DatumStanjaPredmeta" class="fixed-width-label">Datum stanja:</label>
-                            <div class="input-group date" id="dateTimePicker_DatumStanjaPredmeta">
-                                <input type="text" class="form-control" id="txtCase_DatumStanjaPredmeta" />
-                                <span class="input-group-addon btn">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
-                            </div>
-                            <br />
-                            <label for="ddlCase_StanjePredmeta" class="fixed-width-label">Stanje:</label>
-                            <select class="form-control fixed-width-field" id="ddlCase_StanjePredmeta">
-                                <option value="-1">-----</option>
-                            </select>
-                        </form>
+                        </div>
+                        <div class="col-lg-6">
+                            <form class="form-inline" role="form">
+                                <label for="ddlCase_Lice">Lice:</label>
+                                <select class="form-control" id="ddlCase_Lice">
+                                    <option value="-1">-----</option>
+                                </select>
+                            </form>
+                        </div>
+                        <div class="col-lg-3">
+                            <form class="form-inline" role="form">
+                                <label for="ddlCase_UlogaLica">Uloga:</label>
+                                <select class="form-control" id="ddlCase_UlogaLica">
+                                    <option value="-1">-----</option>
+                                </select>
+                            </form>
+                        </div>
+                        <div class="col-lg-2">
+                            <form class="form-inline" role="form">
+                                <label for="ddlCase_GlavnaStranka">Vrsta:</label>
+                                <select class="form-control" id="ddlCase_GlavnaStranka">
+                                    <option value="" selected="selected">-----</option>
+                                    <option value="ns">Naša stranka</option>
+                                    <option value="ps">Protivna stranka</option>
+                                </select>
+                            </form>
+                        </div>
+                        <div class="col-lg-1">
+                            <button id="btnAppendPartyToCase" type="button" class="btn btn-success" disabled="disabled" onclick="AppendPartyToCase(); return false;">Dodaj</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <hr />
+                            <table id="tblCaseParties" class="table table-condensed" style="word-break: break-word;"></table>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -389,6 +444,7 @@
         <button id="btnOpenModalEditCodeTableRecord" data-toggle='modal' data-target='#modalCodeTableRecord'></button>
         <button id="btnOpenModalEditSud" data-toggle='modal' data-target='#modalSud'></button>
         <button id="btnOpenModalEditParty" data-toggle='modal' data-target='#modalParty'></button>
+        <button id="btnOpenModalEditCase" data-toggle='modal' data-target='#modalCase'></button>
 
         <button id="btnOpenModalPrompt" data-toggle='modal' data-target='#modalPrompt'></button>
     </div>
