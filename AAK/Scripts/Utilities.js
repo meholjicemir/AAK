@@ -461,3 +461,9 @@ function ShowLoaderCenter() {
 function HideLoaderCenter() {
     $(".loader-center").remove();
 }
+
+function GetDataFromMultiselect(dropdownId) {
+    var dropdown = $("#" + dropdownId);
+    var data = dropdown.val() == null ? "" : dropdown.val().toString();
+    return data;
+}

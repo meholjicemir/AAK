@@ -31,10 +31,26 @@ namespace AAK.DataProviders
             collection.AddParameter<int>("sudijaId", predmet.SudijaId);
             collection.AddParameter<decimal?>("vrijednostSpora", predmet.VrijednostSpora);
             collection.AddParameter<int>("vrstaPredmetaId", predmet.VrstaPredmetaId);
-            collection.AddParameter<DateTime>("datumStanjaPredmeta", predmet.DatumStanjaPredmeta);
+            collection.AddParameter<DateTime?>("datumStanjaPredmeta", predmet.DatumStanjaPredmeta);
             collection.AddParameter<int>("stanjePredmetaId", predmet.StanjePredmetaId);
+
+            collection.AddParameter<int>("nacinOkoncanjaId", predmet.NacinOkoncanjaId);
+            collection.AddParameter<string>("uspjeh", predmet.Uspjeh);
+            collection.AddParameter<DateTime?>("datumArhiviranja", predmet.DatumArhiviranja);
+            collection.AddParameter<string>("brojArhive", predmet.BrojArhive);
+            collection.AddParameter<string>("brojArhiveRegistrator", predmet.BrojArhiveRegistrator);
+
             collection.AddParameter<int?>("userId", predmet.CreatedBy);
-            return DBUtility.Utility.ExecuteStoredProcedure<int>("Predmeti_Insert", ref collection);
+            int insertedId = DBUtility.Utility.ExecuteStoredProcedure<int>("Predmeti_Insert", ref collection);
+
+            if (insertedId > 0)
+                foreach (LicePredmet lp in predmet.Parties)
+                {
+                    lp.PredmetId = insertedId;
+                    LicePredmet_Insert(lp);
+                }
+
+            return insertedId;
         }
 
         public static void Predmeti_Update(Predmet predmet)
@@ -48,16 +64,75 @@ namespace AAK.DataProviders
             collection.AddParameter<int>("sudijaId", predmet.SudijaId);
             collection.AddParameter<decimal?>("vrijednostSpora", predmet.VrijednostSpora);
             collection.AddParameter<int>("vrstaPredmetaId", predmet.VrstaPredmetaId);
-            collection.AddParameter<DateTime>("datumStanjaPredmeta", predmet.DatumStanjaPredmeta);
+            collection.AddParameter<DateTime?>("datumStanjaPredmeta", predmet.DatumStanjaPredmeta);
             collection.AddParameter<int>("stanjePredmetaId", predmet.StanjePredmetaId);
+
+            collection.AddParameter<int>("nacinOkoncanjaId", predmet.NacinOkoncanjaId);
+            collection.AddParameter<string>("uspjeh", predmet.Uspjeh);
+            collection.AddParameter<DateTime?>("datumArhiviranja", predmet.DatumArhiviranja);
+            collection.AddParameter<string>("brojArhive", predmet.BrojArhive);
+            collection.AddParameter<string>("brojArhiveRegistrator", predmet.BrojArhiveRegistrator);
+
             collection.AddParameter<int>("id", predmet.Id);
             collection.AddParameter<int?>("userId", predmet.ModifiedBy);
             DBUtility.Utility.ExecuteStoredProcedureVoid("Predmeti_Update", ref collection);
+
+            List<LicePredmet> existingLicePredmeti = LicePredmet_GetForPredmet(predmet.Id);
+
+            LicePredmet temp;
+
+            foreach (LicePredmet lp in existingLicePredmeti)
+            {
+                temp = (from LicePredmet tempLP in predmet.Parties
+                        where tempLP.LiceId == lp.LiceId && tempLP.PredmetId == lp.PredmetId && tempLP.UlogaId == lp.UlogaId
+                        select tempLP).FirstOrDefault();
+
+                if (temp == null)
+                    LicePredmet_Delete(lp.Id);
+            }
+
+            foreach (LicePredmet lp in predmet.Parties)
+            {
+                lp.PredmetId = predmet.Id;
+
+                temp = (from LicePredmet tempLP in existingLicePredmeti
+                        where tempLP.LiceId == lp.LiceId && tempLP.PredmetId == lp.PredmetId && tempLP.UlogaId == lp.UlogaId
+                        select tempLP).FirstOrDefault();
+
+                if (temp == null)
+                    LicePredmet_Insert(lp);
+            }
         }
 
         public static void Predmeti_Delete(int id)
         {
             DBUtility.Utility.ExecuteStoredProcedureVoid<int>("Predmeti_Delete", "id", id);
         }
+
+        #region LicePredmet
+
+        public static List<LicePredmet> LicePredmet_GetForPredmet(int predmetId)
+        {
+            DataTable dt = DBUtility.Utility.ExecuteStoredProcedure<int>("LicePredmet_GetForPredmet", "predmetId", predmetId);
+            return DBUtility.Utility.ParseDataTable<LicePredmet>(dt);
+        }
+
+        public static int? LicePredmet_Insert(LicePredmet licePredmet)
+        {
+            DBUtility.ParameterCollection collection = new DBUtility.ParameterCollection();
+            collection.AddParameter<int>("predmetId", licePredmet.PredmetId);
+            collection.AddParameter<int>("liceId", licePredmet.LiceId);
+            collection.AddParameter<int>("ulogaId", licePredmet.UlogaId);
+            collection.AddParameter<bool>("isNasaStranka", licePredmet.IsNasaStranka);
+            collection.AddParameter<bool>("isProtivnaStranka", licePredmet.IsProtivnaStranka);
+            return DBUtility.Utility.ExecuteStoredProcedure<int>("LicePredmet_Insert", ref collection);
+        }
+
+        public static void LicePredmet_Delete(int id)
+        {
+            DBUtility.Utility.ExecuteStoredProcedureVoid<int>("LicePredmet_Delete", "id", id);
+        }
+
+        #endregion
     }
 }

@@ -14,10 +14,13 @@ namespace AAK.Models
         public decimal? VrijednostSpora { get; set; }
         public string Uspjeh { get; set; } // Uspjeh u postupku
         public string PravniOsnov { get; set; }
-        public DateTime DatumStanjaPredmeta { get; set; }
+        public DateTime? DatumStanjaPredmeta { get; set; }
         public DateTime? DatumArhiviranja { get; set; }
+
         public string BrojArhive { get; set; }
         public string BrojArhiveRegistrator { get; set; }
+        public string BrojArhiveTotal { get; set; }
+
         public int? SkontroDan { get; set; }
         public DateTime? SkontroDatum { get; set; }
         public string SkontroBiljeska { get; set; }
@@ -44,13 +47,12 @@ namespace AAK.Models
         public string UlogaName { get; set; }
 
         public int NacinOkoncanjaId { get; set; }
-        public string NacinOkoncanjaString { get; set; }
+        public string NacinOkoncanjaName { get; set; }
 
         public int StanjePredmetaId { get; set; }
         public string StanjePredmetaName { get; set; }
 
         public bool PrivremeniZastupnici { get; set; }
-
 
         public int? CreatedBy { get; set; }
         public string CreatedByName { get; set; }
@@ -59,6 +61,8 @@ namespace AAK.Models
         public int? ModifiedBy { get; set; }
         public string ModifiedByName { get; set; }
         public DateTime? Modified { get; set; }
+
+        public List<LicePredmet> Parties { get; set; }
 
         public Predmet()
         {
@@ -69,10 +73,13 @@ namespace AAK.Models
             this.VrijednostSpora = null;
             this.Uspjeh = string.Empty;
             this.PravniOsnov = string.Empty;
-            this.DatumStanjaPredmeta = new DateTime(1970, 1, 1);
+            this.DatumStanjaPredmeta = null;
             this.DatumArhiviranja = null;
+
             this.BrojArhive = string.Empty;
             this.BrojArhiveRegistrator = string.Empty;
+            this.BrojArhiveTotal = string.Empty;
+
             this.SkontroDan = null;
             this.SkontroDatum = null;
             this.SkontroBiljeska = string.Empty;
@@ -97,7 +104,7 @@ namespace AAK.Models
             this.UlogaName = string.Empty;
 
             this.NacinOkoncanjaId = -1;
-            this.NacinOkoncanjaString = string.Empty;
+            this.NacinOkoncanjaName = string.Empty;
 
             this.StanjePredmetaId = -1;
             this.StanjePredmetaName = string.Empty;
@@ -112,6 +119,8 @@ namespace AAK.Models
             this.ModifiedBy = null;
             this.ModifiedByName = string.Empty;
             this.Modified = null;
+
+            this.Parties = new List<LicePredmet>();
         }
     }
 }

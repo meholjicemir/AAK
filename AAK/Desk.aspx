@@ -13,6 +13,7 @@
 
     <link rel="stylesheet" href="Libraries/Bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-table/dist/bootstrap-table.min.css" />
+    <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multiselect.css" />
     <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" />
     <link rel="stylesheet" href="Libraries/jQuery/jquery-ui.min.css" />
     <link rel="stylesheet" href="Styles/NewStyle.css" />
@@ -24,6 +25,7 @@
     <script src="Libraries/Bootstrap/js/bootstrap.min.js"></script>
     <script src="Libraries/Bootstrap/bootstrap-table/dist/bootstrap-table.min.js"></script>
     <script src="Libraries/Bootstrap/bootstrap-table/dist/locale/bootstrap-table-hr-HR.min.js"></script>
+    <script src="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multiselect.js"></script>
     <script src="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
     <script src="Scripts/Utilities.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer="defer"></script>
@@ -61,6 +63,7 @@
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Kategorije predmeta', 'KategorijePredmeta'); return false;">Kategorije predmeta</a></li>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Vrste predmeta', 'VrstePredmeta'); return false;">Vrste predmeta</a></li>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Stanja predmeta', 'StanjaPredmeta'); return false;">Stanja predmeta</a></li>
+                            <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Načini okončanja', 'NaciniOkoncanja'); return false;">Načini okončanja</a></li>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Države', 'Drzave'); return false;">Države</a></li>
                         </ul>
                     </li>
@@ -153,6 +156,8 @@
 
         <div id="divUsers" class="panel panel-default menu-div" style="display: none;">
             <div class="panel-body">
+                <button id="btnNewUser" type="button" class="btn btn-primary pull-left" data-toggle="modal" data-target="#modalUser" onclick="ClearModalUser(); return false;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj novog korisnika</button>
+                <table id="tblUsers" class="table table-condensed" style="word-break: break-word;"></table>
             </div>
         </div>
 
@@ -237,11 +242,13 @@
                         </div>
                     </div>
                     <hr />
-                    <div class="row">
+                    <div class="row administer-case-parties">
                         <div class="col-lg-12" style="text-align: center;">
-                            <h4>Lica u postupku</h4>
+                            <h4><strong>Lica u postupku</strong></h4>
                             <hr />
                         </div>
+                    </div>
+                    <div class="row administer-case-parties">
                         <div class="col-lg-6">
                             <form class="form-inline" role="form">
                                 <label for="ddlCase_Lice">Lice:</label>
@@ -272,10 +279,42 @@
                             <button id="btnAppendPartyToCase" type="button" class="btn btn-success" disabled="disabled" onclick="AppendPartyToCase(); return false;">Dodaj</button>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row administer-case-parties">
                         <div class="col-lg-12">
                             <hr />
                             <table id="tblCaseParties" class="table table-condensed" style="word-break: break-word;"></table>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-lg-12" style="text-align: center;">
+                            <h4><strong>Ishod postukpa i arhiva</strong></h4>
+                            <hr />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <form class="form-inline" role="form">
+                                <label for="ddlCase_NacinOkoncanja" class="fixed-width-label">Način okončanja:</label>
+                                <select class="form-control" id="ddlCase_NacinOkoncanja">
+                                    <option value="-1">-----</option>
+                                </select>
+                                <br />
+                                <label for="ddlCase_Uspjeh" class="fixed-width-label">Uspjeh:</label>
+                                <select class="form-control fixed-width-label" id="ddlCase_Uspjeh">
+                                </select>
+                                <br />
+                                <label for="dateTimePicker_DatumArhiviranja" class="fixed-width-label">Datum arhiviranja:</label>
+                                <div class="input-group date" id="dateTimePicker_DatumArhiviranja">
+                                    <input type="text" class="form-control" id="txtCase_DatumArhiviranja" />
+                                    <span class="input-group-addon btn">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                                <br />
+                                <label for="ddlCase_NacinOkoncanja" class="fixed-width-label">Broj u arhivi / registrator:</label>
+                                <input type="text" id="txtCase_BrojArhive" class="form-control" /><input type="text" id="txtCase_BrojArhiveRegistrator" class="form-control" />
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -402,6 +441,43 @@
         </div>
     </div>
 
+
+    <div id="modalUser" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Novi korisnik</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-inline" role="form">
+                        <label for="txtUser_Email" class="fixed-width-label">Email:</label>
+                        <input type="text" class="form-control fixed-width-field" id="txtUser_Email" />
+                        <br />
+                        <label for="txtUser_FirstName" class="fixed-width-label">Ime:</label>
+                        <input type="text" class="form-control fixed-width-field" id="txtUser_FirstName" />
+                        <br />
+                        <label for="txtUser_LastName" class="fixed-width-label">Prezime:</label>
+                        <input type="text" class="form-control fixed-width-field" id="txtUser_LastName" />
+                        <br />
+                        <label for="txtUser_Phone" class="fixed-width-label">Phone:</label>
+                        <input type="text" class="form-control fixed-width-field" id="txtUser_Phone" />
+                        <br />
+
+                        <label for="ddlUser_UserGroups" class="fixed-width-label">Korisničke grupe:</label>
+                        <select id="ddlUser_UserGroups" multiple="multiple" class="form-control fixed-width-field">
+                        </select>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="SaveUser(); return false;">Spasi i zatvori</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Odustani</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <div id="modalCodeTableRecord" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -447,6 +523,7 @@
         <button id="btnOpenModalEditCase" data-toggle='modal' data-target='#modalCase'></button>
 
         <button id="btnOpenModalPrompt" data-toggle='modal' data-target='#modalPrompt'></button>
+        <button id="btnOpenModalEditUser" data-toggle='modal' data-target='#modalUser'></button>
     </div>
 
     <div class="pull-right" style="position: absolute; top: 0; right: 0; margin: 2px; font-size: xx-small; z-index: 1000;">

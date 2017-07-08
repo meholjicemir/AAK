@@ -12,11 +12,11 @@ namespace AAK.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Phone { get; set; }
-        public int UserGroupId { get; set; }
 
         public string AccessToken { get; set; }
 
         public string UserGroupCodes { get; set; }
+        public string UserGroupNames { get; set; }
 
         public User()
         {
@@ -25,11 +25,11 @@ namespace AAK.Models
             this.FirstName = string.Empty;
             this.LastName = string.Empty;
             this.Phone = string.Empty;
-            this.UserGroupId = -1;
 
             this.AccessToken = string.Empty;
 
             this.UserGroupCodes = string.Empty;
+            this.UserGroupNames = string.Empty;
         }
     }
 }

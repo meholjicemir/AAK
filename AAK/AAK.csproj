@@ -168,7 +168,6 @@
     <Content Include="LogIn.aspx.js" />
     <Content Include="Scripts\Utilities.js" />
     <Content Include="Styles\NewStyle.css" />
-    <Content Include="Users.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -177,14 +176,18 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\CodeTableController.cs" />
     <Compile Include="Controllers\LiceController.cs" />
+    <Compile Include="Controllers\LicePredmetController.cs" />
     <Compile Include="Controllers\NasBrojController.cs" />
     <Compile Include="Controllers\PredmetController.cs" />
     <Compile Include="Controllers\SudController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\UserGroupController.cs" />
     <Compile Include="DataProviders\CodeTables.cs" />
     <Compile Include="DataProviders\Lica.cs" />
     <Compile Include="DataProviders\Predmeti.cs" />
     <Compile Include="DataProviders\Sudovi.cs" />
+    <Compile Include="DataProviders\UserGroups.cs" />
+    <Compile Include="DataProviders\Users.cs" />
     <Compile Include="Desk.aspx.cs">
       <DependentUpon>Desk.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -206,17 +209,12 @@
     <Compile Include="Models\Helper\CodeTable.cs" />
     <Compile Include="Models\Helper\UserWithData.cs" />
     <Compile Include="Models\Lice.cs" />
+    <Compile Include="Models\LicePredmet.cs" />
     <Compile Include="Models\Predmet.cs" />
     <Compile Include="Models\Sud.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\UserGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Users.aspx.cs">
-      <DependentUpon>Users.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Users.aspx.designer.cs">
-      <DependentUpon>Users.aspx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
