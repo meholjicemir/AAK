@@ -63,6 +63,8 @@ namespace AAK.Models
         public DateTime? Modified { get; set; }
 
         public List<LicePredmet> Parties { get; set; }
+        public List<Note> Notes { get; set; }
+        public List<Expense> Expenses { get; set; }
 
         public Predmet()
         {
@@ -121,6 +123,8 @@ namespace AAK.Models
             this.Modified = null;
 
             this.Parties = new List<LicePredmet>();
+            this.Notes = new List<Note>();
+            this.Expenses = new List<Expense>();
         }
     }
 }

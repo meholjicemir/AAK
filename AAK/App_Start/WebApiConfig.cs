@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -19,6 +20,12 @@ namespace AAK
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            var json = GlobalConfiguration.Configuration.Formatters.JsonFormatter;
+            //var converters = json.SerializerSettings.Converters;
+            //converters.Add(new IsoDateTimeConverter() { DateTimeFormat = "dd.MM.yyyy HH:mm:ss" });
+
+            //GlobalConfiguration.Configuration.Formatters.Insert(0, json);
         }
     }
 }

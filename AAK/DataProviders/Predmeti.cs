@@ -40,15 +40,32 @@ namespace AAK.DataProviders
             collection.AddParameter<string>("brojArhive", predmet.BrojArhive);
             collection.AddParameter<string>("brojArhiveRegistrator", predmet.BrojArhiveRegistrator);
 
+            collection.AddParameter<string>("pravniOsnov", predmet.PravniOsnov);
+
             collection.AddParameter<int?>("userId", predmet.CreatedBy);
+
             int insertedId = DBUtility.Utility.ExecuteStoredProcedure<int>("Predmeti_Insert", ref collection);
 
             if (insertedId > 0)
+            {
                 foreach (LicePredmet lp in predmet.Parties)
                 {
                     lp.PredmetId = insertedId;
                     LicePredmet_Insert(lp);
                 }
+
+                foreach (Note note in predmet.Notes)
+                {
+                    note.CaseId = insertedId;
+                    Notes.Note_Insert(note);
+                }
+
+                foreach (Expense expense in predmet.Expenses)
+                {
+                    expense.CaseId = insertedId;
+                    Expenses.Expense_Insert(expense);
+                }
+            }
 
             return insertedId;
         }
@@ -73,35 +90,101 @@ namespace AAK.DataProviders
             collection.AddParameter<string>("brojArhive", predmet.BrojArhive);
             collection.AddParameter<string>("brojArhiveRegistrator", predmet.BrojArhiveRegistrator);
 
+            collection.AddParameter<string>("pravniOsnov", predmet.PravniOsnov);
+
             collection.AddParameter<int>("id", predmet.Id);
             collection.AddParameter<int?>("userId", predmet.ModifiedBy);
+
             DBUtility.Utility.ExecuteStoredProcedureVoid("Predmeti_Update", ref collection);
 
-            List<LicePredmet> existingLicePredmeti = LicePredmet_GetForPredmet(predmet.Id);
-
-            LicePredmet temp;
-
-            foreach (LicePredmet lp in existingLicePredmeti)
+            #region Parties
             {
-                temp = (from LicePredmet tempLP in predmet.Parties
-                        where tempLP.LiceId == lp.LiceId && tempLP.PredmetId == lp.PredmetId && tempLP.UlogaId == lp.UlogaId
-                        select tempLP).FirstOrDefault();
+                List<LicePredmet> existingLicePredmeti = LicePredmet_GetForPredmet(predmet.Id);
+                LicePredmet temp;
 
-                if (temp == null)
-                    LicePredmet_Delete(lp.Id);
+                foreach (LicePredmet lp in existingLicePredmeti)
+                {
+                    temp = (from LicePredmet tempLP in predmet.Parties
+                            where tempLP.LiceId == lp.LiceId && tempLP.PredmetId == lp.PredmetId && tempLP.UlogaId == lp.UlogaId
+                            select tempLP).FirstOrDefault();
+
+                    if (temp == null)
+                        LicePredmet_Delete(lp.Id);
+                }
+
+                foreach (LicePredmet lp in predmet.Parties)
+                {
+                    lp.PredmetId = predmet.Id;
+
+                    temp = (from LicePredmet tempLP in existingLicePredmeti
+                            where tempLP.LiceId == lp.LiceId && tempLP.PredmetId == lp.PredmetId && tempLP.UlogaId == lp.UlogaId
+                            select tempLP).FirstOrDefault();
+
+                    if (temp == null)
+                        LicePredmet_Insert(lp);
+                }
             }
+            #endregion
 
-            foreach (LicePredmet lp in predmet.Parties)
+            #region Notes
             {
-                lp.PredmetId = predmet.Id;
+                List<Note> existingNotes = Notes.Notes_GetForCase(predmet.Id);
+                Note temp;
 
-                temp = (from LicePredmet tempLP in existingLicePredmeti
-                        where tempLP.LiceId == lp.LiceId && tempLP.PredmetId == lp.PredmetId && tempLP.UlogaId == lp.UlogaId
-                        select tempLP).FirstOrDefault();
+                foreach (Note note in existingNotes)
+                {
+                    temp = (from Note tempNote in predmet.Notes
+                            where tempNote.CaseId == note.CaseId && tempNote.NoteDate == note.NoteDate && tempNote.NoteText.Equals(note.NoteText) && tempNote.CreatedBy == note.CreatedBy
+                            select tempNote).FirstOrDefault();
 
-                if (temp == null)
-                    LicePredmet_Insert(lp);
+                    if (temp == null)
+                        Notes.Note_Delete(note.Id);
+                }
+
+                foreach (Note note in predmet.Notes)
+                {
+                    note.CaseId = predmet.Id;
+
+                    temp = (from Note tempNote in existingNotes
+                            where tempNote.CaseId == note.CaseId && tempNote.NoteDate == note.NoteDate && tempNote.NoteText.Equals(note.NoteText) && tempNote.CreatedBy == note.CreatedBy
+                            select tempNote).FirstOrDefault();
+
+                    if (temp == null)
+                        Notes.Note_Insert(note);
+                }
             }
+            #endregion
+
+            #region Expenses
+            {
+                List<Expense> existingExpenses = Expenses.Expenses_GetForCase(predmet.Id);
+                Expense temp;
+
+                foreach (Expense expense in existingExpenses)
+                {
+                    temp = (from Expense tempExpense in predmet.Expenses
+                            where tempExpense.CaseId == expense.CaseId && tempExpense.ExpenseDate == expense.ExpenseDate && tempExpense.VrstaTroskaId == expense.VrstaTroskaId
+                                && (tempExpense.PaidBy ?? "").ToLowerInvariant().Equals((expense.PaidBy ?? "").ToLowerInvariant())
+                            select tempExpense).FirstOrDefault();
+
+                    if (temp == null)
+                        Expenses.Expense_Delete(expense.Id);
+                }
+
+                foreach (Expense expense in predmet.Expenses)
+                {
+                    expense.CaseId = predmet.Id;
+
+                    temp = (from Expense tempExpense in existingExpenses
+                            where tempExpense.CaseId == expense.CaseId && tempExpense.ExpenseDate == expense.ExpenseDate && tempExpense.VrstaTroskaId == expense.VrstaTroskaId
+                                && tempExpense.PaidBy.ToLowerInvariant().Equals(expense.PaidBy.ToLowerInvariant())
+                            select tempExpense).FirstOrDefault();
+
+                    if (temp == null)
+                        Expenses.Expense_Insert(expense);
+                }
+            }
+            #endregion
         }
 
         public static void Predmeti_Delete(int id)

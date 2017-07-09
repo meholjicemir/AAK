@@ -16,3 +16,16 @@ handle alert("error");
 
 - Handle this: alert("error")
 - validations, required fields
+- "none selected" na multiselect prevesti na bosanski
+- DateSorter not working because of format.
+
+
+
+
+- Radnje
+- Troškovi
+- Dokumenti
+- Pravni osnov
+- Bilješke
+- Veze
++ Glavne stranke

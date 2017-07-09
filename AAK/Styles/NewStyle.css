@@ -336,3 +336,14 @@ li > a.menu-item {
 .custom-table-button-delete {
     color: red;
 }
+
+.modal-in-title {
+    text-decoration: underline;
+    margin-bottom: 20px;
+}
+
+.other-tab {
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-top: -1px;
+}

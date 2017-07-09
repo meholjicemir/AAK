@@ -174,16 +174,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\CaseActivityController.cs" />
     <Compile Include="Controllers\CodeTableController.cs" />
+    <Compile Include="Controllers\ExpenseController.cs" />
     <Compile Include="Controllers\LiceController.cs" />
     <Compile Include="Controllers\LicePredmetController.cs" />
     <Compile Include="Controllers\NasBrojController.cs" />
+    <Compile Include="Controllers\NoteController.cs" />
     <Compile Include="Controllers\PredmetController.cs" />
     <Compile Include="Controllers\SudController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\UserGroupController.cs" />
+    <Compile Include="DataProviders\CaseActivities.cs" />
     <Compile Include="DataProviders\CodeTables.cs" />
+    <Compile Include="DataProviders\Expenses.cs" />
     <Compile Include="DataProviders\Lica.cs" />
+    <Compile Include="DataProviders\Notes.cs" />
     <Compile Include="DataProviders\Predmeti.cs" />
     <Compile Include="DataProviders\Sudovi.cs" />
     <Compile Include="DataProviders\UserGroups.cs" />
@@ -205,11 +211,14 @@
     <Compile Include="LogIn.aspx.designer.cs">
       <DependentUpon>LogIn.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Models\CaseActivity.cs" />
     <Compile Include="Models\CodeTableData.cs" />
+    <Compile Include="Models\Expense.cs" />
     <Compile Include="Models\Helper\CodeTable.cs" />
     <Compile Include="Models\Helper\UserWithData.cs" />
     <Compile Include="Models\Lice.cs" />
     <Compile Include="Models\LicePredmet.cs" />
+    <Compile Include="Models\Note.cs" />
     <Compile Include="Models\Predmet.cs" />
     <Compile Include="Models\Sud.cs" />
     <Compile Include="Models\User.cs" />

@@ -53,7 +53,7 @@ namespace AAK.Controllers
         }
 
         [HttpDelete]
-        public HttpResponseMessage Predmeti_Delete([FromUri] Predmet predmet)
+        public HttpResponseMessage Predmeti_Delete([FromUri]Predmet predmet)
         {
             try
             {

@@ -7,6 +7,7 @@ var Sudovi = null;
 var Lica = null;
 var Predmeti = null;
 var Users = null;
+var CaseActivities = null;
 
 var CurrentCase = null;
 
@@ -39,7 +40,9 @@ function ValidateUser(email) {
             CurrentUser = {
                 Id: data.Id,
                 Email: data.Email,
-                UserGroupCodes: data.UserGroupCodes
+                UserGroupCodes: data.UserGroupCodes,
+                FirstName: data.FirstName,
+                LastName: data.LastName
             };
 
             RenderApp(data);
@@ -92,19 +95,17 @@ function RenderApp(user) {
     $("#divAll").show();
 
     if (hasCaseRights)
-        MenuHome();
+        MenuCases();
+        //MenuHome();
     else if (hasAdminRights)
         MenuUsers();
     else
         ShowAlert("danger", "Korisnik postoji ali nema dodijeljena potrebna prava za korištenje aplikacije.");
 
-    $('#dateTimePicker_DatumStanjaPredmeta').datetimepicker({
+    $('#dateTimePicker_DatumStanjaPredmeta,#dateTimePicker_DatumArhiviranja,#dateTimePicker_NoteDate,#dateTimePicker_ExpenseDate').datetimepicker({
         format: 'DD.MM.YYYY'
     });
 
-    $('#dateTimePicker_DatumArhiviranja').datetimepicker({
-        format: 'DD.MM.YYYY'
-    });
 }
 
 function MenuHome() {
@@ -112,6 +113,152 @@ function MenuHome() {
     $("#liMenuHome").addClass("active");
     $(".menu-div").hide();
     $("#divHome").show();
+
+    LoadCaseActivities();
+}
+
+function LoadCaseActivities() {
+    ShowLoaderCenter();
+
+    var _columns = [
+        { field: 'Id' },
+        { field: 'Color' },
+        { field: 'CaseFullName', title: 'Predmet', titleTooltip: 'Predmet', sortable: false },
+        { field: 'ActivityDate', title: 'Za datum', titleTooltip: 'Za datum', sortable: false, sorter: DateSorterFunction },
+        { field: 'BrojPredmeta', title: 'Broj predmeta', titleTooltip: 'Broj predmeta', sortable: false, visible: false },
+        { field: 'KategorijaPredmeta', title: 'Kategorija', titleTooltip: 'Kategorija', sortable: false },
+        { field: 'Note', title: 'Bilješka', titleTooltip: 'Bilješka', sortable: false }
+    ];
+
+    $("#tblCaseActivities").bootstrapTable("destroy");
+
+    var todayDate = new Date(new Date().setHours(0, 0, 0, 0));
+    //todayDate = moment(todayDate).format("DD.MM.YYYY");
+
+    var tomorrowDate = new Date(new Date().setHours(0, 0, 0, 0));
+    tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+    //tomorrowDate = moment(tomorrowDate).format("DD.MM.YYYY");
+
+    $.get(AppPath + "api/caseactivity", {
+        UserId: CurrentUser.Id,
+        Filter: $("#txtCaseActivitiesFilter").val(),
+        RowCount: $("#ddlCaseActivitiesRowCount").val()
+    })
+    .done(function (data) {
+        if (data != null && data.length > 0) {
+            CaseActivities = data;
+            $(data).each(function (index, _caseActivity) {
+
+                if (Date.parse(_caseActivity.ActivityDate) === Date.parse(tomorrowDate))
+                    _caseActivity.Color = "#00b6ee";
+                else if (Date.parse(_caseActivity.ActivityDate) === Date.parse(todayDate))
+                    _caseActivity.Color = "#21b04b";
+                else if (Date.parse(_caseActivity.ActivityDate) < Date.parse(todayDate))
+                    _caseActivity.Color = "#ff8888";
+                else
+                    _caseActivity.Color = "white";
+
+                if (Date.parse(_caseActivity.ActivityDate))
+                    _caseActivity.ActivityDate = moment(_caseActivity.ActivityDate).format("DD.MM.YYYY");
+
+                if (index == data.length - 1) {
+                    $("#tblCaseActivities").bootstrapTable({
+                        data: data,
+                        showColumns: true,
+                        columns: _columns,
+                        escape: false,
+                        onPostBody: function () {
+                            AfterBindCaseActivities();
+                            return false;
+                        }
+                    });
+                    HideLoaderCenter();
+                }
+            });
+        }
+        else {
+            $("#tblCaseActivities").bootstrapTable({
+                data: [],
+                showColumns: true,
+                columns: _columns,
+                escape: false
+            });
+            HideLoaderCenter();
+        }
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+        HideLoaderCenter();
+        alert("error");
+    });
+}
+
+function AfterBindCaseActivities() {
+    $("#tblCaseActivities").find("tr").each(function (index, element) {
+        if (index == 0) {
+            $(element).find("th:first-child").hide();
+            $(element).find("th:nth-child(2)").hide();
+            if ($("#caseActivitiesEmptyHeader").length == 0)
+                $(element).append("<th id='caseActivitiesEmptyHeader'></th>");
+        }
+        else {
+            var tempId = parseInt($(element).find("td:first-child").html());
+            var tempColor = $(element).find("td:nth-child(2)").html();
+            $(element).find("td:first-child").hide();
+            $(element).find("td:nth-child(2)").hide();
+
+            switch (tempColor) {
+                case "white":
+                    break;
+                default:
+                    $(element).css("background-color", tempColor).css("color", "white");
+                    $(element).find("td:nth-child(3)").css("font-weight", "bold");
+                    $(element).find("td:nth-child(4)").css("font-weight", "bold");
+                    $(element).find("td:nth-child(7)").css("font-weight", "bold");
+                    break;
+            }
+
+            if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
+                var buttonsHTML = "<td style='width: 50px;'><div class='btn-group pull-right'>";
+                buttonsHTML +=
+                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši' onclick='DeleteCaseActivity(" + tempId.toString() + "); return false;'>"
+                            + "<span class='glyphicon glyphicon-remove'></span>"
+                            + "</button>";
+                buttonsHTML += "</div></td>"
+
+                $(element).append(buttonsHTML);
+            }
+        }
+    });
+}
+
+function DeleteCaseActivity(id) {
+    $(CaseActivities).each(function (index, obj) {
+        if (obj.Id == id) {
+            ShowPrompt(
+                "Da li ste sigurni da želite izbrisati stavku pozvanih predmeta?",
+                "Ovo znači da se više neće pokazivati te da je navedeni zadatak završen.",
+                function () {
+                    ShowLoaderCenter();
+                    $.ajax({
+                        url: AppPath + "api/caseactivity?Id=" + id.toString(),
+                        type: "DELETE",
+                        success: function () {
+                            LoadCaseActivities();
+                            HideLoaderCenter();
+                            ShowAlert("success", "Uspješno izbrisano.");
+                        },
+                        error: function () {
+                            HideLoaderCenter();
+                            ShowAlert("danger", "Greška pri brisanju stavke pozvanih predmeta.");
+                        }
+                    });
+                },
+                function () { }
+            );
+
+            return false; // break loop
+        }
+    });
 }
 
 function MenuCases() {
@@ -130,6 +277,7 @@ function MenuCases() {
     LoadCodeTableData("StanjaPredmeta", $("#ddlCase_StanjePredmeta"));
     LoadCodeTableData("vLica", $("#ddlCase_Lice"), "Naziv");
     LoadCodeTableData("NaciniOkoncanja", $("#ddlCase_NacinOkoncanja"));
+    LoadCodeTableData("VrsteTroskova", $("#ddlCase_ExpenseVrstaTroska"));
 
     for (var i = 0; i <= 100; i++)
         $("#ddlCase_Uspjeh").append($("<option " + (i == 0 ? "selected='selected'" : "") + "></option>").attr("value", i.toString() + '%').text(i.toString() + '%'));
@@ -192,15 +340,15 @@ function LoadCases() {
                 switch (_case.KategorijaPredmetaId) {
                     case 5:
                         // OTVOREN
-                        _case.KategorijaPredmetaName = "<span style='color: blue; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
+                        _case.KategorijaPredmetaName = "<span style='color: #00b6ee; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
                         break;
                     case 7:
                         // ARHIVIRAN
-                        _case.KategorijaPredmetaName = "<span style='color: red; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
+                        _case.KategorijaPredmetaName = "<span style='color: #ff8888; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
                         break;
                     case 9:
                         //PO ŽALBI/PRIGOVORU
-                        _case.KategorijaPredmetaName = "<span style='color: green; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
+                        _case.KategorijaPredmetaName = "<span style='color: #21b04b; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
                         break;
                     default:
                         _case.KategorijaPredmetaName = "<span style='color: black; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
@@ -319,10 +467,10 @@ function LoadParties() {
             Lica = data;
             $(data).each(function (index, _party) {
                 if (Date.parse(_party.Created))
-                    _party.Created = moment(_party.Created).format("lll");
+                    _party.Created = moment(_party.Created).format("DD.MM.YYYY");
 
                 if (Date.parse(_party.Modified))
-                    _party.Modified = moment(_party.Modified).format("lll");
+                    _party.Modified = moment(_party.Modified).format("DD.MM.YYYY");
 
                 _party.IsMinorString = _party.IsMinor ? "Da" : "Ne";
 
@@ -576,10 +724,10 @@ function LoadSudovi() {
             $(data).each(function (index, _sud) {
 
                 if (Date.parse(_sud.Created))
-                    _sud.Created = moment(_sud.Created).format("lll");
+                    _sud.Created = moment(_sud.Created).format("DD.MM.YYYY");
 
                 if (Date.parse(_sud.Modified))
-                    _sud.Modified = moment(_sud.Modified).format("lll");
+                    _sud.Modified = moment(_sud.Modified).format("DD.MM.YYYY");
 
                 if (index == data.length - 1) {
                     $("#tblSudovi").bootstrapTable({
@@ -724,7 +872,11 @@ function SaveCase() {
         BrojArhive: $("#txtCase_BrojArhive").val(),
         BrojArhiveRegistrator: $("#txtCase_BrojArhiveRegistrator").val(),
 
-        Parties: CurrentCase.Parties
+        PravniOsnov: $("#txtCase_PravniOsnov").val(),
+
+        Parties: CurrentCase.Parties,
+        Notes: CurrentCase.Notes,
+        Expenses: CurrentCase.Expenses
     };
 
     var tempId = $("#modalCase").attr("edit_id");
@@ -755,7 +907,6 @@ function SaveCase() {
 function EditCase(id) {
     $("#modalCase").attr("edit_id", id);
 
-
     $(Predmeti).each(function (index, obj) {
         if (obj.Id == id) {
 
@@ -778,6 +929,8 @@ function EditCase(id) {
             $("#txtCase_BrojArhive").val(CurrentCase.BrojArhive);
             $("#txtCase_BrojArhiveRegistrator").val(CurrentCase.BrojArhiveRegistrator);
 
+            $("#txtCase_PravniOsnov").val(CurrentCase.PravniOsnov);
+
             $("#modalCase").find(".modal-title").html("Izmijeni predmet: <span style='font-style: italic; color: gray;'>" + CurrentCase.NasBroj + "</span>");
 
             ShowLoaderCenter();
@@ -788,13 +941,41 @@ function EditCase(id) {
                 CurrentCase.Parties = data;
                 BindCaseParties(CurrentCase.Parties);
                 HideLoaderCenter();
-                $("#btnOpenModalEditCase").click();
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
                 HideLoaderCenter();
                 alert("error loading parties");
             });
 
+            ShowLoaderCenter();
+            $.get(AppPath + "api/note", {
+                CaseId: CurrentCase.Id
+            })
+            .done(function (data) {
+                CurrentCase.Notes = data;
+                BindCaseNotes(CurrentCase.Notes);
+                HideLoaderCenter();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                HideLoaderCenter();
+                alert("error loading notes");
+            });
+
+            ShowLoaderCenter();
+            $.get(AppPath + "api/expense", {
+                CaseId: CurrentCase.Id
+            })
+            .done(function (data) {
+                CurrentCase.Expenses = data;
+                BindCaseExpenses(CurrentCase.Expenses);
+                HideLoaderCenter();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                HideLoaderCenter();
+                alert("error loading expenses");
+            });
+
+            $("#btnOpenModalEditCase").click();
             return false; // break loop
         }
     });
@@ -838,6 +1019,7 @@ function ClearModalUser() {
     $("#txtUser_LastName").val("");
     $("#txtUser_Phone").val("");
     $("#ddlUser_UserGroups").val("");
+    $("#ddlUser_UserGroups").multiselect('refresh');
     $("#modalUser").find(".modal-title").html("Novi korisnik");
 }
 
@@ -1172,6 +1354,26 @@ function ClearModalCase() {
     $("#txtCase_BrojArhive").val("");
     $("#txtCase_BrojArhiveRegistrator").val("");
 
+    $("#txtCase_PravniOsnov").val("");
+
+    // LicePredmet
+    $("#ddlCase_Lice").val(-1);
+    $("#ddlCase_UlogaLica").val(-1);
+    $("#ddlCase_GlavnaStranka").val("");
+    $("#btnAppendPartyToCase").attr("disabled", "disabled");
+
+    // Notes
+    $("#txtCase_NoteDate").val("");
+    $("#txtCase_NoteText").val("");
+    $("#btnAppendNoteToCase").attr("disabled", "disabled");
+
+    // Expenses
+    $("#ddlCase_ExpenseVrstaTroska").val(-1);
+    $("#txtCase_ExpenseAmount").val("");
+    $("#txtCase_ExpenseDate").val("");
+    $("#ddlCase_ExpensePaidBy").val("");
+    $("#btnAppendExpenseToCase").attr("disabled", "disabled");
+
     $("#modalCase").find(".modal-title").html("Novi predmet lice");
     $("#tblCaseParties").bootstrapTable("destroy");
 }
@@ -1302,6 +1504,8 @@ function DeleteParty(id) {
 function StartBuildingNewCase() {
     CurrentCase = {};
     CurrentCase.Parties = [];
+    CurrentCase.Notes = [];
+    CurrentCase.Expenses = [];
 
     ClearModalCase();
 
@@ -1326,6 +1530,8 @@ function StartBuildingNewCase() {
     //});
 
     BindCaseParties([]);
+    BindCaseNotes([]);
+    BindCaseExpenses([]);
 }
 
 function AppendPartyToCase() {
@@ -1396,9 +1602,192 @@ function DeleteCaseParty(index) {
     BindCaseParties(CurrentCase.Parties);
 }
 
+function AppendNoteToCase() {
+    if ($("#txtCase_NoteText").val() != "" && $("#txtCase_NoteDate").val() != "") {
+
+        if (CurrentCase.Notes == undefined)
+            CurrentCase.Notes = [];
+
+        CurrentCase.Notes.push({
+            NoteText: $("#txtCase_NoteText").val(),
+            NoteDate: $("#txtCase_NoteDate").val(),
+            CreatedBy: CurrentUser.Id,
+            CreatedByName: CurrentUser.FirstName + " " + CurrentUser.LastName,
+            CaseId: CurrentCase.Id
+        });
+
+        BindCaseNotes(CurrentCase.Notes);
+    }
+}
+
+function BindCaseNotes(_data) {
+    var _columns = [
+        { field: 'NoteDate', title: 'Datum', titleTooltip: 'Datum', sortable: true, sorter: DateSorterFunction },
+        { field: 'NoteText', title: 'Bilješka', titleTooltip: 'Bilješka', sortable: true },
+        { field: 'CreatedByName', title: 'Izrađena od', titleTooltip: 'Izrađena od', sortable: true }
+    ];
+
+    $("#tblCaseNotes").bootstrapTable("destroy");
+
+    if (_data && _data.length > 0) {
+        $(_data).each(function (index, _note) {
+            if (Date.parse(_note.NoteDate))
+                _note.NoteDate = moment(_note.NoteDate).format("DD.MM.YYYY");
+
+            if (index == _data.length - 1) {
+                $("#tblCaseNotes").bootstrapTable({
+                    data: _data,
+                    striped: true,
+                    columns: _columns,
+                    onPostBody: function () {
+                        AfterBindCaseNotes();
+                        return false;
+                    }
+                });
+            }
+        });
+    }
+    else {
+        $("#tblCaseNotes").bootstrapTable({
+            data: [],
+            columns: _columns
+        });
+    }
+}
+
+function AfterBindCaseNotes() {
+    $("#tblCaseNotes").find("tr").each(function (index, element) {
+        if (index == 0) {
+            if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0 && CurrentCase.Notes.length > 0)
+                if ($("#caseNotesEmptyHeader").length == 0)
+                    $(element).append("<th id='caseNotesEmptyHeader'></th>");
+        }
+        else if (CurrentCase.Notes.length > 0) {
+            if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
+                var buttonsHTML = "<td style='width: 50px;'><div class='btn-group pull-right'>";
+                buttonsHTML +=
+                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši bilješku' onclick='DeleteCaseNote(" + (index - 1) + "); return false;'>"
+                            + "<span class='glyphicon glyphicon-remove'></span>"
+                            + "</button>";
+                buttonsHTML += "</div></td>"
+
+                $(element).append(buttonsHTML);
+            }
+        }
+    });
+}
+
+function DeleteCaseNote(index) {
+    CurrentCase.Notes.splice(index, 1);
+    BindCaseNotes(CurrentCase.Notes);
+}
+
+function AppendExpenseToCase() {
+    if ($("#ddlCase_ExpenseVrstaTroska").val() != -1 && $("#txtCase_ExpenseAmount").val() != "") {
+
+        if (CurrentCase.Expenses == undefined)
+            CurrentCase.Expenses = [];
+
+        CurrentCase.Expenses.push({
+            VrstaTroskaId: $("#ddlCase_ExpenseVrstaTroska").val(),
+            VrstaTroskaName: $("#ddlCase_ExpenseVrstaTroska option:selected").text(),
+            Amount: $("#txtCase_ExpenseAmount").val(),
+            ExpenseDate: $("#txtCase_ExpenseDate").val(),
+            PaidBy: $("#ddlCase_ExpensePaidBy").val(),
+            CaseId: CurrentCase.Id
+        });
+
+        BindCaseExpenses(CurrentCase.Expenses);
+    }
+}
+
+function BindCaseExpenses(_data) {
+    var _columns = [
+        { field: 'VrstaTroskaName', title: 'Vrsta troška', titleTooltip: 'Vrsta troška', sortable: true },
+        { field: 'Amount', title: 'Iznos', titleTooltip: 'Iznos', sortable: true, align: "right" },
+        { field: 'ExpenseDate', title: 'Datum plaćanja', titleTooltip: 'Datum plaćanja', sortable: true, sorter: DateSorterFunction },
+        { field: 'PaidBy', title: 'Plaćeno od', titleTooltip: 'Plaćeno od', sortable: true }
+    ];
+
+    $("#tblCaseExpenses").bootstrapTable("destroy");
+
+    if (_data && _data.length > 0) {
+        $(_data).each(function (index, _expense) {
+            if (Date.parse(_expense.ExpenseDate))
+                _expense.ExpenseDate = moment(_expense.ExpenseDate).format("DD.MM.YYYY");
+
+            if (index == _data.length - 1) {
+                $("#tblCaseExpenses").bootstrapTable({
+                    data: _data,
+                    striped: true,
+                    columns: _columns,
+                    onPostBody: function () {
+                        AfterBindCaseExpenses();
+                        return false;
+                    }
+                });
+            }
+        });
+    }
+    else {
+        $("#tblCaseExpenses").bootstrapTable({
+            data: [],
+            columns: _columns
+        });
+    }
+}
+
+function AfterBindCaseExpenses() {
+    $("#tblCaseExpenses").find("tr").each(function (index, element) {
+        if (index == 0) {
+            if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0 && CurrentCase.Expenses.length > 0)
+                if ($("#caseExpensesEmptyHeader").length == 0)
+                    $(element).append("<th id='caseExpensesEmptyHeader'></th>");
+        }
+        else if (CurrentCase.Expenses.length > 0) {
+            if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
+                var buttonsHTML = "<td style='width: 50px;'><div class='btn-group pull-right'>";
+                buttonsHTML +=
+                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši trošak' onclick='DeleteCaseExpense(" + (index - 1) + "); return false;'>"
+                            + "<span class='glyphicon glyphicon-remove'></span>"
+                            + "</button>";
+                buttonsHTML += "</div></td>"
+
+                $(element).append(buttonsHTML);
+            }
+        }
+    });
+}
+
+function DeleteCaseExpense(index) {
+    CurrentCase.Expenses.splice(index, 1);
+    BindCaseExpenses(CurrentCase.Expenses);
+}
+
 $("#ddlCase_Lice,#ddlCase_UlogaLica").change(function () {
     if ($("#ddlCase_Lice").val() != -1 && $("#ddlCase_UlogaLica").val() != -1)
         $("#btnAppendPartyToCase").removeAttr("disabled");
     else
         $("#btnAppendPartyToCase").attr("disabled", "disabled");
 });
+
+$("#txtCase_NoteText,#txtCase_NoteDate").change(function () {
+    if ($("#txtCase_NoteText").val() != "" && $("#txtCase_NoteDate").val() != "")
+        $("#btnAppendNoteToCase").removeAttr("disabled");
+    else
+        $("#btnAppendNoteToCase").attr("disabled", "disabled");
+});
+
+$("#ddlCase_ExpenseVrstaTroska,#txtCase_ExpenseAmount").change(function () {
+    if ($("#ddlCase_ExpenseVrstaTroska").val() != -1 && $("#txtCase_ExpenseAmount").val() != "")
+        $("#btnAppendExpenseToCase").removeAttr("disabled");
+    else
+        $("#btnAppendExpenseToCase").attr("disabled", "disabled");
+});
+
+function OpenOtherTab(element, divId) {
+    $(".other-tab").hide();
+    $("#" + divId).show();
+    $("#ulOtherTabs").find("li").removeClass("active");
+    $(element).parent().addClass("active");
+}
