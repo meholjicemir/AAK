@@ -157,8 +157,8 @@
 
         <div id="divCases" class="panel panel-default menu-div" style="display: none;">
             <div class="panel-body">
-                <button id="btnNewCase" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCase" onclick="StartBuildingNewCase(); return false;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj novi predmet</button>
-                <hr />
+                <button id="btnNewCase" type="button" class="btn btn-primary only-office-admin" data-toggle="modal" data-target="#modalCase" onclick="StartBuildingNewCase(); return false;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj novi predmet</button>
+                <hr class="only-office-admin" />
                 <form class="form-inline pull-left" role="form">
                     <div class="form-group">
                         <label for="txtCasesFilter">Traži:</label>
@@ -186,8 +186,8 @@
 
         <div id="divParties" class="panel panel-default menu-div" style="display: none;">
             <div class="panel-body">
-                <button id="btnNewParty" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalParty" onclick="ClearModalParty(); return false;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj novo lice</button>
-                <hr />
+                <button id="btnNewParty" type="button" class="btn btn-primary only-office-admin" data-toggle="modal" data-target="#modalParty" onclick="ClearModalParty(); return false;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj novo lice</button>
+                <hr class="only-office-admin" />
                 <form class="form-inline pull-left" role="form">
                     <div class="form-group">
                         <label for="txtPartiesFilter">Traži:</label>
@@ -215,7 +215,7 @@
 
         <div id="divSudovi" class="panel panel-default menu-div" style="display: none;">
             <div class="panel-body">
-                <button id="btnNewSud" type="button" class="btn btn-primary pull-left" data-toggle="modal" data-target="#modalSud" onclick="ClearModalSud(); return false;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj novi sud</button>
+                <button id="btnNewSud" type="button" class="btn btn-primary pull-left only-office-admin" data-toggle="modal" data-target="#modalSud" onclick="ClearModalSud(); return false;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj novi sud</button>
                 <table id="tblSudovi" class="table table-condensed" style="word-break: break-word;"></table>
             </div>
         </div>
@@ -231,7 +231,7 @@
             <div class="panel-heading">
             </div>
             <div class="panel-body">
-                <button id="btnNewCodeTableRecord" type="button" class="btn btn-primary pull-left" data-toggle="modal" data-target="#modalCodeTableRecord" onclick="NewCodeTableRecord(); return false;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj</button>
+                <button id="btnNewCodeTableRecord" type="button" class="btn btn-primary pull-left only-office-admin" data-toggle="modal" data-target="#modalCodeTableRecord" onclick="NewCodeTableRecord(); return false;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj</button>
                 <table id="tblCodeTableData" class="table table-condensed" style="word-break: break-word;"></table>
             </div>
         </div>
@@ -315,14 +315,14 @@
                         </div>
                     </div>
                     <hr />
-                    <div class="row administer-case-parties">
+                    <div class="row only-office-admin">
                         <div class="col-lg-12" style="text-align: center;">
                             <div class="modal-in-title">
                                 <h4><strong>Lica u postupku</strong></h4>
                             </div>
                         </div>
                     </div>
-                    <div class="row administer-case-parties">
+                    <div class="row only-office-admin">
                         <div class="col-lg-12">
                             <form class="form-inline" role="form">
                                 <label for="ddlCase_Lice">Lice:</label>
@@ -400,6 +400,9 @@
                                         <br />
                                         <label for="txtCase_CaseActivity_Note" class="fixed-width-label">Bilješka:</label>
                                         <textarea id="txtCase_CaseActivity_Note" class="form-control fixed-width-field" rows="4"></textarea>
+                                        <br />
+                                        <label for="cbCase_CaseActivity_ForAllUsers" class="fixed-width-label">Prikaži svim korisnicima</label>
+                                        <input id="cbCase_CaseActivity_ForAllUsers" type="checkbox" checked="checked" disabled="disabled" />
                                     </form>
                                 </div>
                             </div>
@@ -509,7 +512,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="SaveCase(); return false;">Spasi</button>
+                    <button id="btnSavecase" type="button" class="btn btn-primary" onclick="SaveCase(); return false;">Spasi</button>
                     <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="SaveCase(); return false;">Spasi i zatvori</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Odustani</button>
                 </div>
