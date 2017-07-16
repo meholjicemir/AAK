@@ -65,6 +65,12 @@ namespace AAK.DataProviders
                     expense.CaseId = insertedId;
                     Expenses.Expense_Insert(expense);
                 }
+
+                foreach (Radnja radnja in predmet.Radnje)
+                {
+                    radnja.PredmetId = insertedId;
+                    Radnje.Radnja_Insert(radnja);
+                }
             }
 
             return insertedId;
@@ -105,7 +111,8 @@ namespace AAK.DataProviders
                 foreach (LicePredmet lp in existingLicePredmeti)
                 {
                     temp = (from LicePredmet tempLP in predmet.Parties
-                            where tempLP.LiceId == lp.LiceId && tempLP.PredmetId == lp.PredmetId && tempLP.UlogaId == lp.UlogaId
+                                //where tempLP.LiceId == lp.LiceId && tempLP.PredmetId == lp.PredmetId && tempLP.UlogaId == lp.UlogaId
+                            where tempLP.Id == lp.Id
                             select tempLP).FirstOrDefault();
 
                     if (temp == null)
@@ -134,7 +141,8 @@ namespace AAK.DataProviders
                 foreach (Note note in existingNotes)
                 {
                     temp = (from Note tempNote in predmet.Notes
-                            where tempNote.CaseId == note.CaseId && tempNote.NoteDate == note.NoteDate && tempNote.NoteText.Equals(note.NoteText) && tempNote.CreatedBy == note.CreatedBy
+                                //where tempNote.CaseId == note.CaseId && tempNote.NoteDate == note.NoteDate && tempNote.NoteText.Equals(note.NoteText) && tempNote.CreatedBy == note.CreatedBy
+                            where tempNote.Id == note.Id
                             select tempNote).FirstOrDefault();
 
                     if (temp == null)
@@ -163,8 +171,9 @@ namespace AAK.DataProviders
                 foreach (Expense expense in existingExpenses)
                 {
                     temp = (from Expense tempExpense in predmet.Expenses
-                            where tempExpense.CaseId == expense.CaseId && tempExpense.ExpenseDate == expense.ExpenseDate && tempExpense.VrstaTroskaId == expense.VrstaTroskaId
-                                && (tempExpense.PaidBy ?? "").ToLowerInvariant().Equals((expense.PaidBy ?? "").ToLowerInvariant())
+                                //where tempExpense.CaseId == expense.CaseId && tempExpense.ExpenseDate == expense.ExpenseDate && tempExpense.VrstaTroskaId == expense.VrstaTroskaId
+                                //    && (tempExpense.PaidBy ?? "").ToLowerInvariant().Equals((expense.PaidBy ?? "").ToLowerInvariant())
+                            where tempExpense.Id == expense.Id
                             select tempExpense).FirstOrDefault();
 
                     if (temp == null)
@@ -182,6 +191,32 @@ namespace AAK.DataProviders
 
                     if (temp == null)
                         Expenses.Expense_Insert(expense);
+                }
+            }
+            #endregion
+
+            #region Radnje
+            {
+                List<Radnja> existingRadnje = Radnje.Radnje_GetForCase(predmet.Id);
+                Radnja temp;
+
+                foreach (Radnja radnja in existingRadnje)
+                {
+                    temp = (from Radnja tempRadnja in predmet.Radnje
+                            where tempRadnja.Id == radnja.Id
+                            select tempRadnja).FirstOrDefault();
+
+                    if (temp == null)
+                        Radnje.Radnja_Delete(radnja.Id);
+                }
+
+                foreach (Radnja radnja in predmet.Radnje)
+                {
+                    radnja.PredmetId = predmet.Id;
+                    if (radnja.Id == -1)
+                        Radnje.Radnja_Insert(radnja);
+                    else
+                        Radnje.Radnja_Update(radnja);
                 }
             }
             #endregion

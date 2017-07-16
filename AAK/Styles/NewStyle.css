@@ -337,6 +337,10 @@ li > a.menu-item {
     color: red;
 }
 
+.custom-table-button-check {
+    color: green;
+}
+
 .modal-in-title {
     text-decoration: underline;
     margin-bottom: 20px;

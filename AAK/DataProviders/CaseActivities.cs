@@ -15,6 +15,16 @@ namespace AAK.DataProviders
             return DBUtility.Utility.ParseDataTable<CaseActivity>(dt);
         }
 
+        public static int CaseActivity_Create(CaseActivity caseActivity)
+        {
+            DBUtility.ParameterCollection collection = new DBUtility.ParameterCollection();
+            collection.AddParameter<int>("caseId", caseActivity.CaseId);
+            collection.AddParameter<string>("note", caseActivity.Note);
+            collection.AddParameter<DateTime?>("activityDate", caseActivity.ActivityDate);
+            collection.AddParameter<int?>("userId", caseActivity.CreatedBy);
+            return DBUtility.Utility.ExecuteStoredProcedure<int>("CaseActivity_Create", ref collection);
+        }
+
         public static void CaseActivity_Delete(long id)
         {
             DBUtility.Utility.ExecuteStoredProcedureVoid<long>("CaseActivity_Delete", "id", id);

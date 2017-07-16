@@ -65,6 +65,7 @@
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Stanja predmeta', 'StanjaPredmeta'); return false;">Stanja predmeta</a></li>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Načini okončanja', 'NaciniOkoncanja'); return false;">Načini okončanja</a></li>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Vrste troškova', 'VrsteTroskova'); return false;">Vrste troškova</a></li>
+                            <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Vrste radnji', 'VrsteRadnji'); return false;">Vrste radnji</a></li>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Države', 'Drzave'); return false;">Države</a></li>
                         </ul>
                     </li>
@@ -86,10 +87,15 @@
 
 
         <div id="divHome" class="panel panel-default menu-div" style="display: none;">
-
+            <div class="pull-right" style="margin-right: 5px;">
+                <span class="label" style="background-color: #ff8888;">KAŠNJENJE</span>
+                <span class="label" style="background-color: #21b04b;">DANAS</span>
+                <span class="label" style="background-color: #00b6ee;">SUTRA</span>
+            </div>
+            <br />
             <div class="panel-body">
                 <div class="row">
-                    <div class="col-lg-8">
+                    <div class="col-lg-7">
                         <div style="text-align: center;">
                             <h4><strong>Pozvani predmeti</strong></h4>
                             <hr />
@@ -100,7 +106,7 @@
                                 <input type="text" class="form-control" id="txtCaseActivitiesFilter" />
                             </div>
                             <div class="form-group">
-                                <label for="ddlCasesRowCount">Broj redova:</label>
+                                <label for="ddlCaseActivitiesRowCount">Broj redova:</label>
                                 <select class="form-control" id="ddlCaseActivitiesRowCount">
                                     <option value="10">10</option>
                                     <option value="20" selected="selected">20</option>
@@ -117,11 +123,33 @@
                         </form>
                         <table id="tblCaseActivities" class="table table-no-bordered" style="word-break: break-word;"></table>
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-5">
                         <div style="text-align: center;">
                             <h4><strong>Raspored suđenja i odluka</strong></h4>
                             <hr />
                         </div>
+                        <form class="form-inline pull-left" role="form" style="margin-bottom: 20px;">
+                            <div class="form-group">
+                                <label for="txtRadnjeFilter">Traži:</label>
+                                <input type="text" class="form-control" id="txtRadnjeFilter" />
+                            </div>
+                            <div class="form-group">
+                                <label for="ddlRadnjeRowCount">Broj redova:</label>
+                                <select class="form-control" id="ddlRadnjeRowCount">
+                                    <option value="10">10</option>
+                                    <option value="20" selected="selected">20</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="1000">1000</option>
+                                    <option value="5000">5000</option>
+                                    <option value="2147483647">Sve</option>
+                                </select>
+                            </div>
+                            <button id="btnRefreshRadnje" class="btn btn-default" onclick="LoadRadnje(); return false;">
+                                <span class="glyphicon glyphicon-refresh"></span>&nbsp;Osvježi
+                            </button>
+                        </form>
+                        <table id="tblRadnje" class="table table-no-bordered" style="word-break: break-word;"></table>
                     </div>
                 </div>
             </div>
@@ -320,34 +348,61 @@
                     <hr />
                     <div class="row">
                         <div class="col-lg-12" style="text-align: center;">
-                            <div class="modal-in-title">
-                                <h4><strong>Ishod postupka i arhiva</strong></h4>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="modal-in-title">
+                                        <h4><strong>Ishod postupka i arhiva</strong></h4>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="modal-in-title">
+                                        <h4><strong>Pozivanje predmeta</strong></h4>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-lg-12">
-                            <form class="form-inline" role="form">
-                                <label for="ddlCase_NacinOkoncanja" class="fixed-width-label">Način okončanja:</label>
-                                <select class="form-control" id="ddlCase_NacinOkoncanja">
-                                    <option value="-1">-----</option>
-                                </select>
-                                <br />
-                                <label for="ddlCase_Uspjeh" class="fixed-width-label">Uspjeh:</label>
-                                <select class="form-control fixed-width-label" id="ddlCase_Uspjeh">
-                                </select>
-                                <br />
-                                <label for="dateTimePicker_DatumArhiviranja" class="fixed-width-label">Datum arhiviranja:</label>
-                                <div class="input-group date" id="dateTimePicker_DatumArhiviranja">
-                                    <input type="text" class="form-control" id="txtCase_DatumArhiviranja" />
-                                    <span class="input-group-addon btn">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <form class="form-inline" role="form">
+                                        <label for="ddlCase_NacinOkoncanja" class="fixed-width-label">Način okončanja:</label>
+                                        <select class="form-control" id="ddlCase_NacinOkoncanja">
+                                            <option value="-1">-----</option>
+                                        </select>
+                                        <br />
+                                        <label for="ddlCase_Uspjeh" class="fixed-width-label">Uspjeh:</label>
+                                        <select class="form-control fixed-width-label" id="ddlCase_Uspjeh">
+                                        </select>
+                                        <br />
+                                        <label for="dateTimePicker_DatumArhiviranja" class="fixed-width-label">Datum arhiviranja:</label>
+                                        <div class="input-group date" id="dateTimePicker_DatumArhiviranja">
+                                            <input type="text" class="form-control" id="txtCase_DatumArhiviranja" />
+                                            <span class="input-group-addon btn">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                        <br />
+                                        <label for="txtCase_BrojArhive" class="fixed-width-label">Broj u arhivi / registrator:</label>
+                                        <input type="text" id="txtCase_BrojArhive" class="form-control" /><input type="text" id="txtCase_BrojArhiveRegistrator" class="form-control" />
+                                    </form>
                                 </div>
-                                <br />
-                                <label for="ddlCase_NacinOkoncanja" class="fixed-width-label">Broj u arhivi / registrator:</label>
-                                <input type="text" id="txtCase_BrojArhive" class="form-control" /><input type="text" id="txtCase_BrojArhiveRegistrator" class="form-control" />
-                            </form>
+                                <div class="col-lg-6">
+                                    <form class="form-inline" role="form">
+                                        <label for="dateTimePicker_CaseActivity_ActivityDate" class="fixed-width-label">Datum pozivanja predmeta:</label>
+                                        <div class="input-group date" id="dateTimePicker_CaseActivity_ActivityDate">
+                                            <input type="text" class="form-control" id="txtCase_CaseActivity_ActivityDate" />
+                                            <span class="input-group-addon btn">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                        <br />
+                                        <label for="txtCase_CaseActivity_Note" class="fixed-width-label">Bilješka:</label>
+                                        <textarea id="txtCase_CaseActivity_Note" class="form-control fixed-width-field" rows="4"></textarea>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <hr />
@@ -369,7 +424,33 @@
                                 <li><a href="#" onclick="OpenOtherTab(this, 'divVeze'); return false;">Veze</a></li>
                             </ul>
                             <div class="other-tab" id="divRadnje">
-                                Radnje
+                                <form class="form-inline" role="form">
+                                    <label for="ddlCase_Radnja_VrstaRadnje">Vrsta Radnje:</label>
+                                    <select id="ddlCase_Radnja_VrstaRadnje" class="form-control">
+                                        <option value="-1">-----</option>
+                                    </select>
+                                    <label for="dateTimePicker_Radnja_DatumRadnje">Datum:</label>
+                                    <div class="input-group date" id="dateTimePicker_Radnja_DatumRadnje">
+                                        <input type="text" class="form-control" id="txtCase_Radnja_DatumRadnje" />
+                                        <span class="input-group-addon btn">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                    <label for="ddlCase_Radnja_Troskovi">Troškovi:</label>
+                                    <select id="ddlCase_Radnja_Troskovi" class="form-control">
+                                        <option value="">-----</option>
+                                        <option value="0%">0%</option>
+                                        <option value="25%">25%</option>
+                                        <option value="50%">50%</option>
+                                        <option value="100%">100%</option>
+                                    </select>
+                                    <label for="txtCase_Radnja_Biljeske">Bilješke:</label>
+                                    <input type="text" class="form-control" id="txtCase_Radnja_Biljeske" />
+
+                                    <button id="btnAppendRadnjaToCase" type="button" class="btn btn-success" disabled="disabled" onclick="AppendRadnjaToCase(); return false;">Dodaj</button>
+                                </form>
+                                <br />
+                                <table id="tblCaseRadnje" class="table table-condensed" style="word-break: break-word;"></table>
                             </div>
                             <div class="other-tab" style="display: none;" id="divTroskovi">
                                 <form class="form-inline" role="form">
@@ -378,7 +459,7 @@
                                         <option value="-1">-----</option>
                                     </select>
                                     <label for="txtCase_ExpenseAmount">Iznos:</label>
-                                    <input type="text" class="form-control" id="txtCase_ExpenseAmount" />
+                                    <input type="number" class="form-control" id="txtCase_ExpenseAmount" />
                                     <label for="dateTimePicker_ExpenseDate">Datum:</label>
                                     <div class="input-group date" id="dateTimePicker_ExpenseDate">
                                         <input type="text" class="form-control" id="txtCase_ExpenseDate" />
@@ -618,8 +699,8 @@
                     <label id="promptMessage"></label>
                 </div>
                 <div class="modal-footer">
-                    <button id="btnPromptYes" type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
-                    <button id="btnPromptNo" type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                    <button id="btnPromptYes" type="button" class="btn btn-success" data-dismiss="modal">Da</button>
+                    <button id="btnPromptNo" type="button" class="btn btn-danger" data-dismiss="modal">Ne</button>
                 </div>
             </div>
         </div>

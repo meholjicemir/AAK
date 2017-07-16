@@ -27,6 +27,21 @@ namespace AAK.Controllers
             }
         }
 
+        [HttpPost]
+        public HttpResponseMessage CaseActivity_Create([FromBody]CaseActivity caseActivity)
+        {
+            try
+            {
+                int? insertedId = CaseActivities.CaseActivity_Create(caseActivity);
+                return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
+            }
+            catch (Exception ex)
+            {
+                LoggerUtility.Logger.LogException(ex, "CaseActivity_Create");
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+            }
+        }
+
         [HttpDelete]
         public HttpResponseMessage CaseActivity_Delete([FromUri] CaseActivity caseActivity)
         {

@@ -120,6 +120,14 @@ function ConvertDateToUSFormatString(input, dateOnly) {
     return output;
 }
 
+function ConvertBSDateToUSDateString(input) {
+    if (input == null)
+        return null;
+
+    var arr = input.split('.');
+    return arr[1] + "/" + arr[0] + "/" + arr[2];
+}
+
 function ShowPrompt(title, message, yesFunction, noFunction) {
     $("#promptTitle").html(title);
     $("#promptMessage").html(message);
@@ -222,152 +230,6 @@ function DateSorterFunction(a, b) {
     }
 }
 
-function LoadMainMenu(url) {
-    ShowLoader();
-    $.ajax({
-        type: 'POST',
-        url: document.location.pathname.substr(document.location.pathname.lastIndexOf('/') + 1).replace(".aspx", "") + '.aspx/GetMainMenuItems',
-        contentType: 'application/json; charset=utf-8',
-        dataType: 'json',
-        data: JSON.stringify({
-            roleName: CurrentUser.RoleName
-        }),
-        async: true,
-        success: function (msg) {
-            var items = $.extend(true, [], msg.d);;
-            if (items == null)
-                items = [];
-            HideLoader();
-            BindMenu(items, url, $("#ulMainMenu"));
-        },
-        error: function (msg) {
-            HideLoader();
-            ShowAlert("danger", "Failed loading main menu items: " + msg.statusText + ": " + JSON.parse(msg.responseText).Message);
-        }
-    });
-}
-
-function LoadCaseMenu(url) {
-    BindFileNo(CaseId);
-    ShowLoader();
-    $.ajax({
-        type: 'POST',
-        url: document.location.pathname.substr(document.location.pathname.lastIndexOf('/') + 1).replace(".aspx", "") + '.aspx/GetCaseMenuItems',
-        contentType: 'application/json; charset=utf-8',
-        dataType: 'json',
-        data: JSON.stringify({
-            roleName: CurrentUser.RoleName
-        }),
-        async: true,
-        success: function (msg) {
-            var items = $.extend(true, [], msg.d);;
-            if (items == null)
-                items = [];
-            HideLoader();
-            BindMenu(items, url, $("#ulCaseMenu"), "?case_id=" + CaseIdEncrypted);
-        },
-        error: function (msg) {
-            HideLoader();
-            ShowAlert("danger", "Failed loading case menu items: " + msg.statusText + ": " + JSON.parse(msg.responseText).Message);
-        }
-    });
-}
-
-function BindMenu(items, url, container, queryString) {
-    // get rid of query string
-    url = url.split('?')[0];
-
-    var single = '<li class="##CLASS##"><a class="menu-item" href="##LINK##">##DESCRIPTION##</a></li>';
-    var dropdownRoot = '<li class="dropdown">'
-                                + '<a class="menu-item" href="#" class="dropdown-toggle" data-toggle="dropdown">##DESCRIPTION##<b class="caret"></b></a>'
-                                + '<ul class="dropdown-menu" id="##SUB_ID##"></ul>'
-                            + '</li>';
-
-    var dropdownSubmenu = '<li class="dropdown-submenu">'
-                                + '<a class="menu-item" href="#">##DESCRIPTION##</a>'
-                                + '<ul class="dropdown-menu" id="##SUB_ID##"></ul>'
-                        + '</li>';
-
-    //##DESCRIPTION##
-    //##SUB_ID##
-    //##LINK##
-
-    function BindData(data, _container) {
-        $(data).each(function (index, obj) {
-            if (obj.Children.length == 0) {
-                var link = "";
-                if (obj.Description != "Document Manager")
-                    link = url + obj.RelativeLink.replace("..", "") + (queryString != undefined ? queryString : "");
-                else
-                    link = NewDmPath + CurrentUser.AccessToken + "&FileNo=" + FileNo;
-
-                var cssClass = "";
-                if (obj.RelativeLink != "" && window.location.href.split('?')[0].indexOf(obj.RelativeLink.replace("..", "")) != -1)
-                    cssClass += "active";
-
-                _container.prepend(single.replace("##DESCRIPTION##", obj.Description).replace("##LINK##", link).replace("##CLASS##", cssClass));
-            }
-            else {
-                var subId = "subId_" + obj.Id.toString() + container.attr("id");
-                if (obj.ParentId == -1)
-                    _container.prepend(dropdownRoot.replace("##DESCRIPTION##", obj.Description).replace("##SUB_ID##", subId));
-                else
-                    _container.prepend(dropdownSubmenu.replace("##DESCRIPTION##", obj.Description).replace("##SUB_ID##", subId));
-                var subContainer = $("#" + subId);
-                BindData(obj.Children, subContainer);
-            }
-        });
-    };
-
-    var indexesToRemove = [];
-    $(items).each(function (I, objI) {
-        if (objI.ParentId > 0) {
-            $(items).each(function (J, objJ) {
-                if (objJ.Id == objI.ParentId) {
-                    if (objJ.Children == undefined)
-                        objJ.Children = [];
-                    objJ.Children.push(objI);
-                    indexesToRemove.push(I);
-                    return false; // break J loop
-                }
-            });
-        }
-
-        if (I == items.length - 1) {
-            if (indexesToRemove.length > 0) {
-                $(indexesToRemove).each(function (index_removing, object_removing) {
-                    items.splice(object_removing, 1);
-                    if (index_removing == indexesToRemove.length - 1)
-                        BindData(items, container);
-                });
-            }
-            else
-                BindData(items, container);
-        }
-    });
-}
-
-var FileNo = "";
-function BindFileNo(_caseId) {
-    $.ajax({
-        type: 'POST',
-        url: document.location.pathname.substr(document.location.pathname.lastIndexOf('/') + 1).replace(".aspx", "") + '.aspx/GetFileNo',
-        contentType: 'application/json; charset=utf-8',
-        dataType: 'json',
-        data: JSON.stringify({
-            caseId: _caseId
-        }),
-        async: false,
-        success: function (msg) {
-            FileNo = msg.d;
-            $("#strongNavBarHeader").append('&nbsp;&nbsp;<span>(File no: ' + FileNo + ')</span>');
-        },
-        error: function (msg) {
-            ShowAlert("danger", "Failed GetFileNo: " + msg.statusText + ": " + JSON.parse(msg.responseText).Message);
-        }
-    });
-}
-
 function CreateNewDocument(uploadedFile, fileName, documentNode, caseId, forceOverwrite, callback) {
     if (uploadedFile != null) {
         ShowLoader();
@@ -416,32 +278,6 @@ function CreateNewDocument(uploadedFile, fileName, documentNode, caseId, forceOv
     }
 }
 
-
-function SaveDocumentToDB(document, callback) {
-    ShowLoader();
-    $.post(WebAPIURL + "/document", document)
-    .done(function (data) {
-        if (data && data > 0) {
-            HideLoader();
-            if (callback != undefined && typeof callback == "function")
-                callback(data);
-        }
-        else {
-            HideLoader();
-            ShowAlert("danger", "Unknown error saving document to the database.");
-        }
-    })
-    .fail(function (response) {
-        HideLoader();
-        if (response.status == 403) {
-            ShowAlert("danger", "Session expired. Please log in again.", true);
-            LogOut();
-        }
-        else
-            ShowAlert("danger", "POST request to " + WebAPIURL + "api/document failed.");
-    });
-}
-
 function MakeStringValidPath(string) {
     for (var i = 0; i < string.length; i++) {
         var indexIfExists = pathInvalidCharCodes.indexOf(string.charCodeAt(i));
@@ -473,3 +309,4 @@ function GetDataFromMultiselect(dropdownId) {
     var data = dropdown.val() == null ? "" : dropdown.val().toString();
     return data;
 }
+

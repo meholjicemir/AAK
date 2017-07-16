@@ -18,7 +18,7 @@ handle alert("error");
 - validations, required fields
 - "none selected" na multiselect prevesti na bosanski
 - DateSorter not working because of format.
-
+- Created & Modified columns - show time too!
 
 
 
@@ -29,3 +29,12 @@ handle alert("error");
 - Bilješke
 - Veze
 + Glavne stranke
+
+
+
+Za sastanak:
+- Radnje dodatni podaci?
+- Dokumenti linkovi
+- Izvještaji
+- Templates
+- Hosting

@@ -182,6 +182,8 @@
     <Compile Include="Controllers\NasBrojController.cs" />
     <Compile Include="Controllers\NoteController.cs" />
     <Compile Include="Controllers\PredmetController.cs" />
+    <Compile Include="Controllers\RadnjaController.cs" />
+    <Compile Include="Controllers\RadnjaHomeController.cs" />
     <Compile Include="Controllers\SudController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\UserGroupController.cs" />
@@ -191,6 +193,7 @@
     <Compile Include="DataProviders\Lica.cs" />
     <Compile Include="DataProviders\Notes.cs" />
     <Compile Include="DataProviders\Predmeti.cs" />
+    <Compile Include="DataProviders\Radnje.cs" />
     <Compile Include="DataProviders\Sudovi.cs" />
     <Compile Include="DataProviders\UserGroups.cs" />
     <Compile Include="DataProviders\Users.cs" />
@@ -220,6 +223,7 @@
     <Compile Include="Models\LicePredmet.cs" />
     <Compile Include="Models\Note.cs" />
     <Compile Include="Models\Predmet.cs" />
+    <Compile Include="Models\Radnja.cs" />
     <Compile Include="Models\Sud.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserGroup.cs" />
