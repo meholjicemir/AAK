@@ -1,0 +1,343 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit http://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <_PublishTargetUrl>D:\CODE\AdvokatDjonko\Baza\Deploy</_PublishTargetUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="bin/AAK.dll">
+      <publishTime>07/17/2017 22:29:46</publishTime>
+    </File>
+    <File Include="bin/DBUtility.dll">
+      <publishTime>06/12/2017 12:30:42</publishTime>
+    </File>
+    <File Include="bin/LoggerUtility.dll">
+      <publishTime>05/29/2017 18:51:12</publishTime>
+    </File>
+    <File Include="bin/Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll">
+      <publishTime>06/15/2015 03:06:24</publishTime>
+    </File>
+    <File Include="bin/Newtonsoft.Json.dll">
+      <publishTime>03/08/2014 21:33:56</publishTime>
+    </File>
+    <File Include="bin/roslyn/csc.exe">
+      <publishTime>06/18/2015 21:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.Build.Tasks.CodeAnalysis.dll">
+      <publishTime>06/18/2015 21:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.CSharp.dll">
+      <publishTime>06/18/2015 21:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.dll">
+      <publishTime>06/18/2015 21:19:44</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.VisualBasic.dll">
+      <publishTime>06/18/2015 21:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CSharp.Core.targets">
+      <publishTime>06/18/2015 21:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.VisualBasic.Core.targets">
+      <publishTime>06/18/2015 21:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Collections.Immutable.dll">
+      <publishTime>06/18/2015 21:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Reflection.Metadata.dll">
+      <publishTime>06/18/2015 21:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/vbc.exe">
+      <publishTime>06/18/2015 21:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/VBCSCompiler.exe">
+      <publishTime>06/18/2015 21:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/VBCSCompiler.exe.config">
+      <publishTime>06/18/2015 21:19:46</publishTime>
+    </File>
+    <File Include="bin/System.Net.Http.Formatting.dll">
+      <publishTime>01/28/2015 04:02:42</publishTime>
+    </File>
+    <File Include="bin/System.Web.Http.dll">
+      <publishTime>01/28/2015 04:02:54</publishTime>
+    </File>
+    <File Include="bin/System.Web.Http.WebHost.dll">
+      <publishTime>01/28/2015 04:03:46</publishTime>
+    </File>
+    <File Include="Desk.aspx">
+      <publishTime>07/17/2017 23:39:03</publishTime>
+    </File>
+    <File Include="Desk.aspx.js">
+      <publishTime>07/17/2017 23:39:16</publishTime>
+    </File>
+    <File Include="Global.asax">
+      <publishTime>05/27/2017 14:27:20</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css">
+      <publishTime>02/10/2016 09:04:10</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js">
+      <publishTime>02/10/2016 09:04:28</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-datetimepicker/moment.min.js">
+      <publishTime>02/10/2016 09:06:18</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multiselect.css">
+      <publishTime>02/03/2016 13:28:50</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multiselect.js">
+      <publishTime>02/03/2016 13:28:45</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/bootstrap-table-locale-all.js">
+      <publishTime>05/29/2017 17:17:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/bootstrap-table-locale-all.min.js">
+      <publishTime>05/29/2017 17:17:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/bootstrap-table.css">
+      <publishTime>05/29/2017 17:17:57</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/bootstrap-table.js">
+      <publishTime>05/29/2017 17:17:57</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/bootstrap-table.min.css">
+      <publishTime>05/29/2017 17:17:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/bootstrap-table.min.js">
+      <publishTime>05/29/2017 17:17:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/accent-neutralise/bootstrap-table-accent-neutralise.js">
+      <publishTime>05/29/2017 17:17:52</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/accent-neutralise/bootstrap-table-accent-neutralise.min.js">
+      <publishTime>05/29/2017 17:17:52</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/angular/bootstrap-table-angular.js">
+      <publishTime>05/29/2017 17:17:52</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/angular/bootstrap-table-angular.min.js">
+      <publishTime>05/29/2017 17:17:52</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/cookie/bootstrap-table-cookie.js">
+      <publishTime>05/29/2017 17:17:52</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/cookie/bootstrap-table-cookie.min.js">
+      <publishTime>05/29/2017 17:17:52</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/editable/bootstrap-table-editable.js">
+      <publishTime>05/29/2017 17:17:52</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/editable/bootstrap-table-editable.min.js">
+      <publishTime>05/29/2017 17:17:52</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/export/bootstrap-table-export.js">
+      <publishTime>05/29/2017 17:17:52</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/export/bootstrap-table-export.min.js">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/filter-control/bootstrap-table-filter-control.js">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/filter-control/bootstrap-table-filter-control.min.js">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/filter/bootstrap-table-filter.js">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/filter/bootstrap-table-filter.min.js">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/flat-json/bootstrap-table-flat-json.js">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/flat-json/bootstrap-table-flat-json.min.js">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/group-by-v2/bootstrap-table-group-by.css">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/group-by-v2/bootstrap-table-group-by.js">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/group-by-v2/bootstrap-table-group-by.min.js">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/group-by/bootstrap-table-group-by.css">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/group-by/bootstrap-table-group-by.js">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/group-by/bootstrap-table-group-by.min.js">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/key-events/bootstrap-table-key-events.js">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/key-events/bootstrap-table-key-events.min.js">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/mobile/bootstrap-table-mobile.js">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/mobile/bootstrap-table-mobile.min.js">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/multiple-search/bootstrap-table-multiple-search.js">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/multiple-search/bootstrap-table-multiple-search.min.js">
+      <publishTime>05/29/2017 17:17:53</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/multiple-sort/bootstrap-table-multiple-sort.js">
+      <publishTime>05/29/2017 17:17:54</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/multiple-sort/bootstrap-table-multiple-sort.min.js">
+      <publishTime>05/29/2017 17:17:54</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/natural-sorting/bootstrap-table-natural-sorting.js">
+      <publishTime>05/29/2017 17:17:54</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/natural-sorting/bootstrap-table-natural-sorting.min.js">
+      <publishTime>05/29/2017 17:17:54</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/reorder-columns/bootstrap-table-reorder-columns.js">
+      <publishTime>05/29/2017 17:17:54</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/reorder-columns/bootstrap-table-reorder-columns.min.js">
+      <publishTime>05/29/2017 17:17:54</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/reorder-rows/bootstrap-table-reorder-rows.css">
+      <publishTime>05/29/2017 17:17:54</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/reorder-rows/bootstrap-table-reorder-rows.js">
+      <publishTime>05/29/2017 17:17:54</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/reorder-rows/bootstrap-table-reorder-rows.min.js">
+      <publishTime>05/29/2017 17:17:54</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/resizable/bootstrap-table-resizable.js">
+      <publishTime>05/29/2017 17:17:54</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/resizable/bootstrap-table-resizable.min.js">
+      <publishTime>05/29/2017 17:17:54</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/sticky-header/bootstrap-table-sticky-header.css">
+      <publishTime>05/29/2017 17:17:54</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/sticky-header/bootstrap-table-sticky-header.js">
+      <publishTime>05/29/2017 17:17:54</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/sticky-header/bootstrap-table-sticky-header.min.js">
+      <publishTime>05/29/2017 17:17:54</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/toolbar/bootstrap-table-toolbar.js">
+      <publishTime>05/29/2017 17:17:54</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/extensions/toolbar/bootstrap-table-toolbar.min.js">
+      <publishTime>05/29/2017 17:17:54</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/locale/bootstrap-table-en-US.js">
+      <publishTime>05/29/2017 17:17:55</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/locale/bootstrap-table-en-US.min.js">
+      <publishTime>05/29/2017 17:17:55</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/locale/bootstrap-table-hr-HR.js">
+      <publishTime>05/29/2017 17:17:56</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/bootstrap-table/dist/locale/bootstrap-table-hr-HR.min.js">
+      <publishTime>05/29/2017 17:17:56</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/css/bootstrap-theme.css">
+      <publishTime>02/02/2016 13:10:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/css/bootstrap-theme.css.map">
+      <publishTime>02/02/2016 13:10:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/css/bootstrap-theme.min.css">
+      <publishTime>02/02/2016 13:10:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/css/bootstrap-theme.min.css.map">
+      <publishTime>02/02/2016 13:10:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/css/bootstrap.css">
+      <publishTime>02/02/2016 13:10:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/css/bootstrap.css.map">
+      <publishTime>02/02/2016 13:10:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/css/bootstrap.min.css">
+      <publishTime>02/02/2016 13:10:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/css/bootstrap.min.css.map">
+      <publishTime>02/02/2016 13:10:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/fonts/glyphicons-halflings-regular.eot">
+      <publishTime>02/02/2016 13:10:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/fonts/glyphicons-halflings-regular.svg">
+      <publishTime>02/02/2016 13:10:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/fonts/glyphicons-halflings-regular.ttf">
+      <publishTime>02/02/2016 13:10:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/fonts/glyphicons-halflings-regular.woff">
+      <publishTime>02/02/2016 13:10:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/fonts/glyphicons-halflings-regular.woff2">
+      <publishTime>02/02/2016 13:10:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/js/bootstrap.js">
+      <publishTime>02/02/2016 13:10:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/js/bootstrap.min.js">
+      <publishTime>02/02/2016 13:10:58</publishTime>
+    </File>
+    <File Include="Libraries/Bootstrap/js/npm.js">
+      <publishTime>02/02/2016 13:10:58</publishTime>
+    </File>
+    <File Include="Libraries/jQuery/jquery-1.12.0.min.js">
+      <publishTime>02/02/2016 13:13:36</publishTime>
+    </File>
+    <File Include="Libraries/jQuery/jquery-ui.css">
+      <publishTime>03/04/2016 14:16:06</publishTime>
+    </File>
+    <File Include="Libraries/jQuery/jquery-ui.js">
+      <publishTime>03/04/2016 14:16:06</publishTime>
+    </File>
+    <File Include="Libraries/jQuery/jquery-ui.min.css">
+      <publishTime>03/04/2016 14:13:42</publishTime>
+    </File>
+    <File Include="Libraries/jQuery/jquery-ui.min.js">
+      <publishTime>03/04/2016 14:13:42</publishTime>
+    </File>
+    <File Include="Libraries/Moment/moment.js">
+      <publishTime>04/07/2016 19:29:00</publishTime>
+    </File>
+    <File Include="LogIn.aspx">
+      <publishTime>05/28/2017 17:57:46</publishTime>
+    </File>
+    <File Include="LogIn.aspx.js">
+      <publishTime>05/28/2017 18:06:39</publishTime>
+    </File>
+    <File Include="packages.config">
+      <publishTime>05/27/2017 14:27:27</publishTime>
+    </File>
+    <File Include="Scripts/Utilities.js">
+      <publishTime>07/16/2017 20:13:25</publishTime>
+    </File>
+    <File Include="Styles/NewStyle.css">
+      <publishTime>07/17/2017 23:00:03</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>07/17/2017 22:29:47</publishTime>
+    </File>
+  </ItemGroup>
+</Project>

@@ -33,8 +33,23 @@ handle alert("error");
 
 
 Za sastanak:
-- Radnje dodatni podaci?
-- Dokumenti linkovi
+- Requirements dokument
+- Pokazati dosad šta ima
+- Raspored polja za unos uglavnom ostao isti
+- Potrebno odabrati kolone na nekim tabelama
+- Radnje dodatni podaci? Da li se koriste?
+- Dokumenti: vidjeti kako linkovi funkcionišu
 - Izvještaji
 - Templates
-- Hosting
+- Veze predmeta još jednom definisati kako tačno ih napraviti
+- Labele
+- Hosting: Opcije
+
+Šta je ostalo:
+- Veze
+- Labele
+- Izvještaji
+- Generisanje dokumenata
+- Sigurnost (uključujući korisničke sesije)
+- Testiranje (ja)
+- Testiranje (vi) - korištenje paralelno

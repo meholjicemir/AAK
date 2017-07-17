@@ -22,6 +22,7 @@ namespace AAK.DataProviders
             collection.AddParameter<string>("note", caseActivity.Note);
             collection.AddParameter<DateTime?>("activityDate", caseActivity.ActivityDate);
             collection.AddParameter<int?>("userId", caseActivity.CreatedBy);
+            collection.AddParameter<bool>("forAllUsers", caseActivity.ForAllUsers);
             return DBUtility.Utility.ExecuteStoredProcedure<int>("CaseActivity_Create", ref collection);
         }
 

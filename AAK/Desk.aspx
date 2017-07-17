@@ -13,7 +13,7 @@
 
     <link rel="stylesheet" href="Libraries/Bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-table/dist/bootstrap-table.min.css" />
-    <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multiselect.css" />
+    <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multbuiselect.css" />
     <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" />
     <link rel="stylesheet" href="Libraries/jQuery/jquery-ui.min.css" />
     <link rel="stylesheet" href="Styles/NewStyle.css" />
@@ -29,7 +29,7 @@
     <script src="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
     <script src="Scripts/Utilities.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer="defer"></script>
-    <script src="Desk.aspx.js" defer="defer"></script>
+    <script src="Desk.aspx.js?v=3" defer="defer"></script>
 
     <div>
         <div class="g-signin2" data-onsuccess="onSignIn"></div>
@@ -66,6 +66,7 @@
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Načini okončanja', 'NaciniOkoncanja'); return false;">Načini okončanja</a></li>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Vrste troškova', 'VrsteTroskova'); return false;">Vrste troškova</a></li>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Vrste radnji', 'VrsteRadnji'); return false;">Vrste radnji</a></li>
+                            <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Načini obavljanja radnje', 'NaciniObavljanjaRadnje'); return false;">Načini obavljanja radnje</a></li>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Države', 'Drzave'); return false;">Države</a></li>
                         </ul>
                     </li>
@@ -240,7 +241,7 @@
 
 
     <!-- Modals -->
-    <div id="modalCase" class="modal fade" role="dialog">
+    <div id="modalCase" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-admin">
             <div class="modal-content">
                 <div class="modal-header">
@@ -427,7 +428,7 @@
                                 <li><a href="#" onclick="OpenOtherTab(this, 'divVeze'); return false;">Veze</a></li>
                             </ul>
                             <div class="other-tab" id="divRadnje">
-                                <form class="form-inline" role="form">
+                                <form class="form-inline only-office-admin" role="form">
                                     <label for="ddlCase_Radnja_VrstaRadnje">Vrsta Radnje:</label>
                                     <select id="ddlCase_Radnja_VrstaRadnje" class="form-control">
                                         <option value="-1">-----</option>
@@ -456,7 +457,7 @@
                                 <table id="tblCaseRadnje" class="table table-condensed" style="word-break: break-word;"></table>
                             </div>
                             <div class="other-tab" style="display: none;" id="divTroskovi">
-                                <form class="form-inline" role="form">
+                                <form class="form-inline only-office-admin" role="form">
                                     <label for="ddlCase_ExpenseVrstaTroska">Vrsta troška:</label>
                                     <select id="ddlCase_ExpenseVrstaTroska" class="form-control">
                                         <option value="-1">-----</option>
@@ -490,7 +491,7 @@
                                 <textarea class="form-control" rows="5" id="txtCase_PravniOsnov"></textarea>
                             </div>
                             <div class="other-tab" style="display: none;" id="divBiljeske">
-                                <form class="form-inline" role="form">
+                                <form class="form-inline only-office-admin" role="form">
                                     <label for="dateTimePicker_NoteDate">Datum:</label>
                                     <div class="input-group date" id="dateTimePicker_NoteDate">
                                         <input type="text" class="form-control" id="txtCase_NoteDate" />
@@ -512,15 +513,15 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="btnSavecase" type="button" class="btn btn-primary" onclick="SaveCase(); return false;">Spasi</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="SaveCase(); return false;">Spasi i zatvori</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Odustani</button>
+                    <button id="btnSaveCase" type="button" class="btn btn-primary only-office-admin" onclick="SaveCase(); return false;">Spasi</button>
+                    <button type="button" class="btn btn-primary only-office-admin" data-dismiss="modal" onclick="SaveCase(); return false;">Spasi i zatvori</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Zatvori</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="modalParty" class="modal fade" role="dialog">
+    <div id="modalParty" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-admin">
             <div class="modal-content">
                 <div class="modal-header">
@@ -585,13 +586,13 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" onclick="SaveParty(); return false;">Spasi</button>
                     <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="SaveParty(); return false;">Spasi i zatvori</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Odustani</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Zatvori</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="modalSud" class="modal fade" role="dialog">
+    <div id="modalSud" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -628,14 +629,13 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="SaveSud(); return false;">Spasi i zatvori</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Odustani</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Zatvori</button>
                 </div>
             </div>
         </div>
     </div>
 
-
-    <div id="modalUser" class="modal fade" role="dialog">
+    <div id="modalUser" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -664,12 +664,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="SaveUser(); return false;">Spasi i zatvori</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Odustani</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Zatvori</button>
                 </div>
             </div>
         </div>
     </div>
-
 
     <div id="modalCodeTableRecord" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -684,7 +683,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="SaveCodeTableRecord(); return false;">Spasi i zatvori</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Odustani</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Zatvori</button>
                 </div>
             </div>
 

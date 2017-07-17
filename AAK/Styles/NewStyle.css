@@ -307,9 +307,10 @@ li > a.menu-item {
 
 
 .modal-admin {
-    width: 96%;
-    margin-left: 2%;
-    margin-top: 85px;
+    /*width: 96%;*/
+    /*margin-right: 2%;*/
+    margin-left: -18px;
+    margin-top: 50px;
 }
 
 .fixed-width-label {

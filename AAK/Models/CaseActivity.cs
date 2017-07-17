@@ -11,6 +11,7 @@ namespace AAK.Models
         public int CaseId { get; set; }
         public string Note { get; set; }
         public DateTime? ActivityDate { get; set; }
+        public bool ForAllUsers { get; set; }
 
         public int? CreatedBy { get; set; }
         public string CreatedByName { get; set; }
@@ -26,6 +27,7 @@ namespace AAK.Models
             this.CaseId = -1;
             this.Note = string.Empty;
             this.ActivityDate = null;
+            this.ForAllUsers = true;
 
             this.CreatedBy = null;
             this.CreatedByName = string.Empty;
