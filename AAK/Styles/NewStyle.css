@@ -305,14 +305,6 @@ li > a.menu-item {
     margin: 10px;
 }
 
-
-.modal-admin {
-    /*width: 96%;*/
-    /*margin-right: 2%;*/
-    margin-left: -18px;
-    margin-top: 50px;
-}
-
 .fixed-width-label {
     width: 200px;
 }
@@ -351,4 +343,36 @@ li > a.menu-item {
     padding: 10px;
     border: 1px solid #ddd;
     margin-top: -1px;
+}
+
+
+.nas-broj-text {
+    max-width: 100px;
+    color: red;
+    font-weight: bold;
+}
+
+    .nas-broj-text::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+        color: #999;
+        font-weight: normal;
+    }
+
+    .nas-broj-text::-moz-placeholder { /* Firefox 19+ */
+        color: #999;
+        font-weight: normal;
+    }
+
+    .nas-broj-text:-ms-input-placeholder { /* IE 10+ */
+        color: #999;
+        font-weight: normal;
+    }
+
+    .nas-broj-text:-moz-placeholder { /* Firefox 18- */
+        color: #999;
+        font-weight: normal;
+    }
+
+.modal-admin {
+    margin-top: 50px;
+    max-width: 1220px;
 }

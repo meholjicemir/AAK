@@ -12,8 +12,8 @@ var Radnje = null;
 var CurrentCase = null;
 
 $(document).ready(function () {
-    $(".g-signin2").click();
-    //ValidateUser("meholjic.emir@gmail.com");
+    //$(".g-signin2").click();
+    ValidateUser("meholjic.emir@gmail.com");
     //ValidateUser("emir.meholjic@toptal.com");
 });
 
@@ -132,6 +132,8 @@ function RenderApp(user) {
         format: 'DD.MM.YYYY'
     });
 
+    if (window.innerWidth > 1240)
+        $(".modal-admin").css("margin-left", ((window.innerWidth - 1240) / 2).toString() + "px");
 }
 
 function MenuHome() {
@@ -434,24 +436,25 @@ function LoadCases() {
     var _columns = [
         { field: 'Id' },
         { field: 'NasBroj', title: 'Naš broj', titleTooltip: 'Naš broj', sortable: true },
-        { field: 'BrojPredmeta', title: 'Broj predmeta', titleTooltip: 'Broj predmeta', sortable: true, visible: false },
         { field: 'StrankaNasa', title: 'Naša stranka', titleTooltip: 'Naša stranka', sortable: true },
         { field: 'StrankaProtivna', title: 'Protivna stranka', titleTooltip: 'Protivna stranka', sortable: true },
-        { field: 'SudijaName', title: 'Sudija', titleTooltip: 'Sudija', sortable: true, visible: false },
-        { field: 'SudName', title: 'Sud', titleTooltip: 'Sud', sortable: true },
-        { field: 'Iniciran', title: 'Iniciran', titleTooltip: 'Iniciran', sortable: true, visible: false, sorter: DateSorterFunction },
-        { field: 'VrijednostSporaString', title: 'Vrijednost spora', titleTooltip: 'Vrijednost spora', sortable: true, align: "right", visible: false },
-        { field: 'KategorijaPredmetaName', title: 'Kategorija', titleTooltip: 'Kategorija', sortable: true },
-        { field: 'UlogaName', title: 'Uloga', titleTooltip: 'Uloga', sortable: true },
-        { field: 'PrivremeniZastupnici', title: 'Pr. zast.', titleTooltip: 'Privremeni zastupnici', sortable: true, visible: false },
         { field: 'VrstaPredmetaName', title: 'Vrsta predmeta', titleTooltip: 'Vrsta predmeta', sortable: true },
-        { field: 'PravniOsnov', title: 'Pravni osnov', titleTooltip: 'Pravni osnov', sortable: true, visible: false },
-        { field: 'DatumStanjaPredmeta', title: 'Datum stanja', titleTooltip: 'Datum stanja', sortable: true, sorter: DateSorterFunction },
+        { field: 'BrojPredmeta', title: 'Broj predmeta', titleTooltip: 'Broj predmeta', sortable: true },
+        { field: 'SudName', title: 'Sud', titleTooltip: 'Sud', sortable: true },
         { field: 'StanjePredmetaName', title: 'Stanje predmeta', titleTooltip: 'Stanje predmeta', sortable: true },
+        { field: 'DatumStanjaPredmeta', title: 'Datum stanja', titleTooltip: 'Datum stanja', sortable: true, sorter: DateSorterFunction, visible: false },
+        { field: 'KategorijaPredmetaName', title: 'Kategorija', titleTooltip: 'Kategorija', sortable: true },
+
+        { field: 'SudijaName', title: 'Sudija', titleTooltip: 'Sudija', sortable: true, visible: false },
+        { field: 'Iniciran', title: 'Iniciran', titleTooltip: 'Iniciran', sortable: true, sorter: DateSorterFunction, visible: false },
+        { field: 'VrijednostSporaString', title: 'Vrijednost spora', titleTooltip: 'Vrijednost spora', sortable: true, align: "right", visible: false },
+        { field: 'UlogaName', title: 'Uloga', titleTooltip: 'Uloga', sortable: true, visible: false },
+        { field: 'PrivremeniZastupnici', title: 'Pr. zast.', titleTooltip: 'Privremeni zastupnici', sortable: true, visible: false },
+        { field: 'PravniOsnov', title: 'Pravni osnov', titleTooltip: 'Pravni osnov', sortable: true, visible: false },
 
         { field: 'NacinOkoncanjaName', title: 'Način okončanja', titleTooltip: 'Način okončanja', sortable: true, visible: false },
         { field: 'Uspjeh', title: 'Uspjeh', titleTooltip: 'Uspjeh', sortable: true, visible: false },
-        { field: 'DatumArhiviranja', title: 'Datum arhiviranja', titleTooltip: 'Datum arhiviranja', sortable: true, visible: false, sorter: DateSorterFunction },
+        { field: 'DatumArhiviranja', title: 'Datum arhiviranja', titleTooltip: 'Datum arhiviranja', sortable: true, sorter: DateSorterFunction, visible: false },
         { field: 'BrojArhiveTotal', title: 'Br. arh/reg', titleTooltip: 'Broj u arhivi / registrator', sortable: true, visible: false }
     ];
 
@@ -460,6 +463,7 @@ function LoadCases() {
     $.get(AppPath + "api/predmet", {
         UserId: CurrentUser.Id,
         Filter: $("#txtCasesFilter").val(),
+        FilterNasBroj: $("#txtCasesFilterNasBroj").val(),
         RowCount: $("#ddlCasesRowCount").val()
     })
     .done(function (data) {
@@ -543,19 +547,23 @@ function AfterBindCases() {
             $(element).find("td:first-child").hide();
 
 
-            var buttonsHTML = "<td style='width: 100px;'><div class='btn-group pull-right'>";
+            var buttonsHTML = "<td style='width: 50px;'><div class='btn-group pull-right'>";
             buttonsHTML +=
                         "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Pregledaj / izmijeni podatke o predmetu' onclick='EditCase(" + tempId.toString() + "); return false;'>"
                         + "<span class='glyphicon glyphicon-pencil'></span>"
                         + "</button>";
 
-            if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
-                buttonsHTML +=
-                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši predmet' onclick='DeleteCase(" + tempId.toString() + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-remove'></span>"
-                            + "</button>";
-                buttonsHTML += "</div></td>"
-            }
+            //if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
+            //    buttonsHTML +=
+            //                "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši predmet' onclick='DeleteCase(" + tempId.toString() + "); return false;'>"
+            //                + "<span class='glyphicon glyphicon-remove'></span>"
+            //                + "</button>";
+            //    buttonsHTML += "</div></td>"
+            //}
+
+            $(element).dblclick(function () {
+                EditCase(tempId);
+            });
 
             $(element).append(buttonsHTML);
         }
@@ -583,20 +591,22 @@ function LoadParties() {
         { field: 'Ime', title: 'Ime', titleTooltip: 'Ime', sortable: true, visible: false },
         { field: 'Prezime', title: 'Prezime', titleTooltip: 'Prezime', sortable: true, visible: false },
         { field: 'PravnoLice', title: 'Pravno lice', titleTooltip: 'Pravno lice', sortable: true, visible: false },
-        { field: 'IsMinorString', title: 'Mldb', titleTooltip: 'Malodobno lice', sortable: true },
-        { field: 'ZakonskiZastupnik', title: 'Z. zastupnik', titleTooltip: 'Zakonski zastupnik', sortable: true },
-        { field: 'Adresa', title: 'Adresa', titleTooltip: 'Adresa', sortable: true, visible: false },
-        { field: 'PostanskiBroj', title: 'Poštanski broj', titleTooltip: 'Poštanski broj', sortable: true, align: "right", visible: false },
+        { field: 'Adresa', title: 'Adresa', titleTooltip: 'Adresa', sortable: true },
         { field: 'Grad', title: 'Grad', titleTooltip: 'Grad', sortable: true },
+        { field: 'PostanskiBroj', title: 'Poštanski broj', titleTooltip: 'Poštanski broj', sortable: true, align: "right", visible: false },
         { field: 'DrzavaName', title: 'Država', titleTooltip: 'Država', sortable: true, visible: false },
         { field: 'Telefon', title: 'Telefon', titleTooltip: 'Telefon', sortable: true },
         { field: 'Fax', title: 'Fax', titleTooltip: 'Fax', sortable: true },
         { field: 'Email', title: 'Email', titleTooltip: 'Email', sortable: true },
-        { field: 'JMBG_IDBroj', title: 'JMBG / ID broj', titleTooltip: 'JMBG / ID broj', sortable: true },
+
+        { field: 'IsMinorString', title: 'Malodobno lice', titleTooltip: 'Malodobno lice', sortable: true, visible: false },
+        { field: 'ZakonskiZastupnik', title: 'Zakonski zastupnik', titleTooltip: 'Zakonski zastupnik', sortable: true, visible: false },
+
+        { field: 'JMBG_IDBroj', title: 'JMBG / ID broj', titleTooltip: 'JMBG / ID broj', sortable: true, visible: false },
         { field: 'CreatedByName', title: 'Kreirao/la', titleTooltip: 'Kreirao/la', sortable: true, visible: false },
-        { field: 'Created', title: 'Datum kreiranja', titleTooltip: 'Datum kreiranja', sortable: true, visible: false, sorter: DateSorterFunction },
+        { field: 'Created', title: 'Datum kreiranja', titleTooltip: 'Datum kreiranja', sortable: true, sorter: DateSorterFunction, visible: false },
         { field: 'ModifiedByName', title: 'Izmijenio/la', titleTooltip: 'Izmijenio/la', sortable: true, visible: false },
-        { field: 'Modified', title: 'Datum zadnje izmjene', titleTooltip: 'Datum zadnje izmjene', sortable: true, visible: false, sorter: DateSorterFunction }
+        { field: 'Modified', title: 'Datum zadnje izmjene', titleTooltip: 'Datum zadnje izmjene', sortable: true, sorter: DateSorterFunction, visible: false }
     ];
     $("#tblParties").bootstrapTable("destroy");
 
@@ -1098,7 +1108,7 @@ function EditCase(id) {
     // Radnje
     $("#ddlCase_Radnja_VrstaRadnje").val(-1);
     $("#txtCase_Radnja_DatumRadnje").val("");
-    $("#ddlCase_Radnja_Troskovi").val("");
+    //$("#ddlCase_Radnja_Troskovi").val("");
     $("#txtCase_Radnja_Biljeske").val("");
     $("#btnAppendRadnjaToCase").attr("disabled", "disabled");
 
@@ -1200,36 +1210,35 @@ function EditCase(id) {
     });
 }
 
-function DeleteCase(id) {
-    $(Predmeti).each(function (index, obj) {
-        if (obj.Id == id) {
-            ShowPrompt(
-                "Da li ste sigurni da želite izbrisati predmet?",
-                "<span style='font-style: italic; color: gray;'>" + obj.NasBroj + "</span>",
-                function () {
-                    ShowLoaderCenter();
-                    $.ajax({
-                        url: AppPath + "api/predmet?Id=" + id.toString(),
-                        type: "DELETE",
-                        success: function () {
-                            LoadCases();
-                            HideLoaderCenter();
-                            ShowAlert("success", "Uspješno izbrisan predmet.");
-                        },
-                        error: function () {
-                            HideLoaderCenter();
-                            ShowAlert("danger", "Greška pri brisanju predmeta.");
-                        }
-                    });
-                },
-                function () { }
-            );
+//function DeleteCase(id) {
+//    $(Predmeti).each(function (index, obj) {
+//        if (obj.Id == id) {
+//            ShowPrompt(
+//                "Da li ste sigurni da želite izbrisati predmet?",
+//                "<span style='font-style: italic; color: gray;'>" + obj.NasBroj + "</span>",
+//                function () {
+//                    ShowLoaderCenter();
+//                    $.ajax({
+//                        url: AppPath + "api/predmet?Id=" + id.toString(),
+//                        type: "DELETE",
+//                        success: function () {
+//                            LoadCases();
+//                            HideLoaderCenter();
+//                            ShowAlert("success", "Uspješno izbrisan predmet.");
+//                        },
+//                        error: function () {
+//                            HideLoaderCenter();
+//                            ShowAlert("danger", "Greška pri brisanju predmeta.");
+//                        }
+//                    });
+//                },
+//                function () { }
+//            );
 
-            return false; // break loop
-        }
-    });
-}
-
+//            return false; // break loop
+//        }
+//    });
+//}
 
 function ClearModalUser() {
     $("#modalUser").removeAttr("edit_id");
@@ -1596,7 +1605,7 @@ function ClearModalCase() {
     // Radnje
     $("#ddlCase_Radnja_VrstaRadnje").val(-1);
     $("#txtCase_Radnja_DatumRadnje").val("");
-    $("#ddlCase_Radnja_Troskovi").val("");
+    //$("#ddlCase_Radnja_Troskovi").val("");
     $("#txtCase_Radnja_Biljeske").val("");
     $("#btnAppendRadnjaToCase").attr("disabled", "disabled");
 
@@ -1796,7 +1805,7 @@ function BindCaseParties(_data) {
     var _columns = [
         { field: 'Lice', title: 'Lice', titleTooltip: 'Lice', sortable: true },
         { field: 'Uloga', title: 'Uloga', titleTooltip: 'Uloga', sortable: true },
-        { field: 'GlavnaStranka', title: 'Glavna stranka', titleTooltip: 'Glavna stranka', sortable: true }
+        { field: 'GlavnaStranka', title: 'Vrsta stranke', titleTooltip: 'Vrsta stranke', sortable: true }
     ];
 
     $("#tblCaseParties").bootstrapTable("destroy");
@@ -1935,7 +1944,7 @@ function AppendRadnjaToCase() {
             VrstaRadnjeId: $("#ddlCase_Radnja_VrstaRadnje").val(),
             VrstaRadnjeName: $("#ddlCase_Radnja_VrstaRadnje option:selected").text(),
             DatumRadnje: $("#txtCase_Radnja_DatumRadnje").val(),
-            Troskovi: $("#ddlCase_Radnja_Troskovi").val(),
+            Troskovi: '', //$("#ddlCase_Radnja_Troskovi").val(),
             Biljeske: $("#txtCase_Radnja_Biljeske").val(),
             PredmetId: CurrentCase.Id
         });

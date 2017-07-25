@@ -66,7 +66,7 @@
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Načini okončanja', 'NaciniOkoncanja'); return false;">Načini okončanja</a></li>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Vrste troškova', 'VrsteTroskova'); return false;">Vrste troškova</a></li>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Vrste radnji', 'VrsteRadnji'); return false;">Vrste radnji</a></li>
-                            <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Načini obavljanja radnje', 'NaciniObavljanjaRadnje'); return false;">Načini obavljanja radnje</a></li>
+                            <%--<li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Načini obavljanja radnje', 'NaciniObavljanjaRadnje'); return false;">Načini obavljanja radnje</a></li>--%>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Države', 'Drzave'); return false;">Države</a></li>
                         </ul>
                     </li>
@@ -163,7 +163,8 @@
                 <form class="form-inline pull-left" role="form">
                     <div class="form-group">
                         <label for="txtCasesFilter">Traži:</label>
-                        <input type="text" class="form-control" id="txtCasesFilter" />
+                        <input type="text" class="form-control" id="txtCasesFilter" placeholder="Sve kolone" />
+                        <input type="text" class="form-control nas-broj-text" id="txtCasesFilterNasBroj" placeholder="Naš broj" />
                     </div>
                     <div class="form-group">
                         <label for="ddlCasesRowCount">Broj redova:</label>
@@ -327,16 +328,43 @@
                         <div class="col-lg-12">
                             <form class="form-inline" role="form">
                                 <label for="ddlCase_Lice">Lice:</label>
-                                <select class="form-control" id="ddlCase_Lice">
+                                <select class="form-control" id="ddlCase_Lice" style="max-width: 400px;">
                                     <option value="-1">-----</option>
                                 </select>
                                 <label for="ddlCase_UlogaLica">Uloga:</label>
+                                <select class="form-control" id="ddlCase_UlogaOrdinalNo">
+                                    <option value="1" selected="selected">1.</option>
+                                    <option value="2">2.</option>
+                                    <option value="3">3.</option>
+                                    <option value="4">4.</option>
+                                    <option value="5">5.</option>
+                                    <option value="6">6.</option>
+                                    <option value="7">7.</option>
+                                    <option value="8">8.</option>
+                                    <option value="9">9.</option>
+                                    <option value="10">10.</option>
+                                    <option value="11">11.</option>
+                                    <option value="12">12.</option>
+                                    <option value="13">13.</option>
+                                    <option value="14">14.</option>
+                                    <option value="15">15.</option>
+                                    <option value="16">16.</option>
+                                    <option value="17">17.</option>
+                                    <option value="18">18.</option>
+                                    <option value="19">19.</option>
+                                    <option value="20">20.</option>
+                                    <option value="21">21.</option>
+                                    <option value="22">22.</option>
+                                    <option value="23">23.</option>
+                                    <option value="24">24.</option>
+                                    <option value="25">25.</option>
+                                </select>
                                 <select class="form-control" id="ddlCase_UlogaLica">
                                     <option value="-1">-----</option>
                                 </select>
                                 <label for="ddlCase_GlavnaStranka">Vrsta:</label>
                                 <select class="form-control" id="ddlCase_GlavnaStranka">
-                                    <option value="" selected="selected">-----</option>
+                                    <option value="" selected="selected">Ostalo</option>
                                     <option value="ns">Naša stranka</option>
                                     <option value="ps">Protivna stranka</option>
                                 </select>
@@ -344,6 +372,108 @@
                             </form>
                             <br />
                             <table id="tblCaseParties" class="table table-condensed" style="word-break: break-word;"></table>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-lg-12" style="text-align: center;">
+                            <div class="modal-in-title">
+                                <h4><strong>Ostalo</strong></h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul id="ulOtherTabs" class="nav nav-tabs">
+                                <li class="active"><a href="#" onclick="OpenOtherTab(this, 'divRadnje'); return false;">Radnje</a></li>
+                                <li><a href="#" onclick="OpenOtherTab(this, 'divTroskovi'); return false;">Troškovi</a></li>
+                                <li><a href="#" onclick="OpenOtherTab(this, 'divDokumenti'); return false;">Dokumenti</a></li>
+                                <li><a href="#" onclick="OpenOtherTab(this, 'divPravniOsnov'); return false;">Pravni osnov</a></li>
+                                <li><a href="#" onclick="OpenOtherTab(this, 'divBiljeske'); return false;">Bilješke</a></li>
+                                <li><a href="#" onclick="OpenOtherTab(this, 'divVeze'); return false;">Veze</a></li>
+                            </ul>
+                            <div class="other-tab" id="divRadnje">
+                                <form class="form-inline only-office-admin" role="form">
+                                    <label for="ddlCase_Radnja_VrstaRadnje">Vrsta Radnje:</label>
+                                    <select id="ddlCase_Radnja_VrstaRadnje" class="form-control">
+                                        <option value="-1">-----</option>
+                                    </select>
+                                    <label for="dateTimePicker_Radnja_DatumRadnje">Datum:</label>
+                                    <div class="input-group date" id="dateTimePicker_Radnja_DatumRadnje">
+                                        <input type="text" class="form-control" id="txtCase_Radnja_DatumRadnje" />
+                                        <span class="input-group-addon btn">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                    <%--<label for="ddlCase_Radnja_Troskovi">Troškovi:</label>
+                                    <select id="ddlCase_Radnja_Troskovi" class="form-control">
+                                        <option value="">-----</option>
+                                        <option value="0%">0%</option>
+                                        <option value="25%">25%</option>
+                                        <option value="50%">50%</option>
+                                        <option value="100%">100%</option>
+                                    </select>--%>
+                                    <label for="txtCase_Radnja_Biljeske">Bilješke:</label>
+                                    <input type="text" class="form-control" id="txtCase_Radnja_Biljeske" />
+
+                                    <button id="btnAppendRadnjaToCase" type="button" class="btn btn-success" disabled="disabled" onclick="AppendRadnjaToCase(); return false;">Dodaj</button>
+                                </form>
+                                <br />
+                                <table id="tblCaseRadnje" class="table table-condensed" style="word-break: break-word;"></table>
+                            </div>
+                            <div class="other-tab" style="display: none;" id="divTroskovi">
+                                <form class="form-inline only-office-admin" role="form">
+                                    <label for="ddlCase_ExpenseVrstaTroska">Vrsta troška:</label>
+                                    <select id="ddlCase_ExpenseVrstaTroska" class="form-control" style="max-width: 300px;">
+                                        <option value="-1">-----</option>
+                                    </select>
+                                    <label for="txtCase_ExpenseAmount">Iznos:</label>
+                                    <input type="number" class="form-control" id="txtCase_ExpenseAmount" />
+                                    <label for="dateTimePicker_ExpenseDate">Datum:</label>
+                                    <div class="input-group date" id="dateTimePicker_ExpenseDate">
+                                        <input type="text" class="form-control" id="txtCase_ExpenseDate" />
+                                        <span class="input-group-addon btn">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                    <label for="ddlCase_ExpensePaidBy">Plaćeno od:</label>
+                                    <select id="ddlCase_ExpensePaidBy" class="form-control">
+                                        <option value="">-----</option>
+                                        <option value="Stranka">Stranka</option>
+                                        <option value="Advokat">Advokat</option>
+                                        <option value="Oslobođen">Oslobođen</option>
+                                    </select>
+                                    <button id="btnAppendExpenseToCase" type="button" class="btn btn-success" disabled="disabled" onclick="AppendExpenseToCase(); return false;">Dodaj</button>
+                                </form>
+                                <br />
+                                <table id="tblCaseExpenses" class="table table-condensed" style="word-break: break-word;"></table>
+                            </div>
+                            <div class="other-tab" style="display: none;" id="divDokumenti">
+                                Dokumenti
+                            </div>
+                            <div class="other-tab" style="display: none;" id="divPravniOsnov">
+                                <label for="txtCase_PravniOsnov">Pravni osnov:</label>
+                                <textarea class="form-control" rows="5" id="txtCase_PravniOsnov"></textarea>
+                            </div>
+                            <div class="other-tab" style="display: none;" id="divBiljeske">
+                                <form class="form-inline only-office-admin" role="form">
+                                    <label for="dateTimePicker_NoteDate">Datum:</label>
+                                    <div class="input-group date" id="dateTimePicker_NoteDate">
+                                        <input type="text" class="form-control" id="txtCase_NoteDate" />
+                                        <span class="input-group-addon btn">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                    <label for="txtCase_NoteText">Bilješka:</label>
+                                    <input type="text" class="form-control" id="txtCase_NoteText" style="min-width: 700px;" />
+                                    <button id="btnAppendNoteToCase" type="button" class="btn btn-success" disabled="disabled" onclick="AppendNoteToCase(); return false;">Dodaj</button>
+                                </form>
+                                <br />
+                                <table id="tblCaseNotes" class="table table-condensed" style="word-break: break-word;"></table>
+                            </div>
+                            <div class="other-tab" style="display: none;" id="divVeze">
+                                Veze
+                            </div>
                         </div>
                     </div>
                     <hr />
@@ -406,108 +536,6 @@
                                         <input id="cbCase_CaseActivity_ForAllUsers" type="checkbox" checked="checked" disabled="disabled" />
                                     </form>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr />
-                    <div class="row">
-                        <div class="col-lg-12" style="text-align: center;">
-                            <div class="modal-in-title">
-                                <h4><strong>Ostalo</strong></h4>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <ul id="ulOtherTabs" class="nav nav-tabs">
-                                <li class="active"><a href="#" onclick="OpenOtherTab(this, 'divRadnje'); return false;">Radnje</a></li>
-                                <li><a href="#" onclick="OpenOtherTab(this, 'divTroskovi'); return false;">Troškovi</a></li>
-                                <li><a href="#" onclick="OpenOtherTab(this, 'divDokumenti'); return false;">Dokumenti</a></li>
-                                <li><a href="#" onclick="OpenOtherTab(this, 'divPravniOsnov'); return false;">Pravni osnov</a></li>
-                                <li><a href="#" onclick="OpenOtherTab(this, 'divBiljeske'); return false;">Bilješke</a></li>
-                                <li><a href="#" onclick="OpenOtherTab(this, 'divVeze'); return false;">Veze</a></li>
-                            </ul>
-                            <div class="other-tab" id="divRadnje">
-                                <form class="form-inline only-office-admin" role="form">
-                                    <label for="ddlCase_Radnja_VrstaRadnje">Vrsta Radnje:</label>
-                                    <select id="ddlCase_Radnja_VrstaRadnje" class="form-control">
-                                        <option value="-1">-----</option>
-                                    </select>
-                                    <label for="dateTimePicker_Radnja_DatumRadnje">Datum:</label>
-                                    <div class="input-group date" id="dateTimePicker_Radnja_DatumRadnje">
-                                        <input type="text" class="form-control" id="txtCase_Radnja_DatumRadnje" />
-                                        <span class="input-group-addon btn">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
-                                    </div>
-                                    <label for="ddlCase_Radnja_Troskovi">Troškovi:</label>
-                                    <select id="ddlCase_Radnja_Troskovi" class="form-control">
-                                        <option value="">-----</option>
-                                        <option value="0%">0%</option>
-                                        <option value="25%">25%</option>
-                                        <option value="50%">50%</option>
-                                        <option value="100%">100%</option>
-                                    </select>
-                                    <label for="txtCase_Radnja_Biljeske">Bilješke:</label>
-                                    <input type="text" class="form-control" id="txtCase_Radnja_Biljeske" />
-
-                                    <button id="btnAppendRadnjaToCase" type="button" class="btn btn-success" disabled="disabled" onclick="AppendRadnjaToCase(); return false;">Dodaj</button>
-                                </form>
-                                <br />
-                                <table id="tblCaseRadnje" class="table table-condensed" style="word-break: break-word;"></table>
-                            </div>
-                            <div class="other-tab" style="display: none;" id="divTroskovi">
-                                <form class="form-inline only-office-admin" role="form">
-                                    <label for="ddlCase_ExpenseVrstaTroska">Vrsta troška:</label>
-                                    <select id="ddlCase_ExpenseVrstaTroska" class="form-control">
-                                        <option value="-1">-----</option>
-                                    </select>
-                                    <label for="txtCase_ExpenseAmount">Iznos:</label>
-                                    <input type="number" class="form-control" id="txtCase_ExpenseAmount" />
-                                    <label for="dateTimePicker_ExpenseDate">Datum:</label>
-                                    <div class="input-group date" id="dateTimePicker_ExpenseDate">
-                                        <input type="text" class="form-control" id="txtCase_ExpenseDate" />
-                                        <span class="input-group-addon btn">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
-                                    </div>
-                                    <label for="ddlCase_ExpensePaidBy">Plaćeno od:</label>
-                                    <select id="ddlCase_ExpensePaidBy" class="form-control">
-                                        <option value="">-----</option>
-                                        <option value="Stranka">Stranka</option>
-                                        <option value="Advokat">Advokat</option>
-                                        <option value="Oslobođen">Oslobođen</option>
-                                    </select>
-                                    <button id="btnAppendExpenseToCase" type="button" class="btn btn-success" disabled="disabled" onclick="AppendExpenseToCase(); return false;">Dodaj</button>
-                                </form>
-                                <br />
-                                <table id="tblCaseExpenses" class="table table-condensed" style="word-break: break-word;"></table>
-                            </div>
-                            <div class="other-tab" style="display: none;" id="divDokumenti">
-                                Dokumenti
-                            </div>
-                            <div class="other-tab" style="display: none;" id="divPravniOsnov">
-                                <label for="txtCase_PravniOsnov">Pravni osnov:</label>
-                                <textarea class="form-control" rows="5" id="txtCase_PravniOsnov"></textarea>
-                            </div>
-                            <div class="other-tab" style="display: none;" id="divBiljeske">
-                                <form class="form-inline only-office-admin" role="form">
-                                    <label for="dateTimePicker_NoteDate">Datum:</label>
-                                    <div class="input-group date" id="dateTimePicker_NoteDate">
-                                        <input type="text" class="form-control" id="txtCase_NoteDate" />
-                                        <span class="input-group-addon btn">
-                                            <span class="glyphicon glyphicon-calendar"></span>
-                                        </span>
-                                    </div>
-                                    <label for="txtCase_NoteText">Bilješka:</label>
-                                    <input type="text" class="form-control" id="txtCase_NoteText" style="min-width: 700px;" />
-                                    <button id="btnAppendNoteToCase" type="button" class="btn btn-success" disabled="disabled" onclick="AppendNoteToCase(); return false;">Dodaj</button>
-                                </form>
-                                <br />
-                                <table id="tblCaseNotes" class="table table-condensed" style="word-break: break-word;"></table>
-                            </div>
-                            <div class="other-tab" style="display: none;" id="divVeze">
-                                Veze
                             </div>
                         </div>
                     </div>

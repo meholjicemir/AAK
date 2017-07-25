@@ -9,6 +9,7 @@ namespace AAK.Models.Helper
     {
         public int UserId { get; set; }
         public string Filter { get; set; }
+        public int? FilterNasBroj { get; set; }
         public int RowCount { get; set; }
     }
 }

@@ -9,9 +9,15 @@ namespace AAK.DataProviders
 {
     public static class Predmeti
     {
-        public static List<Predmet> Predmeti_GetAll(int userId, string filter, int rowCount)
+        public static List<Predmet> Predmeti_GetAll(int userId, string filter, int? filterNasBroj, int rowCount)
         {
-            DataTable dt = DBUtility.Utility.ExecuteStoredProcedure<int, string, int>("Predmeti_GetAll", "userId", userId, "filter", filter ?? "", "rowCount", rowCount);
+            DBUtility.ParameterCollection collection = new DBUtility.ParameterCollection();
+            collection.AddParameter<int>("userId", userId);
+            collection.AddParameter<string>("filter", filter ?? "");
+            collection.AddParameter<int?>("filterNasBroj", filterNasBroj);
+            collection.AddParameter<int>("rowCount", rowCount);
+
+            DataTable dt = DBUtility.Utility.ExecuteStoredProcedure("Predmeti_GetAll", ref collection);
             return DBUtility.Utility.ParseDataTable<Predmet>(dt);
         }
 

@@ -37,8 +37,8 @@ Za sastanak:
 - Pokazati dosad šta ima
 - Raspored polja za unos uglavnom ostao isti
 - Potrebno odabrati kolone na nekim tabelama
-- Radnje dodatni podaci? Da li se koriste?
-- Dokumenti: vidjeti kako linkovi funkcionišu
++ Radnje dodatni podaci? Da li se koriste?
++ Dokumenti: vidjeti kako linkovi funkcionišu
 - Izvještaji
 - Templates
 - Veze predmeta još jednom definisati kako tačno ih napraviti
