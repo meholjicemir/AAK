@@ -54,7 +54,7 @@
                 <ul class="nav navbar-nav collapse navbar-collapse" id="navBarMenuContainer">
                     <li class="menu-item" id="liMenuHome" style="display: none;"><a href="#" onclick="MenuHome(); return false;"><strong>Početna</strong></a></li>
                     <li class="menu-item" id="liMenuCases" style="display: none;"><a href="#" onclick="MenuCases(); return false;"><strong>Predmeti</strong></a></li>
-                    <li class="menu-item" id="liMenuParties" style="display: none;"><a href="#" onclick="MenuParties(); return false;"><strong>Lica</strong></a></li>
+                    <li class="menu-item" id="liMenuParties" style="display: none;"><a href="#" onclick="MenuParties(); return false;"><strong>Stranke</strong></a></li>
                     <li class="menu-item" id="liMenuSudovi" style="display: none;"><a href="#" onclick="MenuSudovi(); return false;"><strong>Sudovi</strong></a></li>
                     <li class="menu-item dropdown" id="liMenuCodeTables">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><strong>Kodne tabele</strong><span class="caret"></span></a>
@@ -188,7 +188,7 @@
 
         <div id="divParties" class="panel panel-default menu-div" style="display: none;">
             <div class="panel-body">
-                <button id="btnNewParty" type="button" class="btn btn-primary only-office-admin" data-toggle="modal" data-target="#modalParty" onclick="ClearModalParty(); return false;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj novo lice</button>
+                <button id="btnNewParty" type="button" class="btn btn-primary only-office-admin" data-toggle="modal" data-target="#modalParty" onclick="ClearModalParty(); return false;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj novu stranku</button>
                 <hr class="only-office-admin" />
                 <form class="form-inline pull-left" role="form">
                     <div class="form-group">
@@ -277,7 +277,7 @@
                             <label for="cbCase_PrivremeniZastupnici">Privremeni zastupnici</label>
                             <input id="cbCase_PrivremeniZastupnici" type="checkbox" />
                         </div>
-                        <div class="col-lg-8">
+                        <div class="col-lg-8 case-column-for-stanje">
                             <form class="form-inline pull-left" role="form">
                                 <label for="txtCase_BrojPredmeta" class="fixed-width-label">Broj predmeta:</label>
                                 <input type="text" class="form-control fixed-width-field" id="txtCase_BrojPredmeta" />
@@ -309,10 +309,14 @@
                                     </span>
                                 </div>
                                 <br />
-                                <label for="ddlCase_StanjePredmeta" class="fixed-width-label">Stanje:</label>
-                                <select class="form-control fixed-width-field" id="ddlCase_StanjePredmeta">
+                                <div class="form-group has-feedback">
+                                    <label for="txtCase_StanjePredmeta" class="fixed-width-label">Stanje:</label>
+                                    <input type="text" class="form-control fixed-width-field" id="txtCase_StanjePredmeta" />
+                                    <i id="spinner_txtCase_StanjePredmeta" class="glyphicon glyphicon-refresh spinning form-control-feedback" style="display: none;"></i>
+                                </div>
+                                <%--<select class="form-control fixed-width-field" id="ddlCase_StanjePredmeta">
                                     <option value="-1">-----</option>
-                                </select>
+                                </select>--%>
                             </form>
                         </div>
                     </div>
@@ -320,14 +324,14 @@
                     <div class="row only-office-admin">
                         <div class="col-lg-12" style="text-align: center;">
                             <div class="modal-in-title">
-                                <h4><strong>Lica u postupku</strong></h4>
+                                <h4><strong>Stranke u postupku</strong></h4>
                             </div>
                         </div>
                     </div>
                     <div class="row only-office-admin">
                         <div class="col-lg-12">
                             <form class="form-inline" role="form">
-                                <label for="ddlCase_Lice">Lice:</label>
+                                <label for="ddlCase_Lice">Stranka:</label>
                                 <select class="form-control" id="ddlCase_Lice" style="max-width: 400px;">
                                     <option value="-1">-----</option>
                                 </select>
@@ -554,7 +558,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Novo lice</h4>
+                    <h4 class="modal-title">Nova stranka</h4>
                 </div>
                 <div class="modal-body row">
                     <div class="col-lg-6">
@@ -684,6 +688,11 @@
                         <label for="txtUser_Phone" class="fixed-width-label">Phone:</label>
                         <input type="text" class="form-control fixed-width-field" id="txtUser_Phone" />
                         <br />
+                        <label for="txtUser_GoogleDriveLocalFolderPath" class="fixed-width-label">Google Drive direktorij (lokalna putanja):</label>
+                        <input type="text" class="form-control fixed-width-field" id="txtUser_GoogleDriveLocalFolderPath" />
+                        <br />
+
+
 
                         <label for="ddlUser_UserGroups" class="fixed-width-label">Korisničke grupe:</label>
                         <select id="ddlUser_UserGroups" multiple="multiple" class="form-control fixed-width-field">

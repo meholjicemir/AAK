@@ -9,5 +9,6 @@ namespace AAK.Models.Helper
     {
         public string Name { get; set; }
         public string ColumnName { get; set; }
+        public string Filter { get; set; }
     }
 }

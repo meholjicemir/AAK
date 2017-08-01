@@ -13,6 +13,7 @@ namespace AAK.Models
         public int UlogaId { get; set; }
         public bool IsNasaStranka { get; set; }
         public bool IsProtivnaStranka { get; set; }
+        public string Broj { get; set; }
 
         public string Lice { get; set; }
         public string Uloga { get; set; }
@@ -26,6 +27,7 @@ namespace AAK.Models
             this.UlogaId = -1;
             this.IsNasaStranka = false;
             this.IsProtivnaStranka = false;
+            this.Broj = string.Empty;
 
             this.Lice = string.Empty;
             this.Uloga = string.Empty;

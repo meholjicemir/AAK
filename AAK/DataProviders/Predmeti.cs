@@ -38,7 +38,8 @@ namespace AAK.DataProviders
             collection.AddParameter<decimal?>("vrijednostSpora", predmet.VrijednostSpora);
             collection.AddParameter<int>("vrstaPredmetaId", predmet.VrstaPredmetaId);
             collection.AddParameter<DateTime?>("datumStanjaPredmeta", predmet.DatumStanjaPredmeta);
-            collection.AddParameter<int>("stanjePredmetaId", predmet.StanjePredmetaId);
+            //collection.AddParameter<int>("stanjePredmetaId", predmet.StanjePredmetaId);
+            collection.AddParameter<string>("stanjePredmetaName", predmet.StanjePredmetaName);
 
             collection.AddParameter<int>("nacinOkoncanjaId", predmet.NacinOkoncanjaId);
             collection.AddParameter<string>("uspjeh", predmet.Uspjeh);
@@ -94,7 +95,8 @@ namespace AAK.DataProviders
             collection.AddParameter<decimal?>("vrijednostSpora", predmet.VrijednostSpora);
             collection.AddParameter<int>("vrstaPredmetaId", predmet.VrstaPredmetaId);
             collection.AddParameter<DateTime?>("datumStanjaPredmeta", predmet.DatumStanjaPredmeta);
-            collection.AddParameter<int>("stanjePredmetaId", predmet.StanjePredmetaId);
+            //collection.AddParameter<int>("stanjePredmetaId", predmet.StanjePredmetaId);
+            collection.AddParameter<string>("stanjePredmetaName", predmet.StanjePredmetaName);
 
             collection.AddParameter<int>("nacinOkoncanjaId", predmet.NacinOkoncanjaId);
             collection.AddParameter<string>("uspjeh", predmet.Uspjeh);
@@ -249,6 +251,7 @@ namespace AAK.DataProviders
             collection.AddParameter<int>("ulogaId", licePredmet.UlogaId);
             collection.AddParameter<bool>("isNasaStranka", licePredmet.IsNasaStranka);
             collection.AddParameter<bool>("isProtivnaStranka", licePredmet.IsProtivnaStranka);
+            collection.AddParameter<string>("broj", licePredmet.Broj);
             return DBUtility.Utility.ExecuteStoredProcedure<int>("LicePredmet_Insert", ref collection);
         }
 

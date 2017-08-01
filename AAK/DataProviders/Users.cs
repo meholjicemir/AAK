@@ -23,6 +23,7 @@ namespace AAK.DataProviders
             collection.AddParameter<string>("firstName", user.FirstName);
             collection.AddParameter<string>("lastName", user.LastName);
             collection.AddParameter<string>("userGroupCodes", user.UserGroupCodes);
+            collection.AddParameter<string>("googleDriveLocalFolderPath", user.GoogleDriveLocalFolderPath);
             return DBUtility.Utility.ExecuteStoredProcedure<int>("User_Insert", ref collection);
         }
 
@@ -34,6 +35,7 @@ namespace AAK.DataProviders
             collection.AddParameter<string>("firstName", user.FirstName);
             collection.AddParameter<string>("lastName", user.LastName);
             collection.AddParameter<string>("userGroupCodes", user.UserGroupCodes);
+            collection.AddParameter<string>("googleDriveLocalFolderPath", user.GoogleDriveLocalFolderPath);
             collection.AddParameter<int>("id", user.Id);
             DBUtility.Utility.ExecuteStoredProcedureVoid("User_Update", ref collection);
         }
