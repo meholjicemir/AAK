@@ -72,6 +72,7 @@ function RenderApp(user) {
         $("#liMenuHome").show();
         $("#liMenuCases").show();
         $("#liMenuParties").show();
+        $("#liMenuReports").show();
         $("#liMenuSudovi").show();
         $("#liMenuCodeTables").show();
         hasCaseRights = true;
@@ -81,6 +82,7 @@ function RenderApp(user) {
         $("#liMenuCases").hide();
         $("#liMenuSudovi").hide();
         $("#liMenuParties").hide();
+        $("#liMenuReports").hide();
         $("#liMenuCodeTables").hide();
     }
 
@@ -117,6 +119,9 @@ function RenderApp(user) {
                     MenuUsers();
                 else
                     MenuHome();
+                break;
+            case "reports":
+                MenuReports();
                 break;
             default:
                 MenuHome();
@@ -361,7 +366,7 @@ function AfterBindCaseActivities() {
                             "<button class='btn btn-default btn-sm custom-table-button-check' data-toggle='tooltip' title='Završeno / Izbriši' onclick='DeleteCaseActivity(" + tempId.toString() + "); return false;'>"
                             + "<span class='glyphicon glyphicon-ok'></span>"
                             + "</button>";
-                buttonsHTML += "</div></td>"
+                buttonsHTML += "</div></td>";
 
                 $(element).append(buttonsHTML);
             }
@@ -547,19 +552,26 @@ function AfterBindCases() {
             $(element).find("td:first-child").hide();
 
 
-            var buttonsHTML = "<td style='width: 50px;'><div class='btn-group pull-right'>";
+            var buttonsHTML = "<td style='width: 100px;'><div class='btn-group pull-right'>";
             buttonsHTML +=
                         "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Pregledaj / izmijeni podatke o predmetu' onclick='EditCase(" + tempId.toString() + "); return false;'>"
                         + "<span class='glyphicon glyphicon-pencil'></span>"
                         + "</button>";
+
+            buttonsHTML +=
+                        "<button class='btn btn-default btn-sm custom-table-button-template' data-toggle='tooltip' title='Generiši dokument iz predloška' onclick='GenerateTemplateForCase(" + tempId.toString() + "); return false;'>"
+                        + "<span class='glyphicon glyphicon-file'></span>"
+                        + "</button>";
+
 
             //if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
             //    buttonsHTML +=
             //                "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši predmet' onclick='DeleteCase(" + tempId.toString() + "); return false;'>"
             //                + "<span class='glyphicon glyphicon-remove'></span>"
             //                + "</button>";
-            //    buttonsHTML += "</div></td>"
             //}
+
+            buttonsHTML += "</div></td>";
 
             $(element).dblclick(function () {
                 EditCase(tempId);
@@ -568,6 +580,13 @@ function AfterBindCases() {
             $(element).append(buttonsHTML);
         }
     });
+}
+
+function MenuReports() {
+    DeactivateAllMenuItems();
+    $("#liMenuReports").addClass("active");
+    $(".menu-div").hide();
+    $("#divReports").show();
 }
 
 function MenuParties() {
@@ -681,7 +700,7 @@ function AfterBindParties() {
                             "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši stranku' onclick='DeleteParty(" + tempId.toString() + "); return false;'>"
                             + "<span class='glyphicon glyphicon-remove'></span>"
                             + "</button>";
-                buttonsHTML += "</div></td>"
+                buttonsHTML += "</div></td>";
 
                 $(element).append(buttonsHTML);
             }
@@ -772,7 +791,7 @@ function AfterBindUsers() {
                             "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši korisnika' onclick='DeleteUser(" + tempId.toString() + "); return false;'>"
                             + "<span class='glyphicon glyphicon-remove'></span>"
                             + "</button>";
-                buttonsHTML += "</div></td>"
+                buttonsHTML += "</div></td>";
 
                 $(element).append(buttonsHTML);
             }
@@ -940,7 +959,7 @@ function AfterBindSudovi() {
                             "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši sud' onclick='DeleteSud(" + tempId.toString() + "); return false;'>"
                             + "<span class='glyphicon glyphicon-remove'></span>"
                             + "</button>";
-                buttonsHTML += "</div></td>"
+                buttonsHTML += "</div></td>";
 
                 $(element).append(buttonsHTML);
             }
@@ -1215,6 +1234,10 @@ function EditCase(id) {
     });
 }
 
+function GenerateTemplateForCase(id) {
+
+}
+
 //function DeleteCase(id) {
 //    $(Predmeti).each(function (index, obj) {
 //        if (obj.Id == id) {
@@ -1480,7 +1503,7 @@ function AfterBindCodeTableData() {
                         "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši' onclick='DeleteCodeTableRecord(" + tempId.toString() + "); return false;'>"
                         + "<span class='glyphicon glyphicon-remove'></span>"
                         + "</button>";
-            buttonsHTML += "</div></td>"
+            buttonsHTML += "</div></td>";
 
             $(element).append(buttonsHTML);
         }
@@ -1572,7 +1595,7 @@ function SaveCodeTableRecord() {
 function ClearModalCase() {
     $("#modalCase").removeAttr("edit_id");
 
-    $("#txtCase_NasBroj").val("(biti će automatski dodijeljen)");
+    $("#txtCase_NasBroj").val("");
     $("#ddlCase_Kategorija").val(-1);
     $("#ddlCase_Uloga").val(-1);
     $("#cbCase_PrivremeniZastupnici").prop("checked", false);
@@ -1846,7 +1869,7 @@ function AfterBindCaseParties() {
                             "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši stranku' onclick='DeleteCaseParty(" + (index - 1) + "); return false;'>"
                             + "<span class='glyphicon glyphicon-remove'></span>"
                             + "</button>";
-                buttonsHTML += "</div></td>"
+                buttonsHTML += "</div></td>";
 
                 $(element).append(buttonsHTML);
             }
@@ -1932,7 +1955,7 @@ function AfterBindCaseNotes() {
                             "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši bilješku' onclick='DeleteCaseNote(" + (index - 1) + "); return false;'>"
                             + "<span class='glyphicon glyphicon-remove'></span>"
                             + "</button>";
-                buttonsHTML += "</div></td>"
+                buttonsHTML += "</div></td>";
 
                 $(element).append(buttonsHTML);
             }
@@ -2020,7 +2043,7 @@ function AfterBindCaseRadnje() {
                             "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši radnju' onclick='DeleteCaseRadnja(" + (index - 1) + "); return false;'>"
                             + "<span class='glyphicon glyphicon-remove'></span>"
                             + "</button>";
-                buttonsHTML += "</div></td>"
+                buttonsHTML += "</div></td>";
 
                 $(element).append(buttonsHTML);
             }
@@ -2108,7 +2131,7 @@ function AfterBindCaseExpenses() {
                             "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši trošak' onclick='DeleteCaseExpense(" + (index - 1) + "); return false;'>"
                             + "<span class='glyphicon glyphicon-remove'></span>"
                             + "</button>";
-                buttonsHTML += "</div></td>"
+                buttonsHTML += "</div></td>";
 
                 $(element).append(buttonsHTML);
             }

@@ -309,12 +309,29 @@ li > a.menu-item {
     width: 200px;
 }
 
+.fixed-width-label-narrow {
+    width: 120px;
+}
+
 .fixed-width-field {
     min-width: 300px;
+    margin-top: 5px;
+}
+
+select.fixed-width-field {
+    max-width: 300px;
+}
+
+.dynamic-width-field {
+    margin-top: 5px;
 }
 
 .form-control {
     max-width: 500px;
+}
+
+.input-group {
+    padding-top: 5px;
 }
 
 .alert {
@@ -334,8 +351,12 @@ li > a.menu-item {
     color: green;
 }
 
+.custom-table-button-template {
+    color: blue;
+}
+
 .modal-in-title {
-    text-decoration: underline;
+    text-transform: uppercase;
     margin-bottom: 20px;
 }
 
@@ -375,4 +396,25 @@ li > a.menu-item {
 .modal-admin {
     margin-top: 50px;
     max-width: 1220px;
+}
+
+.yellowish-background {
+    background-color: #ffffdd;
+}
+
+.gray-background {
+    background-color: #dddddd;
+}
+
+.white-background {
+    background-color: #ffffff;
+}
+
+.a-case-tab {
+    text-transform: uppercase;
+    color: #000000 !important;
+}
+
+.modal-title {
+    font-weight: bold;
 }
