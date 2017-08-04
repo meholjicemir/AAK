@@ -66,7 +66,7 @@
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Stanja predmeta', 'StanjaPredmeta'); return false;">Stanja predmeta</a></li>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Načini okončanja', 'NaciniOkoncanja'); return false;">Načini okončanja</a></li>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Vrste troškova', 'VrsteTroskova'); return false;">Vrste troškova</a></li>
-                            <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Vrste radnji', 'VrsteRadnji'); return false;">Vrste radnji</a></li>
+                            <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Vrste radnji', 'VrsteRadnji', undefined, 'Zvjezdica na kraju naziva vrste radnje znači da se vrsta radnje prikazuje na početnoj stranici.'); return false;">Vrste radnji</a></li>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Tipovi dokumenata', 'TipoviDokumenata'); return false;">Tipovi dokumenata</a></li>
                             <%--<li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Načini obavljanja radnje', 'NaciniObavljanjaRadnje'); return false;">Načini obavljanja radnje</a></li>--%>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Države', 'Drzave'); return false;">Države</a></li>
@@ -402,7 +402,7 @@
                             </ul>
                             <div class="other-tab" id="divRadnje">
                                 <div id="divRadnjeAlert"></div>
-                                <form class="form-inline only-office-admin" role="form">
+                                <form class="form-inline" role="form">
                                     <label for="ddlCase_Radnja_VrstaRadnje">Vrsta Radnje:</label>
                                     <select id="ddlCase_Radnja_VrstaRadnje" class="form-control">
                                         <option value="-1">-----</option>
@@ -459,15 +459,15 @@
                                 <br />
                                 <table id="tblCaseExpenses" class="table table-condensed" style="word-break: break-word;"></table>
                             </div>
-                            <div class="other-tab case-column-for-predato-uz" style="display: none;" id="divDokumenti">
+                            <div class="other-tab" style="display: none;" id="divDokumenti">
                                 <div id="divDocumentsAlert"></div>
-                                <form class="form-inline only-office-admin" role="form">
+                                <form class="form-inline" role="form">
                                     <label for="ddlCase_Document_TipDokumenta">Tip dokumenta:</label>
                                     <select id="ddlCase_Document_TipDokumenta" class="form-control">
                                         <option value="-1">-----</option>
                                     </select>
                                     <span class="form-group has-feedback">
-                                        <label for="txtCase_Document_PredatoUz" class="fixed-width-label">Predato uz:</label>
+                                        <label for="txtCase_Document_PredatoUz">Predato uz:</label>
                                         <input type="text" class="form-control fixed-width-field" id="txtCase_Document_PredatoUz" />
                                         <i id="spinner_txtCase_Document_PredatoUz" class="glyphicon glyphicon-refresh spinning form-control-feedback" style="display: none;"></i>
                                     </span>
@@ -502,7 +502,18 @@
                                 <table id="tblCaseNotes" class="table table-condensed" style="word-break: break-word;"></table>
                             </div>
                             <div class="other-tab" style="display: none;" id="divVeze">
-                                Veze
+                                <form class="form-inline" role="form">
+                                    <span class="form-group has-feedback">
+                                        <label for="txtCase_Connection_ConnectionCase">Veza prema predmetu:</label>
+                                        <input type="text" class="form-control fixed-width-field" id="txtCase_Connection_ConnectionCase" />
+                                        <i id="spinner_txtCase_Connection_ConnectionCase" class="glyphicon glyphicon-refresh spinning form-control-feedback" style="display: none;"></i>
+                                    </span>
+                                    <label for="txtCase_Connection_Note">Bilješke:</label>
+                                    <input type="text" class="form-control fixed-width-field" id="txtCase_Connection_Note" />
+                                    <button id="btnAppendConnectionToCase" type="button" class="btn btn-success" disabled="disabled" onclick="AppendConnectionToCase(); return false;">Dodaj</button>
+                                </form>
+                                <br />
+                                <table id="tblCaseConnections" class="table table-condensed" style="word-break: break-word;"></table>
                             </div>
                         </div>
                     </div>

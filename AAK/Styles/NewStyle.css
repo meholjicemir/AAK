@@ -299,6 +299,7 @@ li > a.menu-item {
     text-align: center;
     background-color: white;
     opacity: 0.9;
+    z-index: 1000;
 }
 
 .menu-div {
@@ -417,4 +418,8 @@ select.fixed-width-field {
 
 .modal-title {
     font-weight: bold;
+}
+
+.spinning {
+    margin-top: 5px;
 }

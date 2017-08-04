@@ -176,6 +176,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\CaseActivityController.cs" />
     <Compile Include="Controllers\CodeTableController.cs" />
+    <Compile Include="Controllers\ConnectionController.cs" />
     <Compile Include="Controllers\DocumentController.cs" />
     <Compile Include="Controllers\ExpenseController.cs" />
     <Compile Include="Controllers\LiceController.cs" />
@@ -190,6 +191,7 @@
     <Compile Include="Controllers\UserGroupController.cs" />
     <Compile Include="DataProviders\CaseActivities.cs" />
     <Compile Include="DataProviders\CodeTables.cs" />
+    <Compile Include="DataProviders\Connections.cs" />
     <Compile Include="DataProviders\Documents.cs" />
     <Compile Include="DataProviders\Expenses.cs" />
     <Compile Include="DataProviders\Lica.cs" />
@@ -218,6 +220,7 @@
     </Compile>
     <Compile Include="Models\CaseActivity.cs" />
     <Compile Include="Models\CodeTableData.cs" />
+    <Compile Include="Models\Connection.cs" />
     <Compile Include="Models\Document.cs" />
     <Compile Include="Models\Expense.cs" />
     <Compile Include="Models\Helper\CodeTable.cs" />

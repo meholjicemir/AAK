@@ -67,6 +67,7 @@ namespace AAK.Models
         public List<Expense> Expenses { get; set; }
         public List<Radnja> Radnje { get; set; }
         public List<Document> Documents { get; set; }
+        public List<Connection> Connections { get; set; }
 
         public Predmet()
         {
@@ -128,6 +129,7 @@ namespace AAK.Models
             this.Expenses = new List<Expense>();
             this.Radnje = new List<Radnja>();
             this.Documents = new List<Document>();
+            this.Connections = new List<Connection>();
         }
     }
 }

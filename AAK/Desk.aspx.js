@@ -1,6 +1,7 @@
 ﻿/// <reference path="Scripts/Utilities.js" />
 
 var AppPath = window.location.href.split('?')[0].toLowerCase().replace("/desk.aspx", "") + "/";
+var CurrentModule = "home";
 var CurrentUser = null;
 var CurrentCodeTable = null;
 var Sudovi = null;
@@ -102,7 +103,8 @@ function RenderApp(user) {
     $("#divAll").show();
 
     if (hasCaseRights) {
-        switch ((module || "").toLowerCase()) {
+        CurrentModule = (module || "").toLowerCase();
+        switch (CurrentModule) {
             case "home":
                 MenuHome();
                 break;
@@ -125,6 +127,7 @@ function RenderApp(user) {
                 MenuReports();
                 break;
             default:
+                CurrentModule = "home";
                 MenuHome();
                 break;
         }
@@ -248,7 +251,7 @@ function AfterBindRadnje() {
             }
 
             $(element).dblclick(function () {
-                alert("Otvaranje predmeta " + tempCaseId.toString());
+                EditCase(tempCaseId);
             });
         }
     });
@@ -373,7 +376,7 @@ function AfterBindCaseActivities() {
             }
 
             $(element).dblclick(function () {
-                alert("Otvaranje predmeta " + tempCaseId.toString());
+                EditCase(tempCaseId);
             });
         }
     });
@@ -409,36 +412,46 @@ function DeleteCaseActivity(id) {
     });
 }
 
+var menuCases_DataLoaded = false;
+function MenuCases_LoadDataOnly() {
+    if (menuCases_DataLoaded === false) {
+        // Load code table data
+        LoadCodeTableData("KategorijePredmeta", $("#ddlCase_Kategorija"));
+        LoadCodeTableData("Sudovi", $("#ddlCase_Sud"), "Sud");
+        LoadCodeTableData("Sudije", $("#ddlCase_Sudija"));
+        LoadCodeTableData("Uloge", $("#ddlCase_Uloga"));
+        LoadCodeTableData("Uloge", $("#ddlCase_UlogaLica"));
+        LoadCodeTableData("VrstePredmeta", $("#ddlCase_VrstaPredmeta"));
+        //LoadCodeTableData("StanjaPredmeta", $("#ddlCase_StanjePredmeta"));
+        LoadCodeTableData("vLica", $("#ddlCase_Lice"), "Naziv");
+        LoadCodeTableData("NaciniOkoncanja", $("#ddlCase_NacinOkoncanja"));
+        LoadCodeTableData("VrsteTroskova", $("#ddlCase_ExpenseVrstaTroska"));
+        LoadCodeTableData("VrsteRadnji", $("#ddlCase_Radnja_VrstaRadnje"));
+        LoadCodeTableData("TipoviDokumenata", $("#ddlCase_Document_TipDokumenta"));
+
+        SetUpStanjeAutocomplete();
+        SetUpPredatoUzAutocomplete();
+        SetUpCaseConnectionAutocomplete();
+
+        $("#ddlCase_Uspjeh").html("");
+        for (var i = 0; i <= 100; i++)
+            $("#ddlCase_Uspjeh").append($("<option " + (i == 0 ? "selected='selected'" : "") + "></option>").attr("value", i.toString() + '%').text(i.toString() + '%'));
+        menuCases_DataLoaded = true;
+    }
+}
+
 function MenuCases() {
     DeactivateAllMenuItems();
     $("#liMenuCases").addClass("active");
     $(".menu-div").hide();
     $("#divCases").show();
 
-    // Load code table data
-    LoadCodeTableData("KategorijePredmeta", $("#ddlCase_Kategorija"));
-    LoadCodeTableData("Sudovi", $("#ddlCase_Sud"), "Sud");
-    LoadCodeTableData("Sudije", $("#ddlCase_Sudija"));
-    LoadCodeTableData("Uloge", $("#ddlCase_Uloga"));
-    LoadCodeTableData("Uloge", $("#ddlCase_UlogaLica"));
-    LoadCodeTableData("VrstePredmeta", $("#ddlCase_VrstaPredmeta"));
-    //LoadCodeTableData("StanjaPredmeta", $("#ddlCase_StanjePredmeta"));
-    LoadCodeTableData("vLica", $("#ddlCase_Lice"), "Naziv");
-    LoadCodeTableData("NaciniOkoncanja", $("#ddlCase_NacinOkoncanja"));
-    LoadCodeTableData("VrsteTroskova", $("#ddlCase_ExpenseVrstaTroska"));
-    LoadCodeTableData("VrsteRadnji", $("#ddlCase_Radnja_VrstaRadnje"));
-    LoadCodeTableData("TipoviDokumenata", $("#ddlCase_Document_TipDokumenta"));
-
-    SetUpStanjeAutocomplete();
-    SetUpPredatoUzAutocomplete();
-
-    for (var i = 0; i <= 100; i++)
-        $("#ddlCase_Uspjeh").append($("<option " + (i == 0 ? "selected='selected'" : "") + "></option>").attr("value", i.toString() + '%').text(i.toString() + '%'));
+    MenuCases_LoadDataOnly();
 
     LoadCases();
 }
 
-function LoadCases() {
+function LoadCases(caseId, callback) {
     ShowLoaderCenter();
 
     var _columns = [
@@ -468,11 +481,15 @@ function LoadCases() {
 
     $("#tblCases").bootstrapTable("destroy");
 
+    if (caseId == undefined)
+        caseId = null;
+
     $.get(AppPath + "api/predmet", {
         UserId: CurrentUser.Id,
         Filter: $("#txtCasesFilter").val(),
         FilterNasBroj: $("#txtCasesFilterNasBroj").val(),
-        RowCount: $("#ddlCasesRowCount").val()
+        RowCount: $("#ddlCasesRowCount").val(),
+        CaseId: caseId
     })
     .done(function (data) {
         if (data != null && data.length > 0) {
@@ -519,6 +536,8 @@ function LoadCases() {
                         escape: false,
                         onPostBody: function () {
                             AfterBindCases();
+                            if (callback != undefined && typeof (callback) == "function")
+                                callback();
                             return false;
                         }
                     });
@@ -1038,8 +1057,10 @@ function SaveCaseActivity() {
             CreatedBy: CurrentUser.Id
         })
         .done(function (data) {
-            if (data && data > 0)
+            if (data && data > 0) {
+                LoadCaseActivities();
                 HideLoaderCenter();
+            }
             else {
                 HideLoaderCenter();
                 ShowAlert("danger", "Greška pri spašavanju pozivanja predmeta.");
@@ -1081,7 +1102,8 @@ function SaveCase() {
         Notes: CurrentCase.Notes,
         Expenses: CurrentCase.Expenses,
         Radnje: CurrentCase.Radnje,
-        Documents: CurrentCase.Documents
+        Documents: CurrentCase.Documents,
+        Connections: CurrentCase.Connections
     };
 
     var tempId = $("#modalCase").attr("edit_id");
@@ -1097,7 +1119,10 @@ function SaveCase() {
             ShowAlert("success", "Uspješno spašen predmet.");
             SaveCaseActivity();
             HideLoaderCenter();
-            LoadCases();
+            if (CurrentModule == "home") // Case activities loaded in SaveCaseActivity()
+                LoadRadnje();
+            else if (CurrentModule == "cases")
+                LoadCases();
         }
         else {
             HideLoaderCenter();
@@ -1145,7 +1170,13 @@ function EditCase(id) {
     $("#txtCase_Document_PredatoUz").val("");
     $("#txtCase_Document_Note").val("");
     $("#txtCase_Document_DocumentLink").val("");
-    $("#btnAppendDocumentToCase").val("");
+    $("#btnAppendDocumentToCase").attr("disabled", "disabled");
+
+    // Connections
+    $("#txtCase_Connection_ConnectionCase").val("");
+    $("#txtCase_Connection_ConnectionCase").attr("caseId", -1);
+    $("#txtCase_Connection_Note").val("");
+    $("#btnAppendConnectionToCase").attr("disabled", "disabled");
 
     $("#txtCase_CaseActivity_ActivityDate").val("");
     $("#txtCase_CaseActivity_Note").val("");
@@ -1157,109 +1188,136 @@ function EditCase(id) {
     if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0)
         $("#btnSaveCase").show();
 
-    $(Predmeti).each(function (index, obj) {
-        if (obj.Id == id) {
+    if (Predmeti == null) {
+        MenuCases_LoadDataOnly();
+        LoadCases(id, function () { EditCase(id); });
+    }
+    else {
+        var caseFound = false;
+        $(Predmeti).each(function (index, obj) {
+            if (obj.Id == id) {
+                caseFound = true;
+                CurrentCase = $.extend(true, {}, obj);
+                $("#txtCase_NasBroj").val(CurrentCase.NasBroj);
+                $("#ddlCase_Kategorija").val(CurrentCase.KategorijaPredmetaId);
+                $("#ddlCase_Uloga").val(CurrentCase.UlogaId);
+                $("#cbCase_PrivremeniZastupnici").prop("checked", CurrentCase.PrivremeniZastupnici);
+                $("#txtCase_BrojPredmeta").val(CurrentCase.BrojPredmeta);
+                $("#ddlCase_Sud").val(CurrentCase.SudId);
+                $("#ddlCase_Sudija").val(CurrentCase.SudijaId);
+                $("#txtCase_VrijednostSpora").val(CurrentCase.VrijednostSpora);
+                $("#ddlCase_VrstaPredmeta").val(CurrentCase.VrstaPredmetaId);
+                $("#txtCase_DatumStanjaPredmeta").val(CurrentCase.DatumStanjaPredmeta);
+                //$("#ddlCase_StanjePredmeta").val(CurrentCase.StanjePredmetaId);
+                $("#txtCase_StanjePredmeta").val(CurrentCase.StanjePredmetaName);
 
-            CurrentCase = $.extend(true, {}, obj);
-            $("#txtCase_NasBroj").val(CurrentCase.NasBroj);
-            $("#ddlCase_Kategorija").val(CurrentCase.KategorijaPredmetaId);
-            $("#ddlCase_Uloga").val(CurrentCase.UlogaId);
-            $("#cbCase_PrivremeniZastupnici").prop("checked", CurrentCase.PrivremeniZastupnici);
-            $("#txtCase_BrojPredmeta").val(CurrentCase.BrojPredmeta);
-            $("#ddlCase_Sud").val(CurrentCase.SudId);
-            $("#ddlCase_Sudija").val(CurrentCase.SudijaId);
-            $("#txtCase_VrijednostSpora").val(CurrentCase.VrijednostSpora);
-            $("#ddlCase_VrstaPredmeta").val(CurrentCase.VrstaPredmetaId);
-            $("#txtCase_DatumStanjaPredmeta").val(CurrentCase.DatumStanjaPredmeta);
-            //$("#ddlCase_StanjePredmeta").val(CurrentCase.StanjePredmetaId);
-            $("#txtCase_StanjePredmeta").val(CurrentCase.StanjePredmetaName);
+                $("#ddlCase_NacinOkoncanja").val(CurrentCase.NacinOkoncanjaId);
+                $("#ddlCase_Uspjeh").val(CurrentCase.Uspjeh);
+                $("#txtCase_DatumArhiviranja").val(CurrentCase.DatumArhiviranja);
+                $("#txtCase_BrojArhive").val(CurrentCase.BrojArhive);
+                $("#txtCase_BrojArhiveRegistrator").val(CurrentCase.BrojArhiveRegistrator);
 
-            $("#ddlCase_NacinOkoncanja").val(CurrentCase.NacinOkoncanjaId);
-            $("#ddlCase_Uspjeh").val(CurrentCase.Uspjeh);
-            $("#txtCase_DatumArhiviranja").val(CurrentCase.DatumArhiviranja);
-            $("#txtCase_BrojArhive").val(CurrentCase.BrojArhive);
-            $("#txtCase_BrojArhiveRegistrator").val(CurrentCase.BrojArhiveRegistrator);
+                $("#txtCase_PravniOsnov").val(CurrentCase.PravniOsnov);
 
-            $("#txtCase_PravniOsnov").val(CurrentCase.PravniOsnov);
+                $("#modalCase").find(".modal-title").html("Izmijeni predmet: <span style='font-style: italic; color: gray;'>" + CurrentCase.NasBroj + "</span>");
 
-            $("#modalCase").find(".modal-title").html("Izmijeni predmet: <span style='font-style: italic; color: gray;'>" + CurrentCase.NasBroj + "</span>");
+                ShowLoaderCenter();
+                $.get(AppPath + "api/licepredmet", {
+                    Id: CurrentCase.Id
+                })
+                .done(function (data) {
+                    CurrentCase.Parties = data;
+                    BindCaseParties(CurrentCase.Parties);
+                    HideLoaderCenter();
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    HideLoaderCenter();
+                    alert("error loading parties");
+                });
 
-            ShowLoaderCenter();
-            $.get(AppPath + "api/licepredmet", {
-                Id: CurrentCase.Id
-            })
-            .done(function (data) {
-                CurrentCase.Parties = data;
-                BindCaseParties(CurrentCase.Parties);
-                HideLoaderCenter();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                HideLoaderCenter();
-                alert("error loading parties");
-            });
+                ShowLoaderCenter();
+                $.get(AppPath + "api/note", {
+                    CaseId: CurrentCase.Id
+                })
+                .done(function (data) {
+                    CurrentCase.Notes = data;
+                    BindCaseNotes(CurrentCase.Notes);
+                    HideLoaderCenter();
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    HideLoaderCenter();
+                    alert("error loading notes");
+                });
 
-            ShowLoaderCenter();
-            $.get(AppPath + "api/note", {
-                CaseId: CurrentCase.Id
-            })
-            .done(function (data) {
-                CurrentCase.Notes = data;
-                BindCaseNotes(CurrentCase.Notes);
-                HideLoaderCenter();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                HideLoaderCenter();
-                alert("error loading notes");
-            });
+                ShowLoaderCenter();
+                $.get(AppPath + "api/expense", {
+                    CaseId: CurrentCase.Id
+                })
+                .done(function (data) {
+                    CurrentCase.Expenses = data;
+                    BindCaseExpenses(CurrentCase.Expenses);
+                    HideLoaderCenter();
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    HideLoaderCenter();
+                    alert("error loading expenses");
+                });
 
-            ShowLoaderCenter();
-            $.get(AppPath + "api/expense", {
-                CaseId: CurrentCase.Id
-            })
-            .done(function (data) {
-                CurrentCase.Expenses = data;
-                BindCaseExpenses(CurrentCase.Expenses);
-                HideLoaderCenter();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                HideLoaderCenter();
-                alert("error loading expenses");
-            });
+                ShowLoaderCenter();
+                $.get(AppPath + "api/radnja", {
+                    PredmetId: CurrentCase.Id,
+                    UserId: CurrentUser.Id
+                })
+                .done(function (data) {
+                    CurrentCase.Radnje = data;
+                    BindCaseRadnje(CurrentCase.Radnje);
+                    HideLoaderCenter();
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    HideLoaderCenter();
+                    alert("error loading radnje");
+                });
 
-            ShowLoaderCenter();
-            $.get(AppPath + "api/radnja", {
-                PredmetId: CurrentCase.Id,
-                UserId: CurrentUser.Id
-            })
-            .done(function (data) {
-                CurrentCase.Radnje = data;
-                BindCaseRadnje(CurrentCase.Radnje);
-                HideLoaderCenter();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                HideLoaderCenter();
-                alert("error loading radnje");
-            });
+                ShowLoaderCenter();
+                $.get(AppPath + "api/document", {
+                    CaseId: CurrentCase.Id,
+                    UserId: CurrentUser.Id
+                })
+                .done(function (data) {
+                    CurrentCase.Documents = data;
+                    BindCaseDocuments(CurrentCase.Documents);
+                    HideLoaderCenter();
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    HideLoaderCenter();
+                    alert("error loading documents");
+                });
 
-            ShowLoaderCenter();
-            $.get(AppPath + "api/document", {
-                CaseId: CurrentCase.Id,
-                UserId: CurrentUser.Id
-            })
-            .done(function (data) {
-                CurrentCase.Documents = data;
-                BindCaseDocuments(CurrentCase.Documents);
-                HideLoaderCenter();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                HideLoaderCenter();
-                alert("error loading documents");
-            });
+                ShowLoaderCenter();
+                $.get(AppPath + "api/connection", {
+                    CaseId: CurrentCase.Id,
+                    UserId: CurrentUser.Id
+                })
+                .done(function (data) {
+                    CurrentCase.Connections = data;
+                    BindCaseConnections(CurrentCase.Connections);
+                    HideLoaderCenter();
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    HideLoaderCenter();
+                    alert("error loading veze");
+                });
 
-            $("#btnOpenModalEditCase").click();
-            return false; // break loop
-        }
-    });
+                $("#btnOpenModalEditCase").click();
+                return false; // break loop
+            }
+
+            if (index == Predmeti.length - 1 && caseFound === false) {
+                MenuCases_LoadDataOnly();
+                LoadCases(id, function () { EditCase(id); });
+            }
+        });
+    }
 }
 
 function GenerateTemplateForCase(id) {
@@ -1454,7 +1512,7 @@ function LoadCodeTableData(tableName, dropDown, columnName) {
     });
 }
 
-function LoadCodeTableUI(element, title, tableName, columnName) {
+function LoadCodeTableUI(element, title, tableName, columnName, remark) {
     $(".menu-item").removeClass("active");
     $("#liMenuCodeTables").addClass("active");
     $(".menu-sub-item").css("background-color", "");
@@ -1465,10 +1523,14 @@ function LoadCodeTableUI(element, title, tableName, columnName) {
         Element: element,
         Title: title,
         TableName: tableName,
-        ColumnName: columnName
+        ColumnName: columnName,
+        Remark: remark
     };
 
-    $("#divCodeTable").find(".panel-heading").html("<strong>" + title + "</strong>");
+    $("#divCodeTable").find(".panel-heading").html("<strong style='font-size:1.2em;'>" + title + "</strong>");
+
+    if (remark != undefined && remark != null)
+        $("#divCodeTable").find(".panel-heading").append("<br><span>(" + remark + ")</span>");
 
     ShowLoaderCenter();
 
@@ -1670,6 +1732,19 @@ function ClearModalCase() {
     $("#txtCase_Radnja_DocumentLink").val("");
     $("#btnAppendRadnjaToCase").attr("disabled", "disabled");
 
+    // Documents
+    $("#ddlCase_Document_TipDokumenta").val(-1);
+    $("#txtCase_Document_PredatoUz").val("");
+    $("#txtCase_Document_Note").val("");
+    $("#txtCase_Document_DocumentLink").val("");
+    $("#btnAppendDocumentToCase").attr("disabled", "disabled");
+
+    // Connections
+    $("#txtCase_Connection_ConnectionCase").val("");
+    $("#txtCase_Connection_ConnectionCase").attr("caseId", -1);
+    $("#txtCase_Connection_Note").val("");
+    $("#btnAppendConnectionToCase").attr("disabled", "disabled");
+
     $("#modalCase").find(".modal-title").html("Novi predmet");
     $("#tblCaseParties").bootstrapTable("destroy");
 
@@ -1814,32 +1889,16 @@ function StartBuildingNewCase() {
     CurrentCase.Expenses = [];
     CurrentCase.Radnje = [];
     CurrentCase.Documents = [];
+    CurrentCase.Connections = [];
 
     ClearModalCase();
-
-    //CurrentCase = {};
-    //ShowLoaderCenter();
-    //$.get(AppPath + "api/nasbroj")
-    //.done(function (data) {
-    //    if (data && data > 0) {
-    //        HideLoaderCenter();
-    //        $("#txtCase_NasBroj").val(data);
-    //    }
-    //    else {
-    //        HideLoaderCenter();
-    //        ShowAlert("danger", 'Greška pri generisanju nove vrijednosti za polje "Naš broj". Molim unesite ga ručno.', undefined, undefined, $("#divNewCaseModalBodyTop"));
-    //        $("#txtCase_NasBroj").removeAttr("disabled");
-    //    }
-    //})
-    //.fail(function (jqXHR, textStatus, errorThrown) {
-    //    HideLoaderCenter();
-    //    ShowAlert("danger", 'Greška pri generisanju nove vrijednosti za polje "Naš broj". Molim unesite ga ručno.', undefined, undefined, $("#divNewCaseModalBodyTop"));
-    //    $("#txtCase_NasBroj").removeAttr("disabled");
-    //});
 
     BindCaseParties([]);
     BindCaseNotes([]);
     BindCaseExpenses([]);
+    BindCaseRadnje([]);
+    BindCaseDocuments([]);
+    BindCaseConnections([]);
 }
 
 function AppendPartyToCase() {
@@ -1998,6 +2057,79 @@ function DeleteCaseNote(index) {
     BindCaseNotes(CurrentCase.Notes);
 }
 
+function AppendConnectionToCase() {
+    if ($("#txtCase_Connection_ConnectionCase").attr("caseId") != undefined && $("#txtCase_Connection_ConnectionCase").attr("caseId") != "") {
+
+        if (CurrentCase.Connections == undefined)
+            CurrentCase.Connections = [];
+
+        CurrentCase.Connections.push({
+            ConnectionCaseId: $("#txtCase_Connection_ConnectionCase").attr("caseId"),
+            ConnectionCaseName: $("#txtCase_Connection_ConnectionCase").val(),
+            Note: $("#txtCase_Connection_Note").val(),
+            CaseId: CurrentCase.Id
+        });
+
+        BindCaseConnections(CurrentCase.Connections);
+    }
+}
+
+function BindCaseConnections(_data) {
+    var _columns = [
+        { field: 'ConnectionCaseName', title: 'Veza prema predmetu', titleTooltip: 'Veza prema predmetu', sortable: true },
+        { field: 'Note', title: 'Bilješke', titleTooltip: 'Bilješke', sortable: true }
+    ];
+
+    $("#tblCaseConnections").bootstrapTable("destroy");
+
+    if (_data && _data.length > 0) {
+        $("#tblCaseConnections").bootstrapTable({
+            data: _data,
+            striped: true,
+            columns: _columns,
+            escape: false,
+            onPostBody: function () {
+                AfterBindCaseConnections();
+                return false;
+            }
+        });
+    }
+    else {
+        $("#tblCaseConnections").bootstrapTable({
+            data: [],
+            striped: true,
+            columns: _columns
+        });
+    }
+}
+
+function AfterBindCaseConnections() {
+    $("#tblCaseConnections").find("tr").each(function (index, element) {
+        if (index == 0) {
+            if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0 && CurrentCase.Connections.length > 0)
+                if ($("#caseConnectionsEmptyHeader").length == 0)
+                    $(element).append("<th id='caseConnectionsEmptyHeader'></th>");
+        }
+        else if (CurrentCase.Connections.length > 0) {
+            if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
+                var buttonsHTML = "<td style='width: 50px;'><div class='btn-group pull-right'>";
+                buttonsHTML +=
+                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši vezu' onclick='DeleteCaseConnection(" + (index - 1) + "); return false;'>"
+                            + "<span class='glyphicon glyphicon-remove'></span>"
+                            + "</button>";
+                buttonsHTML += "</div></td>";
+
+                $(element).append(buttonsHTML);
+            }
+        }
+    });
+}
+
+function DeleteCaseConnection(index) {
+    CurrentCase.Connections.splice(index, 1);
+    BindCaseConnections(CurrentCase.Connections);
+}
+
 function AppendDocumentToCase() {
     if ($("#ddlCase_Document_TipDokumenta").val() != -1 && $("#txtCase_Document_DocumentLink").val() != "") {
 
@@ -2012,7 +2144,7 @@ function AppendDocumentToCase() {
             Note: $("#txtCase_Document_Note").val(),
             DocumentLink: $("#txtCase_Document_DocumentLink").val().replace(CurrentUser.GoogleDriveLocalFolderPath, ""),
             AbsoluteDocumentLink: $("#txtCase_Document_DocumentLink").val(),
-            PredmetId: CurrentCase.Id
+            CaseId: CurrentCase.Id
         });
 
         BindCaseDocuments(CurrentCase.Documents);
@@ -2384,7 +2516,44 @@ function SetUpPredatoUzAutocomplete() {
             });
         },
         delay: 500,
-        appendTo: ".case-column-for-predato-uz"
+        appendTo: "#divDokumenti"
+    });
+}
+
+function SetUpCaseConnectionAutocomplete() {
+    $("#txtCase_Connection_ConnectionCase").autocomplete({
+        source: function (request, response) {
+            $("#spinner_txtCase_Connection_ConnectionCase").show();
+
+            $.get(AppPath + "api/codetable", {
+                Name: "vCases",
+                ColumnName: "Name",
+                Filter: $("#txtCase_Connection_ConnectionCase").val()
+            })
+            .done(function (data) {
+                response($.map(data, function (item) {
+                    return {
+                        label: item.Name,
+                        value: item.Name,
+                        caseId: item.Id
+                    };
+                }));
+                $("#spinner_txtCase_Connection_ConnectionCase").hide();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                alert("error");
+            });
+        },
+        delay: 500,
+        appendTo: "#divVeze",
+        select: function (event, ui) {
+            $("#txtCase_Connection_ConnectionCase").attr("caseId", ui.item.caseId);
+
+            if ($("#txtCase_Connection_ConnectionCase").attr("caseId") != undefined && $("#txtCase_Connection_ConnectionCase").attr("caseId") != "")
+                $("#btnAppendConnectionToCase").removeAttr("disabled");
+            else
+                $("#btnAppendConnectionToCase").attr("disabled", "disabled");
+        },
     });
 }
 

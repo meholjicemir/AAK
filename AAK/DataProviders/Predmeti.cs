@@ -9,13 +9,14 @@ namespace AAK.DataProviders
 {
     public static class Predmeti
     {
-        public static List<Predmet> Predmeti_GetAll(int userId, string filter, int? filterNasBroj, int rowCount)
+        public static List<Predmet> Predmeti_GetAll(int userId, string filter, int? filterNasBroj, int rowCount, int? caseId)
         {
             DBUtility.ParameterCollection collection = new DBUtility.ParameterCollection();
             collection.AddParameter<int>("userId", userId);
             collection.AddParameter<string>("filter", filter ?? "");
             collection.AddParameter<int?>("filterNasBroj", filterNasBroj);
             collection.AddParameter<int>("rowCount", rowCount);
+            collection.AddParameter<int?>("caseId", caseId);
 
             DataTable dt = DBUtility.Utility.ExecuteStoredProcedure("Predmeti_GetAll", ref collection);
             return DBUtility.Utility.ParseDataTable<Predmet>(dt);
@@ -77,6 +78,18 @@ namespace AAK.DataProviders
                 {
                     radnja.PredmetId = insertedId;
                     Radnje.Radnja_Insert(radnja);
+                }
+
+                foreach (Document document in predmet.Documents)
+                {
+                    document.CaseId = insertedId;
+                    Documents.Document_Insert(document);
+                }
+
+                foreach (Connection connection in predmet.Connections)
+                {
+                    connection.CaseId = insertedId;
+                    Connections.Connection_Insert(connection);
                 }
             }
 
@@ -251,6 +264,32 @@ namespace AAK.DataProviders
                         Documents.Document_Insert(document);
                     else
                         Documents.Document_Update(document);
+                }
+            }
+            #endregion
+
+            #region Connections
+            {
+                List<Connection> existingConnections = Connections.Connections_GetForCase(predmet.Id);
+                Connection temp;
+
+                foreach (Connection document in existingConnections)
+                {
+                    temp = (from Connection tempConnection in predmet.Connections
+                            where tempConnection.Id == document.Id
+                            select tempConnection).FirstOrDefault();
+
+                    if (temp == null)
+                        Connections.Connection_Delete(document.Id);
+                }
+
+                foreach (Connection connection in predmet.Connections)
+                {
+                    connection.CaseId = predmet.Id;
+                    if (connection.Id == -1)
+                        Connections.Connection_Insert(connection);
+                    else
+                        Connections.Connection_Update(connection);
                 }
             }
             #endregion

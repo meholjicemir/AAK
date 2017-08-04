@@ -12,7 +12,12 @@ namespace AAK.DataProviders
     {
         public static List<CodeTableData> CodeTable_GetData(CodeTable codeTable)
         {
-            DataTable dt = DBUtility.Utility.ExecuteStoredProcedure<string, string, string>("CodeTable_GetData", "tableName", codeTable.Name, "columnName", codeTable.ColumnName, "filter", codeTable.Filter);
+            DBUtility.ParameterCollection collection = new DBUtility.ParameterCollection();
+            collection.AddParameter<string>("tableName", codeTable.Name);
+            collection.AddParameter<string>("columnName", codeTable.ColumnName);
+            collection.AddParameter<string>("filter", codeTable.Filter);
+
+            DataTable dt = DBUtility.Utility.ExecuteStoredProcedure("CodeTable_GetData", ref collection);
             List<CodeTableData> result = DBUtility.Utility.ParseDataTable<CodeTableData>(dt);
 
             int ordinalNo = 1;
