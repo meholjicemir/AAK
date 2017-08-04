@@ -15,14 +15,16 @@ namespace AAK.DataProviders
             return DBUtility.Utility.ParseDataTable<Radnja>(dt);
         }
 
-        public static List<Radnja> Radnje_GetForCase(int caseId)
+        public static List<Radnja> Radnje_GetForCase(int caseId, int userId)
         {
-            DataTable dt = DBUtility.Utility.ExecuteStoredProcedure<int>("Radnje_GetForCase", "caseId", caseId);
+            DataTable dt = DBUtility.Utility.ExecuteStoredProcedure<int, int>("Radnje_GetForCase", "caseId", caseId, "userId", userId);
             return DBUtility.Utility.ParseDataTable<Radnja>(dt);
         }
 
         public static int? Radnja_Insert(Radnja radnja)
         {
+            radnja.DocumentLink = (radnja.DocumentLink ?? "").TrimStart('\\').TrimStart('/');
+
             DBUtility.ParameterCollection collection = new DBUtility.ParameterCollection();
             collection.AddParameter<int>("caseId", radnja.PredmetId);
             collection.AddParameter<DateTime?>("datumRadnje", radnja.DatumRadnje);
@@ -33,11 +35,14 @@ namespace AAK.DataProviders
             collection.AddParameter<decimal?>("vrijednostRadnje", radnja.VrijednostRadnje);
             collection.AddParameter<int?>("radnjuObavioId", radnja.RadnjuObavioId);
             collection.AddParameter<int?>("nacinObavljanjaId", radnja.NacinObavljanjaId);
+            collection.AddParameter<string>("documentLink", radnja.DocumentLink);
             return DBUtility.Utility.ExecuteStoredProcedure<int>("Radnja_Insert", ref collection);
         }
 
         public static void Radnja_Update(Radnja radnja)
         {
+            radnja.DocumentLink = (radnja.DocumentLink ?? "").TrimStart('\\').TrimStart('/');
+
             DBUtility.ParameterCollection collection = new DBUtility.ParameterCollection();
             collection.AddParameter<int>("caseId", radnja.PredmetId);
             collection.AddParameter<DateTime?>("datumRadnje", radnja.DatumRadnje);
@@ -48,6 +53,7 @@ namespace AAK.DataProviders
             collection.AddParameter<decimal?>("vrijednostRadnje", radnja.VrijednostRadnje);
             collection.AddParameter<int?>("radnjuObavioId", radnja.RadnjuObavioId);
             collection.AddParameter<int?>("nacinObavljanjaId", radnja.NacinObavljanjaId);
+            collection.AddParameter<string>("documentLink", radnja.DocumentLink);
             collection.AddParameter<int>("id", radnja.Id);
             DBUtility.Utility.ExecuteStoredProcedureVoid("Radnja_Update", ref collection);
         }

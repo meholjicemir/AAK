@@ -205,7 +205,7 @@ namespace AAK.DataProviders
 
             #region Radnje
             {
-                List<Radnja> existingRadnje = Radnje.Radnje_GetForCase(predmet.Id);
+                List<Radnja> existingRadnje = Radnje.Radnje_GetForCase(predmet.Id, (int)predmet.ModifiedBy);
                 Radnja temp;
 
                 foreach (Radnja radnja in existingRadnje)
@@ -225,6 +225,32 @@ namespace AAK.DataProviders
                         Radnje.Radnja_Insert(radnja);
                     else
                         Radnje.Radnja_Update(radnja);
+                }
+            }
+            #endregion
+
+            #region Documents
+            {
+                List<Document> existingDocuments = Documents.Documents_GetForCase(predmet.Id, (int)predmet.ModifiedBy);
+                Document temp;
+
+                foreach (Document document in existingDocuments)
+                {
+                    temp = (from Document tempDocument in predmet.Documents
+                            where tempDocument.Id == document.Id
+                            select tempDocument).FirstOrDefault();
+
+                    if (temp == null)
+                        Documents.Document_Delete(document.Id);
+                }
+
+                foreach (Document document in predmet.Documents)
+                {
+                    document.CaseId = predmet.Id;
+                    if (document.Id == -1)
+                        Documents.Document_Insert(document);
+                    else
+                        Documents.Document_Update(document);
                 }
             }
             #endregion

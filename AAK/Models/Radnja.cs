@@ -28,6 +28,11 @@ namespace AAK.Models
         public string CaseFullName { get; set; }
         public int? CaseNasBroj { get; set; }
 
+        public string DocumentLink { get; set; }
+        public string AbsoluteDocumentLink { get; set; }
+
+        public int UserId { get; set; }
+
         public Radnja()
         {
             this.Id = -1;
@@ -50,6 +55,11 @@ namespace AAK.Models
 
             this.CaseFullName = string.Empty;
             this.CaseNasBroj = null;
+
+            this.DocumentLink = string.Empty;
+            this.AbsoluteDocumentLink = string.Empty;
+
+            this.UserId = -1;
         }
     }
 }

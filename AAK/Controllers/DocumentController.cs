@@ -9,19 +9,19 @@ using System.Web.Http;
 
 namespace AAK.Controllers
 {
-    public class RadnjaController : ApiController
+    public class DocumentController : ApiController
     {
         [HttpGet]
-        public HttpResponseMessage Radnje_GetForCase([FromUri]Radnja radnja)
+        public HttpResponseMessage Documents_GetForCase([FromUri]Document document)
         {
             try
             {
-                List<Radnja> result = Radnje.Radnje_GetForCase(radnja.PredmetId, radnja.UserId);
-                return Request.CreateResponse<List<Radnja>>(System.Net.HttpStatusCode.OK, result);
+                List<Document> result = Documents.Documents_GetForCase(document.CaseId, document.UserId);
+                return Request.CreateResponse<List<Document>>(System.Net.HttpStatusCode.OK, result);
             }
             catch (Exception ex)
             {
-                LoggerUtility.Logger.LogException(ex, "Radnje_GetForCase");
+                LoggerUtility.Logger.LogException(ex, "Documents_GetForCase");
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
             }
         }

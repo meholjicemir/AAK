@@ -66,6 +66,7 @@ namespace AAK.Models
         public List<Note> Notes { get; set; }
         public List<Expense> Expenses { get; set; }
         public List<Radnja> Radnje { get; set; }
+        public List<Document> Documents { get; set; }
 
         public Predmet()
         {
@@ -114,7 +115,6 @@ namespace AAK.Models
 
             this.PrivremeniZastupnici = false;
 
-
             this.CreatedBy = null;
             this.CreatedByName = string.Empty;
             this.Created = null;
@@ -127,6 +127,7 @@ namespace AAK.Models
             this.Notes = new List<Note>();
             this.Expenses = new List<Expense>();
             this.Radnje = new List<Radnja>();
+            this.Documents = new List<Document>();
         }
     }
 }

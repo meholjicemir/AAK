@@ -67,6 +67,7 @@
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Načini okončanja', 'NaciniOkoncanja'); return false;">Načini okončanja</a></li>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Vrste troškova', 'VrsteTroskova'); return false;">Vrste troškova</a></li>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Vrste radnji', 'VrsteRadnji'); return false;">Vrste radnji</a></li>
+                            <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Tipovi dokumenata', 'TipoviDokumenata'); return false;">Tipovi dokumenata</a></li>
                             <%--<li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Načini obavljanja radnje', 'NaciniObavljanjaRadnje'); return false;">Načini obavljanja radnje</a></li>--%>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Države', 'Drzave'); return false;">Države</a></li>
                         </ul>
@@ -400,6 +401,7 @@
                                 <li><a href="#" class="a-case-tab" onclick="OpenOtherTab(this, 'divVeze'); return false;">Veze</a></li>
                             </ul>
                             <div class="other-tab" id="divRadnje">
+                                <div id="divRadnjeAlert"></div>
                                 <form class="form-inline only-office-admin" role="form">
                                     <label for="ddlCase_Radnja_VrstaRadnje">Vrsta Radnje:</label>
                                     <select id="ddlCase_Radnja_VrstaRadnje" class="form-control">
@@ -420,9 +422,11 @@
                                         <option value="50%">50%</option>
                                         <option value="100%">100%</option>
                                     </select>--%>
+                                    <br />
                                     <label for="txtCase_Radnja_Biljeske">Bilješke:</label>
-                                    <input type="text" class="form-control" id="txtCase_Radnja_Biljeske" />
-
+                                    <input type="text" class="form-control fixed-width-field" id="txtCase_Radnja_Biljeske" />
+                                    <label for="txtCase_Radnja_DocumentLink">Dokument:</label>
+                                    <input type="file" class="form-control" id="txtCase_Radnja_DocumentLink" />
                                     <button id="btnAppendRadnjaToCase" type="button" class="btn btn-success" disabled="disabled" onclick="AppendRadnjaToCase(); return false;">Dodaj</button>
                                 </form>
                                 <br />
@@ -455,8 +459,27 @@
                                 <br />
                                 <table id="tblCaseExpenses" class="table table-condensed" style="word-break: break-word;"></table>
                             </div>
-                            <div class="other-tab" style="display: none;" id="divDokumenti">
-                                Dokumenti
+                            <div class="other-tab case-column-for-predato-uz" style="display: none;" id="divDokumenti">
+                                <div id="divDocumentsAlert"></div>
+                                <form class="form-inline only-office-admin" role="form">
+                                    <label for="ddlCase_Document_TipDokumenta">Tip dokumenta:</label>
+                                    <select id="ddlCase_Document_TipDokumenta" class="form-control">
+                                        <option value="-1">-----</option>
+                                    </select>
+                                    <span class="form-group has-feedback">
+                                        <label for="txtCase_Document_PredatoUz" class="fixed-width-label">Predato uz:</label>
+                                        <input type="text" class="form-control fixed-width-field" id="txtCase_Document_PredatoUz" />
+                                        <i id="spinner_txtCase_Document_PredatoUz" class="glyphicon glyphicon-refresh spinning form-control-feedback" style="display: none;"></i>
+                                    </span>
+                                    <br />
+                                    <label for="txtCase_Document_Note">Bilješke:</label>
+                                    <input type="text" class="form-control fixed-width-field" id="txtCase_Document_Note" />
+                                    <label for="txtCase_Document_DocumentLink">Dokument:</label>
+                                    <input type="file" class="form-control" id="txtCase_Document_DocumentLink" />
+                                    <button id="btnAppendDocumentToCase" type="button" class="btn btn-success" disabled="disabled" onclick="AppendDocumentToCase(); return false;">Dodaj</button>
+                                </form>
+                                <br />
+                                <table id="tblCaseDocuments" class="table table-condensed" style="word-break: break-word;"></table>
                             </div>
                             <div class="other-tab" style="display: none;" id="divPravniOsnov">
                                 <label for="txtCase_PravniOsnov">Pravni osnov:</label>

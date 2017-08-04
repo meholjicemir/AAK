@@ -43,7 +43,8 @@ function ValidateUser(email) {
                 Email: data.Email,
                 UserGroupCodes: data.UserGroupCodes,
                 FirstName: data.FirstName,
-                LastName: data.LastName
+                LastName: data.LastName,
+                GoogleDriveLocalFolderPath: data.GoogleDriveLocalFolderPath
             };
 
             RenderApp(data);
@@ -426,8 +427,10 @@ function MenuCases() {
     LoadCodeTableData("NaciniOkoncanja", $("#ddlCase_NacinOkoncanja"));
     LoadCodeTableData("VrsteTroskova", $("#ddlCase_ExpenseVrstaTroska"));
     LoadCodeTableData("VrsteRadnji", $("#ddlCase_Radnja_VrstaRadnje"));
+    LoadCodeTableData("TipoviDokumenata", $("#ddlCase_Document_TipDokumenta"));
 
     SetUpStanjeAutocomplete();
+    SetUpPredatoUzAutocomplete();
 
     for (var i = 0; i <= 100; i++)
         $("#ddlCase_Uspjeh").append($("<option " + (i == 0 ? "selected='selected'" : "") + "></option>").attr("value", i.toString() + '%').text(i.toString() + '%'));
@@ -1077,7 +1080,8 @@ function SaveCase() {
         Parties: CurrentCase.Parties,
         Notes: CurrentCase.Notes,
         Expenses: CurrentCase.Expenses,
-        Radnje: CurrentCase.Radnje
+        Radnje: CurrentCase.Radnje,
+        Documents: CurrentCase.Documents
     };
 
     var tempId = $("#modalCase").attr("edit_id");
@@ -1133,7 +1137,15 @@ function EditCase(id) {
     $("#txtCase_Radnja_DatumRadnje").val("");
     //$("#ddlCase_Radnja_Troskovi").val("");
     $("#txtCase_Radnja_Biljeske").val("");
+    $("#txtCase_Radnja_DocumentLink").val("");
     $("#btnAppendRadnjaToCase").attr("disabled", "disabled");
+
+    // Documents
+    $("#ddlCase_Document_TipDokumenta").val(-1);
+    $("#txtCase_Document_PredatoUz").val("");
+    $("#txtCase_Document_Note").val("");
+    $("#txtCase_Document_DocumentLink").val("");
+    $("#btnAppendDocumentToCase").val("");
 
     $("#txtCase_CaseActivity_ActivityDate").val("");
     $("#txtCase_CaseActivity_Note").val("");
@@ -1216,7 +1228,8 @@ function EditCase(id) {
 
             ShowLoaderCenter();
             $.get(AppPath + "api/radnja", {
-                PredmetId: CurrentCase.Id
+                PredmetId: CurrentCase.Id,
+                UserId: CurrentUser.Id
             })
             .done(function (data) {
                 CurrentCase.Radnje = data;
@@ -1226,6 +1239,21 @@ function EditCase(id) {
             .fail(function (jqXHR, textStatus, errorThrown) {
                 HideLoaderCenter();
                 alert("error loading radnje");
+            });
+
+            ShowLoaderCenter();
+            $.get(AppPath + "api/document", {
+                CaseId: CurrentCase.Id,
+                UserId: CurrentUser.Id
+            })
+            .done(function (data) {
+                CurrentCase.Documents = data;
+                BindCaseDocuments(CurrentCase.Documents);
+                HideLoaderCenter();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                HideLoaderCenter();
+                alert("error loading documents");
             });
 
             $("#btnOpenModalEditCase").click();
@@ -1639,6 +1667,7 @@ function ClearModalCase() {
     $("#txtCase_Radnja_DatumRadnje").val("");
     //$("#ddlCase_Radnja_Troskovi").val("");
     $("#txtCase_Radnja_Biljeske").val("");
+    $("#txtCase_Radnja_DocumentLink").val("");
     $("#btnAppendRadnjaToCase").attr("disabled", "disabled");
 
     $("#modalCase").find(".modal-title").html("Novi predmet");
@@ -1784,6 +1813,7 @@ function StartBuildingNewCase() {
     CurrentCase.Notes = [];
     CurrentCase.Expenses = [];
     CurrentCase.Radnje = [];
+    CurrentCase.Documents = [];
 
     ClearModalCase();
 
@@ -1968,6 +1998,93 @@ function DeleteCaseNote(index) {
     BindCaseNotes(CurrentCase.Notes);
 }
 
+function AppendDocumentToCase() {
+    if ($("#ddlCase_Document_TipDokumenta").val() != -1 && $("#txtCase_Document_DocumentLink").val() != "") {
+
+        if (CurrentCase.Documents == undefined)
+            CurrentCase.Documents = [];
+
+        CurrentCase.Documents.push({
+            TipDokumentaId: $("#ddlCase_Document_TipDokumenta").val(),
+            TipDokumentaName: $("#ddlCase_Document_TipDokumenta option:selected").text(),
+            //PredatoUzDokumentId: $("#ddlCase_Document_TipDokumenta").val(),
+            PredatoUzDokumentName: $("#txtCase_Document_PredatoUz").val(),
+            Note: $("#txtCase_Document_Note").val(),
+            DocumentLink: $("#txtCase_Document_DocumentLink").val().replace(CurrentUser.GoogleDriveLocalFolderPath, ""),
+            AbsoluteDocumentLink: $("#txtCase_Document_DocumentLink").val(),
+            PredmetId: CurrentCase.Id
+        });
+
+        BindCaseDocuments(CurrentCase.Documents);
+    }
+}
+
+function BindCaseDocuments(_data) {
+    var _columns = [
+        { field: 'TipDokumentaName', title: 'Tip dokumenta', titleTooltip: 'Tip dokumenta', sortable: true },
+        { field: 'PredatoUzDokumentName', title: 'Predato uz', titleTooltip: 'Predato uz', sortable: true },
+        { field: 'Note', title: 'Bilješke', titleTooltip: 'Bilješke', sortable: true },
+        { field: 'AbsoluteDocumentLinkString', title: 'Dokument', titleTooltip: 'Dokument', sortable: true }
+    ];
+
+    $("#tblCaseDocuments").bootstrapTable("destroy");
+
+    if (_data && _data.length > 0) {
+        $(_data).each(function (index, _document) {
+
+            if (_document.AbsoluteDocumentLink != undefined && _document.AbsoluteDocumentLink != null && _document.AbsoluteDocumentLink.length > 1)
+                _document.AbsoluteDocumentLinkString = "<input type='text' class='form-control' value='" + _document.AbsoluteDocumentLink + "' style='width:100%;' disabled/>";
+
+            if (index == _data.length - 1) {
+                $("#tblCaseDocuments").bootstrapTable({
+                    data: _data,
+                    striped: true,
+                    columns: _columns,
+                    escape: false,
+                    onPostBody: function () {
+                        AfterBindCaseDocuments();
+                        return false;
+                    }
+                });
+            }
+        });
+    }
+    else {
+        $("#tblCaseDocuments").bootstrapTable({
+            data: [],
+            striped: true,
+            columns: _columns
+        });
+    }
+}
+
+function AfterBindCaseDocuments() {
+    $("#tblCaseDocuments").find("tr").each(function (index, element) {
+        if (index == 0) {
+            if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0 && CurrentCase.Documents.length > 0)
+                if ($("#caseDocumentsEmptyHeader").length == 0)
+                    $(element).append("<th id='caseDocumentsEmptyHeader'></th>");
+        }
+        else if (CurrentCase.Documents.length > 0) {
+            if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
+                var buttonsHTML = "<td style='width: 50px;'><div class='btn-group pull-right'>";
+                buttonsHTML +=
+                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši dokument' onclick='DeleteCaseDocument(" + (index - 1) + "); return false;'>"
+                            + "<span class='glyphicon glyphicon-remove'></span>"
+                            + "</button>";
+                buttonsHTML += "</div></td>";
+
+                $(element).append(buttonsHTML);
+            }
+        }
+    });
+}
+
+function DeleteCaseDocument(index) {
+    CurrentCase.Documents.splice(index, 1);
+    BindCaseDocuments(CurrentCase.Documents);
+}
+
 function AppendRadnjaToCase() {
     if ($("#ddlCase_Radnja_VrstaRadnje").val() != -1 && $("#txtCase_Radnja_DatumRadnje").val() != "") {
 
@@ -1980,6 +2097,8 @@ function AppendRadnjaToCase() {
             DatumRadnje: $("#txtCase_Radnja_DatumRadnje").val(),
             Troskovi: '', //$("#ddlCase_Radnja_Troskovi").val(),
             Biljeske: $("#txtCase_Radnja_Biljeske").val(),
+            DocumentLink: $("#txtCase_Radnja_DocumentLink").val().replace(CurrentUser.GoogleDriveLocalFolderPath, ""),
+            AbsoluteDocumentLink: $("#txtCase_Radnja_DocumentLink").val(),
             PredmetId: CurrentCase.Id
         });
 
@@ -1992,7 +2111,8 @@ function BindCaseRadnje(_data) {
         { field: 'VrstaRadnjeName', title: 'Vrsta radnje', titleTooltip: 'Vrsta radnje', sortable: true },
         { field: 'DatumRadnje', title: 'Datum', titleTooltip: 'Datum', sortable: true, sorter: DateSorterFunction },
         //{ field: 'Troskovi', title: 'Troškovi', titleTooltip: 'Troškovi', sortable: true, align: "right" },
-        { field: 'Biljeske', title: 'Bilješke', titleTooltip: 'Bilješke', sortable: true }
+        { field: 'Biljeske', title: 'Bilješke', titleTooltip: 'Bilješke', sortable: true },
+        { field: 'AbsoluteDocumentLinkString', title: 'Dokument', titleTooltip: 'Dokument', sortable: true }
     ];
 
     $("#tblCaseRadnje").bootstrapTable("destroy");
@@ -2002,11 +2122,15 @@ function BindCaseRadnje(_data) {
             if (Date.parse(_radnja.DatumRadnje))
                 _radnja.DatumRadnje = moment(_radnja.DatumRadnje).format("DD.MM.YYYY");
 
+            if (_radnja.AbsoluteDocumentLink != undefined && _radnja.AbsoluteDocumentLink != null && _radnja.AbsoluteDocumentLink.length > 1)
+                _radnja.AbsoluteDocumentLinkString = "<input type='text' class='form-control' value='" + _radnja.AbsoluteDocumentLink + "' style='width:100%;' disabled/>";
+
             if (index == _data.length - 1) {
                 $("#tblCaseRadnje").bootstrapTable({
                     data: _data,
                     striped: true,
                     columns: _columns,
+                    escape: false,
                     onPostBody: function () {
                         AfterBindCaseRadnje();
                         return false;
@@ -2186,6 +2310,20 @@ $("#dateTimePicker_Radnja_DatumRadnje").on('dp.change', function () {
         $("#btnAppendRadnjaToCase").attr("disabled", "disabled");
 });
 
+$("#ddlCase_Document_TipDokumenta").change(function () {
+    if ($("#ddlCase_Document_TipDokumenta").val() != -1 && $("#txtCase_Document_DocumentLink").val() != "")
+        $("#btnAppendDocumentToCase").removeAttr("disabled");
+    else
+        $("#btnAppendDocumentToCase").attr("disabled", "disabled");
+});
+
+$("#txtCase_Document_DocumentLink").change(function () {
+    if ($("#ddlCase_Document_TipDokumenta").val() != -1 && $("#txtCase_Document_DocumentLink").val() != "")
+        $("#btnAppendDocumentToCase").removeAttr("disabled");
+    else
+        $("#btnAppendDocumentToCase").attr("disabled", "disabled");
+});
+
 function OpenOtherTab(element, divId) {
     $(".other-tab").hide();
     $("#" + divId).show();
@@ -2221,3 +2359,48 @@ function SetUpStanjeAutocomplete() {
         appendTo: ".case-column-for-stanje"
     });
 }
+
+function SetUpPredatoUzAutocomplete() {
+    $("#txtCase_Document_PredatoUz").autocomplete({
+        source: function (request, response) {
+            $("#spinner_txtCase_Document_PredatoUz").show();
+
+            $.get(AppPath + "api/codetable", {
+                Name: "PredatoUzDokumenti",
+                ColumnName: "Name",
+                Filter: $("#txtCase_Document_PredatoUz").val()
+            })
+            .done(function (data) {
+                response($.map(data, function (item) {
+                    return {
+                        label: item.Name,
+                        value: item.Name
+                    };
+                }));
+                $("#spinner_txtCase_Document_PredatoUz").hide();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                alert("error");
+            });
+        },
+        delay: 500,
+        appendTo: ".case-column-for-predato-uz"
+    });
+}
+
+$("#txtCase_Radnja_DocumentLink").change(function () {
+    if ($("#txtCase_Radnja_DocumentLink").val() != "" && $("#txtCase_Radnja_DocumentLink").val().indexOf(CurrentUser.GoogleDriveLocalFolderPath) != 0) {
+        $("#txtCase_Radnja_DocumentLink").val("");
+        ShowAlert("danger", "Odabrani dokument mora biti u Vašem Google Drive folderu: " + (CurrentUser.GoogleDriveLocalFolderPath == null ? "" : CurrentUser.GoogleDriveLocalFolderPath),
+            undefined, undefined, $("#divRadnjeAlert"));
+    }
+});
+
+
+$("#txtCase_Document_DocumentLink").change(function () {
+    if ($("#txtCase_Document_DocumentLink").val() != "" && $("#txtCase_Document_DocumentLink").val().indexOf(CurrentUser.GoogleDriveLocalFolderPath) != 0) {
+        $("#txtCase_Document_DocumentLink").val("");
+        ShowAlert("danger", "Odabrani dokument mora biti u Vašem Google Drive folderu: " + (CurrentUser.GoogleDriveLocalFolderPath == null ? "" : CurrentUser.GoogleDriveLocalFolderPath),
+            undefined, undefined, $("#divDocumentsAlert"));
+    }
+});
