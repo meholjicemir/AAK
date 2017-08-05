@@ -5,12 +5,14 @@ var CurrentModule = "home";
 var CurrentUser = null;
 var CurrentCodeTable = null;
 var Sudovi = null;
+var Labels = null;
 var Lica = null;
 var Predmeti = null;
 var Users = null;
 var CaseActivities = null;
 var Radnje = null;
 var CurrentCase = null;
+var SelectedCases = [];
 
 $(document).ready(function () {
     //$(".g-signin2").click();
@@ -76,6 +78,7 @@ function RenderApp(user) {
         $("#liMenuParties").show();
         $("#liMenuReports").show();
         $("#liMenuSudovi").show();
+        $("#liMenuLabels").show();
         $("#liMenuCodeTables").show();
         hasCaseRights = true;
     }
@@ -85,6 +88,7 @@ function RenderApp(user) {
         $("#liMenuSudovi").hide();
         $("#liMenuParties").hide();
         $("#liMenuReports").hide();
+        $("#liMenuLabels").hide();
         $("#liMenuCodeTables").hide();
     }
 
@@ -116,6 +120,9 @@ function RenderApp(user) {
                 break;
             case "courts":
                 MenuSudovi();
+                break;
+            case "labels":
+                MenuLabels();
                 break;
             case "users":
                 if (hasAdminRights)
@@ -446,9 +453,15 @@ function MenuCases() {
     $(".menu-div").hide();
     $("#divCases").show();
 
+    SelectedCases = [];
     MenuCases_LoadDataOnly();
 
     LoadCases();
+    LoadLabels(true);
+}
+
+function ApplyLabel() {
+
 }
 
 function LoadCases(caseId, callback) {
@@ -456,6 +469,7 @@ function LoadCases(caseId, callback) {
 
     var _columns = [
         { field: 'Id' },
+        { checkbox: true },
         { field: 'NasBroj', title: 'Naš broj', titleTooltip: 'Naš broj', sortable: true },
         { field: 'StrankaNasa', title: 'Naša stranka', titleTooltip: 'Naša stranka', sortable: true },
         { field: 'StrankaProtivna', title: 'Protivna stranka', titleTooltip: 'Protivna stranka', sortable: true },
@@ -509,6 +523,8 @@ function LoadCases(caseId, callback) {
 
                 _case.PrivremeniZastupnici = _case.PrivremeniZastupnici ? "Da" : "Ne";
 
+                _case.NasBroj = "<strong>" + _case.NasBroj + "</strong>";
+
                 switch (_case.KategorijaPredmetaId) {
                     case 5:
                         // OTVOREN
@@ -534,11 +550,28 @@ function LoadCases(caseId, callback) {
                         showColumns: true,
                         columns: _columns,
                         escape: false,
+                        clickToSelect: true,
                         onPostBody: function () {
                             AfterBindCases();
                             if (callback != undefined && typeof (callback) == "function")
                                 callback();
                             return false;
+                        },
+                        onCheck: function (row, element) {
+                            SelectedCases.push(row);
+                            $("#divOznake").show();
+                        },
+                        onUncheck: function (row, element) {
+                            $(SelectedCases).each(function (index, _selectedCase) {
+                                if (_selectedCase.Id == row.Id) {
+                                    SelectedCases.splice(index, 1);
+
+                                    if (SelectedCases.length == 0)
+                                        $("#divOznake").hide();
+
+                                    return false;
+                                }
+                            });
                         }
                     });
                     HideLoaderCenter();
@@ -879,6 +912,133 @@ function DeleteUser(id) {
             return false; // break loop
         }
     });
+}
+
+function MenuLabels() {
+    DeactivateAllMenuItems();
+    //$("#liMenuLabels").addClass("active");
+    $(".menu-div").hide();
+    $("#divLabels").show();
+
+    LoadLabels(false);
+}
+
+function LoadLabels(inCasesModule) {
+    if (inCasesModule) {
+
+    }
+    else {
+        ShowLoaderCenter();
+
+        var _columns = [
+            { field: 'Id' },
+            { field: 'Name', title: 'Naziv', titleTooltip: 'Naziv', sortable: true },
+            { field: 'Colors', title: 'Boja', titleTooltip: 'Boja', sortable: true }
+            //{ field: 'BackgroundColor', title: 'Boja pozadine', titleTooltip: 'Boja pozadine', sortable: false },
+            //{ field: 'FontColor', title: 'Boja fonta', titleTooltip: 'Boja fonta', sortable: false }
+        ];
+
+        $("#tblLabels").bootstrapTable("destroy");
+
+        $.get(AppPath + "api/label", {
+            UserId: CurrentUser.Id
+        })
+        .done(function (data) {
+            if (data != null && data.length > 0) {
+                Labels = data;
+
+                $(Labels).each(function (index, _label) {
+
+                    _label.Colors = "<div style='padding:3px; display:inline-block; background-color:" + _label.BackgroundColor + "; color:" + _label.FontColor + "'>" + _label.Name + "</div>";
+
+                    if (index == Labels.length - 1) {
+                        $("#tblLabels").bootstrapTable({
+                            data: data,
+                            striped: true,
+                            showColumns: true,
+                            columns: _columns,
+                            search: true,
+                            escape: false,
+                            onPostBody: function () {
+                                AfterBindLabels();
+                                return false;
+                            }
+                        });
+                        HideLoaderCenter();
+                    }
+                });
+            }
+            else {
+                $("#tblLabels").bootstrapTable({
+                    data: [],
+                    striped: true,
+                    showColumns: true,
+                    columns: _columns,
+                    search: true
+                });
+                HideLoaderCenter();
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            HideLoaderCenter();
+            alert("error");
+        });
+    }
+}
+
+function AfterBindLabels() {
+    $("#tblLabels").find("tr").each(function (index, element) {
+        if (index == 0) {
+            $(element).find("th:first-child").hide();
+            if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0)
+                if ($("#labelsEmptyHeader").length == 0)
+                    $(element).append("<th id='labelsEmptyHeader'></th>");
+        }
+        else {
+            var tempId = parseInt($(element).find("td:first-child").html());
+            $(element).find("td:first-child").hide();
+
+            if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
+                var buttonsHTML = "<td style='width: 100px;'><div class='btn-group pull-right'>";
+                buttonsHTML +=
+                            "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Izmijeni oznaku' onclick='EditLabel(" + tempId.toString() + "); return false;'>"
+                            + "<span class='glyphicon glyphicon-pencil'></span>"
+                            + "</button>";
+
+                buttonsHTML +=
+                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši oznaku' onclick='DeleteLabel(" + tempId.toString() + "); return false;'>"
+                            + "<span class='glyphicon glyphicon-remove'></span>"
+                            + "</button>";
+                buttonsHTML += "</div></td>";
+
+                $(element).append(buttonsHTML);
+            }
+        }
+    });
+}
+
+function EditLabel(id) {
+    $("#modalLabel").attr("edit_id", id);
+
+    $(Labels).each(function (index, obj) {
+        if (obj.Id == id) {
+            $("#txtLabel_Name").val(obj.Name);
+            $("#txtLabel_BackgroundColor").val(obj.BackgroundColor);
+            $("#txtLabel_FontColor").val(obj.FontColor);
+
+            $("#txtLabel_Name").css("background-color", $("#txtLabel_BackgroundColor").val());
+            $("#txtLabel_Name").css("color", $("#txtLabel_FontColor").val());
+
+            $("#modalLabel").find(".modal-title").html("Izmijeni oznaku: <span style='font-style: italic; color: gray;'>" + obj.Name + "</span>");
+            $("#btnOpenModalEditLabel").click();
+
+            return false; // break loop
+        }
+    });
+}
+
+function DeleteLabel(id) {
+
 }
 
 function MenuSudovi() {
@@ -1401,6 +1561,49 @@ function SaveUser() {
     });
 }
 
+function ClearModalLabel() {
+    $("#modalLabel").removeAttr("edit_id");
+    $("#txtLabel_Name").val("");
+    $("#txtLabel_BackgroundColor").val("#ffffff");
+    $("#txtLabel_FontColor").val("#000000");
+
+    $("#txtLabel_Name").css("background-color", "default");
+    $("#txtLabel_Name").css("color", "default");
+
+    $("#modalLabel").find(".modal-title").html("Nova oznaka");
+}
+
+function SaveLabel() {
+    ShowLoaderCenter();
+
+    var reqObj = {
+        Name: $("#txtLabel_Name").val(),
+        BackgroundColor: $("#txtLabel_BackgroundColor").val(),
+        FontColor: $("#txtLabel_FontColor").val()
+    };
+
+    var tempId = $("#modalLabel").attr("edit_id");
+
+    if (tempId != undefined)
+        reqObj.Id = tempId;
+
+    $.post(AppPath + "api/label", reqObj)
+    .done(function (data) {
+        if (data && data > 0) {
+            ShowAlert("success", "Uspješno spašena oznaka.");
+            HideLoaderCenter();
+            LoadLabels(false);
+        }
+        else {
+            HideLoaderCenter();
+            ShowAlert("danger", "Greška pri spašavanju oznake.");
+        }
+    })
+    .fail(function (response) {
+        HideLoaderCenter();
+        ShowAlert("danger", "Greška pri spašavanju oznake.");
+    });
+}
 
 function ClearModalSud() {
     $("#modalSud").removeAttr("edit_id");
@@ -1518,7 +1721,14 @@ function LoadCodeTableUI(element, title, tableName, columnName, remark) {
     $(".menu-sub-item").css("background-color", "");
     $(element).parent().css("background-color", "#e7e7e7");
     $(".menu-div").hide();
+
+    if (title === "Oznake") {
+        $("#divLabels").show();
+        return;
+    }
+
     $("#divCodeTable").show();
+
     CurrentCodeTable = {
         Element: element,
         Title: title,
@@ -2573,3 +2783,12 @@ $("#txtCase_Document_DocumentLink").change(function () {
             undefined, undefined, $("#divDocumentsAlert"));
     }
 });
+
+$("#txtLabel_BackgroundColor").change(function () {
+    $("#txtLabel_Name").css("background-color", $("#txtLabel_BackgroundColor").val());
+});
+
+$("#txtLabel_FontColor").change(function () {
+    $("#txtLabel_Name").css("color", $("#txtLabel_FontColor").val());
+});
+

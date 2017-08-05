@@ -423,3 +423,17 @@ select.fixed-width-field {
 .spinning {
     margin-top: 5px;
 }
+
+.fixed-table-container tbody .selected td {
+    background-color: #31b0d5 !important;
+    color: #ffffff !important;
+}
+
+    .fixed-table-container tbody .selected td > a {
+        background-color: #31b0d5 !important;
+        color: #ffffff !important;
+    }
+
+tr:hover td {
+    background-color: #b0d3dd !important;
+}

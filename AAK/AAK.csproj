@@ -179,6 +179,7 @@
     <Compile Include="Controllers\ConnectionController.cs" />
     <Compile Include="Controllers\DocumentController.cs" />
     <Compile Include="Controllers\ExpenseController.cs" />
+    <Compile Include="Controllers\LabelController.cs" />
     <Compile Include="Controllers\LiceController.cs" />
     <Compile Include="Controllers\LicePredmetController.cs" />
     <Compile Include="Controllers\NasBrojController.cs" />
@@ -194,6 +195,7 @@
     <Compile Include="DataProviders\Connections.cs" />
     <Compile Include="DataProviders\Documents.cs" />
     <Compile Include="DataProviders\Expenses.cs" />
+    <Compile Include="DataProviders\Labels.cs" />
     <Compile Include="DataProviders\Lica.cs" />
     <Compile Include="DataProviders\Notes.cs" />
     <Compile Include="DataProviders\Predmeti.cs" />
@@ -225,6 +227,7 @@
     <Compile Include="Models\Expense.cs" />
     <Compile Include="Models\Helper\CodeTable.cs" />
     <Compile Include="Models\Helper\UserWithData.cs" />
+    <Compile Include="Models\Label.cs" />
     <Compile Include="Models\Lice.cs" />
     <Compile Include="Models\LicePredmet.cs" />
     <Compile Include="Models\Note.cs" />

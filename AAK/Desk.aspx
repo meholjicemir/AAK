@@ -70,6 +70,7 @@
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Tipovi dokumenata', 'TipoviDokumenata'); return false;">Tipovi dokumenata</a></li>
                             <%--<li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Načini obavljanja radnje', 'NaciniObavljanjaRadnje'); return false;">Načini obavljanja radnje</a></li>--%>
                             <li class="menu-sub-item"><a href="#" onclick="LoadCodeTableUI(this, 'Države', 'Drzave'); return false;">Države</a></li>
+                            <li class="menu-sub-item"><a href="#" onclick="MenuLabels(); LoadCodeTableUI(this, 'Oznake'); return false;">Oznake</a></li>
                         </ul>
                     </li>
 
@@ -161,7 +162,22 @@
         <div id="divCases" class="panel panel-default menu-div" style="display: none;">
             <div class="panel-body">
                 <button id="btnNewCase" type="button" class="btn btn-primary only-office-admin" data-toggle="modal" data-target="#modalCase" onclick="StartBuildingNewCase(); return false;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj novi predmet</button>
+                <div id="divOznake" class="pull-right" style="display: none;">
+                    <form class="form-inline " role="form">
+                        <label for="ddlLabels">Oznake:</label>
+                        <select id="ddlLabels" class="form-control">
+                            <option value="" selected="selected">----</option>
+                            <option value="Labela 1">Labela 1</option>
+                            <option value="Labela 2">Labela 2</option>
+                            <option value="Labela 3">Labela 3</option>
+                        </select>
+                        <button class="btn btn-success" onclick="ApplyLabel(); return false;">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </form>
+                </div>
                 <hr class="only-office-admin" />
+
                 <form class="form-inline pull-left" role="form">
                     <div class="form-group">
                         <label for="txtCasesFilter">Traži:</label>
@@ -226,6 +242,13 @@
             <div class="panel-body">
                 <button id="btnNewSud" type="button" class="btn btn-primary pull-left only-office-admin" data-toggle="modal" data-target="#modalSud" onclick="ClearModalSud(); return false;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj novi sud</button>
                 <table id="tblSudovi" class="table table-condensed" style="word-break: break-word;"></table>
+            </div>
+        </div>
+
+        <div id="divLabels" class="panel panel-default menu-div" style="display: none;">
+            <div class="panel-body">
+                <button id="btnNewLabel" type="button" class="btn btn-primary pull-left only-office-admin" data-toggle="modal" data-target="#modalLabel" onclick="ClearModalLabel(); return false;"><span class="glyphicon glyphicon-plus"></span>&nbsp;Dodaj novu oznaku</button>
+                <table id="tblLabels" class="table table-condensed" style="word-break: break-word;"></table>
             </div>
         </div>
 
@@ -653,6 +676,33 @@
         </div>
     </div>
 
+    <div id="modalLabel" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Nova oznaka</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-inline" role="form">
+                        <label for="txtLabel_Name" class="fixed-width-label">Naziv:</label>
+                        <input type="text" class="form-control fixed-width-field" id="txtLabel_Name" />
+                        <br />
+                        <label for="txtLabel_BackgroundColor" class="fixed-width-label">Boja pozadine:</label>
+                        <input type="color" class="form-control fixed-width-field" id="txtLabel_BackgroundColor" />
+                        <br />
+                        <label for="txtLabel_FontColor" class="fixed-width-label">Boja fonta:</label>
+                        <input type="color" class="form-control fixed-width-field" id="txtLabel_FontColor" />
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="SaveLabel(); return false;">Spasi i zatvori</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Zatvori</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="modalSud" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -777,6 +827,7 @@
     <div id="divHidden" style="display: none;">
         <button id="btnOpenModalEditCodeTableRecord" data-toggle='modal' data-target='#modalCodeTableRecord'></button>
         <button id="btnOpenModalEditSud" data-toggle='modal' data-target='#modalSud'></button>
+        <button id="btnOpenModalEditLabel" data-toggle='modal' data-target='#modalLabel'></button>
         <button id="btnOpenModalEditParty" data-toggle='modal' data-target='#modalParty'></button>
         <button id="btnOpenModalEditCase" data-toggle='modal' data-target='#modalCase'></button>
 
