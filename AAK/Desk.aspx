@@ -167,11 +167,8 @@
                         <label for="ddlLabels">Oznake:</label>
                         <select id="ddlLabels" class="form-control">
                             <option value="" selected="selected">----</option>
-                            <option value="Labela 1">Labela 1</option>
-                            <option value="Labela 2">Labela 2</option>
-                            <option value="Labela 3">Labela 3</option>
                         </select>
-                        <button class="btn btn-success" onclick="ApplyLabel(); return false;">
+                        <button id="btnApplyLabel" class="btn btn-success" onclick="ApplyLabel('case'); return false;" disabled="disabled">
                             <span class="glyphicon glyphicon-ok"></span>
                         </button>
                     </form>
@@ -612,59 +609,68 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Nova stranka</h4>
                 </div>
-                <div class="modal-body row">
-                    <div class="col-lg-6">
-                        <form class="form-inline pull-left" role="form">
-                            <label for="txtParty_Prezime" class="fixed-width-label">Prezime:</label>
-                            <input type="text" class="form-control fixed-width-field" id="txtParty_Prezime" />
-                            <br />
-                            <label for="txtParty_Ime" class="fixed-width-label">Ime:</label>
-                            <input type="text" class="form-control fixed-width-field" id="txtParty_Ime" />
-                            <br />
-                            <label for="cbParty_IsMinor" class="fixed-width-label">Malodobno lice</label>
-                            <input id="cbParty_IsMinor" type="checkbox" />
-                            <br />
-                            <label for="txtParty_ZakonskiZastupnik" class="fixed-width-label">Zakonski zastupnik:</label>
-                            <input type="text" class="form-control fixed-width-field" id="txtParty_ZakonskiZastupnik" />
-                            <br />
-                            <label for="txtParty_PravnoLice" class="fixed-width-label">Pravno Lice ili Institucija:</label>
-                            <input type="text" class="form-control fixed-width-field" id="txtParty_PravnoLice" />
-                            <br />
-                            <br />
-                            <label for="txtParty_Adresa" class="fixed-width-label">Adresa:</label>
-                            <input type="text" class="form-control fixed-width-field" id="txtParty_Adresa" />
-                            <br />
-                            <label for="txtParty_PostanskiBroj" class="fixed-width-label">Poštanski broj:</label>
-                            <input type="text" class="form-control fixed-width-field" id="txtParty_PostanskiBroj" />
-                            <br />
-                            <label for="txtParty_Grad" class="fixed-width-label">Grad:</label>
-                            <input type="text" class="form-control fixed-width-field" id="txtParty_Grad" />
-                            <br />
-                            <label for="ddlParty_Drzava" class="fixed-width-label">Država:</label>
-                            <select class="form-control fixed-width-field" id="ddlParty_Drzava">
-                                <option value="-1">-----</option>
-                            </select>
-                            <br />
-                            <label for="txtParty_Email" class="fixed-width-label">Email:</label>
-                            <input type="text" class="form-control fixed-width-field" id="txtParty_Email" />
-                            <br />
-                        </form>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <form class="form-inline pull-left" role="form">
+                                <label for="txtParty_Prezime" class="fixed-width-label">Prezime:</label>
+                                <input type="text" class="form-control fixed-width-field" id="txtParty_Prezime" />
+                                <br />
+                                <label for="txtParty_Ime" class="fixed-width-label">Ime:</label>
+                                <input type="text" class="form-control fixed-width-field" id="txtParty_Ime" />
+                                <br />
+                                <label for="cbParty_IsMinor" class="fixed-width-label">Malodobno lice</label>
+                                <input id="cbParty_IsMinor" type="checkbox" />
+                                <br />
+                                <label for="txtParty_ZakonskiZastupnik" class="fixed-width-label">Zakonski zastupnik:</label>
+                                <input type="text" class="form-control fixed-width-field" id="txtParty_ZakonskiZastupnik" />
+                                <br />
+                                <label for="txtParty_PravnoLice" class="fixed-width-label">Pravno Lice ili Institucija:</label>
+                                <input type="text" class="form-control fixed-width-field" id="txtParty_PravnoLice" />
+                                <br />
+                                <br />
+                                <label for="txtParty_Adresa" class="fixed-width-label">Adresa:</label>
+                                <input type="text" class="form-control fixed-width-field" id="txtParty_Adresa" />
+                                <br />
+                                <label for="txtParty_PostanskiBroj" class="fixed-width-label">Poštanski broj:</label>
+                                <input type="text" class="form-control fixed-width-field" id="txtParty_PostanskiBroj" />
+                                <br />
+                                <label for="txtParty_Grad" class="fixed-width-label">Grad:</label>
+                                <input type="text" class="form-control fixed-width-field" id="txtParty_Grad" />
+                                <br />
+                                <label for="ddlParty_Drzava" class="fixed-width-label">Država:</label>
+                                <select class="form-control fixed-width-field" id="ddlParty_Drzava">
+                                    <option value="-1">-----</option>
+                                </select>
+                                <br />
+                                <label for="txtParty_Email" class="fixed-width-label">Email:</label>
+                                <input type="text" class="form-control fixed-width-field" id="txtParty_Email" />
+                                <br />
+                            </form>
+                        </div>
+                        <div class="col-lg-6">
+                            <form class="form-inline pull-left" role="form">
+                                <label for="txtParty_Biljeske" class="fixed-width-label">Bilješke:</label>
+                                <textarea class="form-control fixed-width-field" rows="8" id="txtParty_Biljeske"></textarea>
+                                <br />
+                                <label for="txtParty_Telefon" class="fixed-width-label">Telefon:</label>
+                                <textarea class="form-control fixed-width-field" rows="2" id="txtParty_Telefon"></textarea>
+                                <br />
+                                <label for="txtParty_Fax" class="fixed-width-label">Fax:</label>
+                                <input type="text" class="form-control fixed-width-field" id="txtParty_Fax" />
+                                <br />
+                                <label for="txtParty_JMBG_IDBroj" class="fixed-width-label">JMBG / ID broj:</label>
+                                <input type="text" class="form-control fixed-width-field" id="txtParty_JMBG_IDBroj" />
+                                <br />
+                            </form>
+                        </div>
                     </div>
-                    <div class="col-lg-6">
-                        <form class="form-inline pull-left" role="form">
-                            <label for="txtParty_Biljeske" class="fixed-width-label">Bilješke:</label>
-                            <textarea class="form-control fixed-width-field" rows="8" id="txtParty_Biljeske"></textarea>
-                            <br />
-                            <label for="txtParty_Telefon" class="fixed-width-label">Telefon:</label>
-                            <textarea class="form-control fixed-width-field" rows="2" id="txtParty_Telefon"></textarea>
-                            <br />
-                            <label for="txtParty_Fax" class="fixed-width-label">Fax:</label>
-                            <input type="text" class="form-control fixed-width-field" id="txtParty_Fax" />
-                            <br />
-                            <label for="txtParty_JMBG_IDBroj" class="fixed-width-label">JMBG / ID broj:</label>
-                            <input type="text" class="form-control fixed-width-field" id="txtParty_JMBG_IDBroj" />
-                            <br />
-                        </form>
+                    <hr />
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h4>Predmeti</h4>
+                            <table id="tblPartyCases" class="table table-condensed" style="word-break: break-word;"></table>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

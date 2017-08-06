@@ -12,5 +12,6 @@ namespace AAK.Models.Helper
         public int? FilterNasBroj { get; set; }
         public int RowCount { get; set; }
         public int? CaseId { get; set; }
+        public int? PartyId { get; set; }
     }
 }

@@ -10,7 +10,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   </PropertyGroup>
   <ItemGroup>
     <File Include="bin/AAK.dll">
-      <publishTime>08/05/2017 01:51:00</publishTime>
+      <publishTime>06/08/2017 22:48:04</publishTime>
     </File>
     <File Include="bin/DBUtility.dll">
       <publishTime>08/02/2017 14:39:08</publishTime>
@@ -70,10 +70,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/28/2015 04:03:46</publishTime>
     </File>
     <File Include="Desk.aspx">
-      <publishTime>08/05/2017 00:57:04</publishTime>
+      <publishTime>06/08/2017 22:38:47</publishTime>
     </File>
     <File Include="Desk.aspx.js">
-      <publishTime>08/05/2017 01:48:08</publishTime>
+      <publishTime>08/06/2017 23:49:06</publishTime>
     </File>
     <File Include="Global.asax">
       <publishTime>05/27/2017 14:27:20</publishTime>
@@ -334,7 +334,205 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/16/2017 20:13:25</publishTime>
     </File>
     <File Include="Styles/NewStyle.css">
-      <publishTime>08/05/2017 00:28:13</publishTime>
+      <publishTime>06/08/2017 21:26:18</publishTime>
+    </File>
+    <File Include="Templates/Dopis Agenciji za ident dokumente radi dostave podataka.docx">
+      <publishTime>07/19/2017 15:50:34</publishTime>
+    </File>
+    <File Include="Templates/Dopis kojim se dostavlja potpisan vansudski sporazum.docx">
+      <publishTime>07/19/2017 16:30:59</publishTime>
+    </File>
+    <File Include="Templates/Dopis kojim se traži isplata potraživanja - solidarni dužnici.docx">
+      <publishTime>07/21/2017 11:40:19</publishTime>
+    </File>
+    <File Include="Templates/Dopis kojim se traži isplata potraživanja.docx">
+      <publishTime>07/21/2017 11:39:53</publishTime>
+    </File>
+    <File Include="Templates/Dopis Komisiji za vrijednosne papire FBiH radi dostave podataka.docx">
+      <publishTime>07/19/2017 15:54:11</publishTime>
+    </File>
+    <File Include="Templates/Dopis Ministarstvu pravde BiH radi dostave izvoda iz registra udruženja.docx">
+      <publishTime>07/21/2017 11:40:51</publishTime>
+    </File>
+    <File Include="Templates/Dopis policijskoj upravi radi dostave zapisnika o uviđaju.docx">
+      <publishTime>07/21/2017 11:41:04</publishTime>
+    </File>
+    <File Include="Templates/Dopis poreznoj upravi radi dostave liste zaposlenih lica.docx">
+      <publishTime>07/21/2017 11:41:14</publishTime>
+    </File>
+    <File Include="Templates/Dopis poreznoj upravi radi dostave podataka o zaposlenju ili penziji.docx">
+      <publishTime>08/06/2017 19:51:24</publishTime>
+    </File>
+    <File Include="Templates/Dopis stranci kojim se dostavlja poziv za plaćanje takse.docx">
+      <publishTime>07/21/2017 11:41:50</publishTime>
+    </File>
+    <File Include="Templates/Dopis stranci kojim se traži plaćanje vještačenja.docx">
+      <publishTime>07/21/2017 11:42:07</publishTime>
+    </File>
+    <File Include="Templates/Dopis Uni Credit banci kojim se traži stanje sa naplatom protiv kantona.docx">
+      <publishTime>07/20/2017 15:09:16</publishTime>
+    </File>
+    <File Include="Templates/Dopis Union banci Sarajevo kojim se traži stanje sa naplatom protiv Federacije BiH.docx">
+      <publishTime>07/20/2017 15:13:21</publishTime>
+    </File>
+    <File Include="Templates/Memorandum.docx">
+      <publishTime>07/20/2017 15:05:27</publishTime>
+    </File>
+    <File Include="Templates/Naslovna strana za spis.docx">
+      <publishTime>08/06/2017 19:51:25</publishTime>
+    </File>
+    <File Include="Templates/Obavijest o godišnjem odmoru društva.docx">
+      <publishTime>07/20/2017 15:16:47</publishTime>
+    </File>
+    <File Include="Templates/Odgovor na prigovor - izvršenje nad budžetom kantona.docx">
+      <publishTime>07/21/2017 00:52:40</publishTime>
+    </File>
+    <File Include="Templates/Odgovor na prigovor - izvršenje nad penzijom ili platom.docx">
+      <publishTime>07/21/2017 00:52:26</publishTime>
+    </File>
+    <File Include="Templates/Odgovor na prigovor.docx">
+      <publishTime>07/21/2017 00:51:59</publishTime>
+    </File>
+    <File Include="Templates/Odgovor na tužbu.docx">
+      <publishTime>07/21/2017 01:19:45</publishTime>
+    </File>
+    <File Include="Templates/Podnesak kojim se dostavlja sudska praksa protiv Zaštitnog Fonda FBiH.docx">
+      <publishTime>07/21/2017 11:42:35</publishTime>
+    </File>
+    <File Include="Templates/Podnesak kojim se povlači prijedlog za izvršenje.docx">
+      <publishTime>07/20/2017 15:28:15</publishTime>
+    </File>
+    <File Include="Templates/Podnesak kojim se povlači tužba.docx">
+      <publishTime>07/20/2017 15:35:27</publishTime>
+    </File>
+    <File Include="Templates/Podnesak o plaćenoj taksi.docx">
+      <publishTime>07/20/2017 15:33:31</publishTime>
+    </File>
+    <File Include="Templates/Podnesak o plaćenom vještačenju.docx">
+      <publishTime>07/20/2017 15:34:02</publishTime>
+    </File>
+    <File Include="Templates/Podnesak.docx">
+      <publishTime>07/20/2017 17:04:30</publishTime>
+    </File>
+    <File Include="Templates/Prigovor na rješenje o izvršenju.docx">
+      <publishTime>07/21/2017 01:00:26</publishTime>
+    </File>
+    <File Include="Templates/Prijedlog za donošenje dopunske presude.docx">
+      <publishTime>07/20/2017 15:39:02</publishTime>
+    </File>
+    <File Include="Templates/Prijedlog za donošenje dopunskog rješenja o troškovima postupka.docx">
+      <publishTime>07/20/2017 16:01:09</publishTime>
+    </File>
+    <File Include="Templates/Prijedlog za ispravku presude.docx">
+      <publishTime>07/20/2017 16:02:47</publishTime>
+    </File>
+    <File Include="Templates/Prijedlog za izvršenje nad novčanim sredstvima na računu.docx">
+      <publishTime>08/06/2017 19:51:27</publishTime>
+    </File>
+    <File Include="Templates/Prijedlog za izvršenje nad penzijom izvršenika.docx">
+      <publishTime>07/20/2017 16:13:53</publishTime>
+    </File>
+    <File Include="Templates/Račun.docx">
+      <publishTime>07/20/2017 17:26:38</publishTime>
+    </File>
+    <File Include="Templates/Revizija osnovom člana 237 st 3 ZPP-a.docx">
+      <publishTime>07/20/2017 17:13:52</publishTime>
+    </File>
+    <File Include="Templates/Revizija.docx">
+      <publishTime>07/20/2017 17:12:41</publishTime>
+    </File>
+    <File Include="Templates/Troškovnik.docx">
+      <publishTime>07/20/2017 16:48:53</publishTime>
+    </File>
+    <File Include="Templates/Tužba za isplatu duga.docx">
+      <publishTime>08/06/2017 19:51:29</publishTime>
+    </File>
+    <File Include="Templates/Tužba za naknadu materijalne štete iz saobraćajne nezgode.docx">
+      <publishTime>07/21/2017 01:22:04</publishTime>
+    </File>
+    <File Include="Templates/Tužba za naknadu nematerijalne štete iz saobraćajne nezgode.docx">
+      <publishTime>07/21/2017 01:22:12</publishTime>
+    </File>
+    <File Include="Templates/Tužba za ostvarivanje prava iz radnog odnosa - poništenje odluke o otkazu ugovora o radu.docx">
+      <publishTime>07/21/2017 01:21:45</publishTime>
+    </File>
+    <File Include="Templates/Tužba za ostvarivanje prava iz radnog odnosa - regres, prekovremeni rad, rad praznicima.docx">
+      <publishTime>07/21/2017 01:22:33</publishTime>
+    </File>
+    <File Include="Templates/Tužba za razvod braka u kojem nisu rođena djeca.docx">
+      <publishTime>07/21/2017 01:22:42</publishTime>
+    </File>
+    <File Include="Templates/Tužba za razvod braka u kojem su rođena djeca.docx">
+      <publishTime>07/21/2017 01:22:50</publishTime>
+    </File>
+    <File Include="Templates/Tužba za utvrđenje i uknjižbu prava vlasništva.docx">
+      <publishTime>01/01/0001 00:00:00</publishTime>
+    </File>
+    <File Include="Templates/Tužba.docx">
+      <publishTime>07/21/2017 01:23:18</publishTime>
+    </File>
+    <File Include="Templates/Urgencija Kantonalnom sudu za rad na predmetu - na ruke predsjednika suda.docx">
+      <publishTime>07/20/2017 17:32:14</publishTime>
+    </File>
+    <File Include="Templates/Urgencija Kantonalnom sudu za rad na predmetu - zbirna na ruke predsjednika suda.docx">
+      <publishTime>07/20/2017 18:04:09</publishTime>
+    </File>
+    <File Include="Templates/Urgencija Općinskom sudu za zakazivanje ročišta - na ruke predsjednika suda - PRESIGNACIJE.docx">
+      <publishTime>07/20/2017 18:01:02</publishTime>
+    </File>
+    <File Include="Templates/Urgencija Općinskom sudu za zakazivanje ročišta - na ruke predsjednika suda.docx">
+      <publishTime>07/20/2017 17:36:44</publishTime>
+    </File>
+    <File Include="Templates/Urgencija Općinskom sudu za zakazivanje ročišta.docx">
+      <publishTime>07/20/2017 17:38:45</publishTime>
+    </File>
+    <File Include="Templates/Vansudski zahtjev.docx">
+      <publishTime>07/20/2017 18:24:19</publishTime>
+    </File>
+    <File Include="Templates/Zahtjev za dostavu dokumentacije od osiguranja.docx">
+      <publishTime>07/20/2017 18:25:41</publishTime>
+    </File>
+    <File Include="Templates/Zahtjev za dostavu izvoda iz sudskog registra.docx">
+      <publishTime>07/20/2017 18:28:14</publishTime>
+    </File>
+    <File Include="Templates/Zahtjev za dostavu zemljišnoknjižnog izvoda.docx">
+      <publishTime>07/20/2017 18:30:23</publishTime>
+    </File>
+    <File Include="Templates/Zahtjev za isključenje sudije Šemse Jogunović.docx">
+      <publishTime>07/20/2017 18:34:15</publishTime>
+    </File>
+    <File Include="Templates/Zahtjev za izdavanjem jedinstvenog pristupnog koda.docx">
+      <publishTime>07/20/2017 18:36:13</publishTime>
+    </File>
+    <File Include="Templates/Zahtjev za izdavanjem jednog jedinstvenog pristupnog koda uz tužbu ili prijedlog.docx">
+      <publishTime>07/20/2017 18:38:30</publishTime>
+    </File>
+    <File Include="Templates/Zahtjev za izdavanjem krivične presude.docx">
+      <publishTime>07/20/2017 18:41:03</publishTime>
+    </File>
+    <File Include="Templates/Zahtjev za izdavanjem posjedovnog lista iz katastra.docx">
+      <publishTime>07/20/2017 18:44:48</publishTime>
+    </File>
+    <File Include="Templates/Zahtjev za izdavanjem presude iz arhive.docx">
+      <publishTime>07/20/2017 18:48:09</publishTime>
+    </File>
+    <File Include="Templates/Zahtjev za oslobađanje od plaćanja sudskih troškova.docx">
+      <publishTime>07/20/2017 18:49:22</publishTime>
+    </File>
+    <File Include="Templates/Zahtjev za zabilježbu postojanja spora u zemljišne knjige.docx">
+      <publishTime>07/20/2017 18:53:45</publishTime>
+    </File>
+    <File Include="Templates/Zapisnik o isplati.docx">
+      <publishTime>08/06/2017 19:51:31</publishTime>
+    </File>
+    <File Include="Templates/Žalba na presudu kojom je odbijen tužbeni zahtjev djelimično.docx">
+      <publishTime>07/20/2017 19:03:42</publishTime>
+    </File>
+    <File Include="Templates/Žalba na presudu kojom je odbijen tužbeni zahtjev u cijelosti.docx">
+      <publishTime>07/20/2017 19:07:37</publishTime>
+    </File>
+    <File Include="Templates/Žalba na presudu zbog propuštanja zbog prigovora litispendencije.docx">
+      <publishTime>07/20/2017 19:16:42</publishTime>
     </File>
     <File Include="Web.config">
       <publishTime>08/05/2017 01:51:01</publishTime>

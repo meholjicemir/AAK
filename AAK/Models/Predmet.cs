@@ -7,6 +7,8 @@ namespace AAK.Models
 {
     public class Predmet
     {
+        public string Naziv { get; set; }
+
         public int Id { get; set; }
         public int NasBroj { get; set; }
         public string BrojPredmeta { get; set; }
@@ -69,8 +71,12 @@ namespace AAK.Models
         public List<Document> Documents { get; set; }
         public List<Connection> Connections { get; set; }
 
+        public string LabelIds { get; set; }
+
         public Predmet()
         {
+            this.Naziv = string.Empty;
+
             this.Id = -1;
             this.NasBroj = -1;
             this.BrojPredmeta = string.Empty;
@@ -130,6 +136,8 @@ namespace AAK.Models
             this.Radnje = new List<Radnja>();
             this.Documents = new List<Document>();
             this.Connections = new List<Connection>();
+
+            this.LabelIds = string.Empty;
         }
     }
 }

@@ -325,6 +325,12 @@ namespace AAK.DataProviders
             DBUtility.Utility.ExecuteStoredProcedureVoid<int>("LicePredmet_Delete", "id", id);
         }
 
+        public static List<Predmet> GetCasesForParty(int partyId)
+        {
+            DataTable dt = DBUtility.Utility.ExecuteStoredProcedure<int>("GetCasesForParty", "partyId", partyId);
+            return DBUtility.Utility.ParseDataTable<Predmet>(dt);
+        }
+
         #endregion
     }
 }

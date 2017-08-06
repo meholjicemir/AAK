@@ -15,8 +15,8 @@ var CurrentCase = null;
 var SelectedCases = [];
 
 $(document).ready(function () {
-    //$(".g-signin2").click();
-    ValidateUser("meholjic.emir@gmail.com");
+    $(".g-signin2").click();
+    //ValidateUser("meholjic.emir@gmail.com");
     //ValidateUser("emir.meholjic@toptal.com");
 });
 
@@ -229,7 +229,7 @@ function LoadRadnje() {
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
         HideLoaderCenter();
-        alert("error");
+        alert("error LoadRadnje");
     });
 }
 
@@ -337,7 +337,7 @@ function LoadCaseActivities() {
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
         HideLoaderCenter();
-        alert("error");
+        alert("error LoadCaseActivities");
     });
 }
 
@@ -456,12 +456,93 @@ function MenuCases() {
     SelectedCases = [];
     MenuCases_LoadDataOnly();
 
-    LoadCases();
     LoadLabels(true);
+    LoadCases();
 }
 
-function ApplyLabel() {
+function ApplyLabel(_contentType) {
+    ShowLoaderCenter();
 
+    var contentIds = "";
+    switch (_contentType) {
+        case "case":
+            for (var i = 0; i < SelectedCases.length; i++)
+                contentIds += SelectedCases[i].Id.toString() + ",";
+            break;
+        default:
+            ShowAlert("danger", "Problem pri dodavanju oznake.");
+            return;
+    }
+
+    var reqObj = {
+        LabelId: $("#ddlLabels").val(),
+        ContentType: _contentType,
+        ContentIds: contentIds
+    };
+
+    $.post(AppPath + "api/labelConnection", reqObj)
+    .done(function (data) {
+        if (data) {
+
+            $(data).each(function (index, _labelConnection) {
+                switch (_contentType) {
+                    case "case":
+                        for (var i = 0; i < Predmeti.length; i++) {
+                            if (Predmeti[i].Id == _labelConnection.ContentId) {
+                                if (Predmeti[i].LabelIds && Predmeti[i].LabelIds.length > 0) {
+                                    var tempLabelIds = Predmeti[i].LabelIds.split(',');
+                                    if (tempLabelIds.indexOf(_labelConnection.LabelId.toString()) == -1) {
+                                        tempLabelIds.push(_labelConnection.LabelId.toString());
+                                        tempLabelIds.sort();
+                                        Predmeti[i].LabelIds = tempLabelIds.join();
+                                    }
+                                }
+                                else
+                                    Predmeti[i].LabelIds = _labelConnection.LabelId.toString();
+                                $("#spanContentLabels_" + _contentType + "_" + _labelConnection.ContentId.toString()).html(BuildLabelsHTML(Predmeti[i].LabelIds, _contentType, _labelConnection.ContentId));
+                                break;
+                            }
+                        }
+                        break;
+                    default:
+                        ShowAlert("danger", "Problem pri dodavanju oznake.");
+                        return;
+                }
+            });
+            $("#ddlLabels").val("");
+            SelectedCases = [];
+            $("#tblCases").find("input[type='checkbox']").each(function (index, element) {
+                if ($(element).prop("checked"))
+                    $(element).trigger("click");
+            });
+            HideLoaderCenter();
+        }
+        else {
+            HideLoaderCenter();
+            ShowAlert("danger", "Problem pri dodavanju oznake.");
+        }
+    })
+    .fail(function (response) {
+        HideLoaderCenter();
+        ShowAlert("danger", "Greška pri dodavanju oznake.");
+    });
+}
+
+function DeleteLabelConnection(element, labelId, contentType, contentId) {
+    ShowLoaderCenter()
+    $.ajax({
+        url: AppPath + "api/labelConnection?LabelId=" + labelId.toString() + "&ContentType=" + contentType + "&ContentId=" + contentId.toString(),
+        type: "DELETE",
+        success: function () {
+            $(element).parent().next().remove();
+            $(element).parent().remove();
+            HideLoaderCenter();
+        },
+        error: function () {
+            HideLoaderCenter();
+            ShowAlert("danger", "Greška pri brisanju oznake.");
+        }
+    });
 }
 
 function LoadCases(caseId, callback) {
@@ -470,7 +551,7 @@ function LoadCases(caseId, callback) {
     var _columns = [
         { field: 'Id' },
         { checkbox: true },
-        { field: 'NasBroj', title: 'Naš broj', titleTooltip: 'Naš broj', sortable: true },
+        { field: 'NasBrojName', title: 'Naš broj', titleTooltip: 'Naš broj', sortable: true },
         { field: 'StrankaNasa', title: 'Naša stranka', titleTooltip: 'Naša stranka', sortable: true },
         { field: 'StrankaProtivna', title: 'Protivna stranka', titleTooltip: 'Protivna stranka', sortable: true },
         { field: 'VrstaPredmetaName', title: 'Vrsta predmeta', titleTooltip: 'Vrsta predmeta', sortable: true },
@@ -479,6 +560,8 @@ function LoadCases(caseId, callback) {
         { field: 'StanjePredmetaName', title: 'Stanje predmeta', titleTooltip: 'Stanje predmeta', sortable: true },
         { field: 'DatumStanjaPredmeta', title: 'Datum stanja', titleTooltip: 'Datum stanja', sortable: true, sorter: DateSorterFunction, visible: false },
         { field: 'KategorijaPredmetaName', title: 'Kategorija', titleTooltip: 'Kategorija', sortable: true },
+
+        { field: 'Labels', title: 'Oznake', titleTooltip: 'Oznake', sortable: false },
 
         { field: 'SudijaName', title: 'Sudija', titleTooltip: 'Sudija', sortable: true, visible: false },
         { field: 'Iniciran', title: 'Iniciran', titleTooltip: 'Iniciran', sortable: true, sorter: DateSorterFunction, visible: false },
@@ -523,7 +606,10 @@ function LoadCases(caseId, callback) {
 
                 _case.PrivremeniZastupnici = _case.PrivremeniZastupnici ? "Da" : "Ne";
 
-                _case.NasBroj = "<strong>" + _case.NasBroj + "</strong>";
+                _case.NasBrojName = "<strong>" + _case.NasBroj + "</strong>";
+
+                if (Labels != null)
+                    _case.Labels = BuildLabelsHTML(_case.LabelIds, "case", _case.Id);
 
                 switch (_case.KategorijaPredmetaId) {
                     case 5:
@@ -550,7 +636,7 @@ function LoadCases(caseId, callback) {
                         showColumns: true,
                         columns: _columns,
                         escape: false,
-                        clickToSelect: true,
+                        clickToSelect: false,
                         onPostBody: function () {
                             AfterBindCases();
                             if (callback != undefined && typeof (callback) == "function")
@@ -572,6 +658,16 @@ function LoadCases(caseId, callback) {
                                     return false;
                                 }
                             });
+                        },
+                        onCheckAll: function (rows) {
+                            $(Predmeti).each(function (index, _case) {
+                                SelectedCases.push(_case);
+                            });
+                            $("#divOznake").show();
+                        },
+                        onUncheckAll: function (rows) {
+                            SelectedCases = [];
+                            $("#divOznake").hide();
                         }
                     });
                     HideLoaderCenter();
@@ -591,7 +687,7 @@ function LoadCases(caseId, callback) {
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
         HideLoaderCenter();
-        alert("error");
+        alert("error LoadCases");
     });
 }
 
@@ -627,12 +723,11 @@ function AfterBindCases() {
             //}
 
             buttonsHTML += "</div></td>";
+            $(element).append(buttonsHTML);
 
             $(element).dblclick(function () {
                 EditCase(tempId);
             });
-
-            $(element).append(buttonsHTML);
         }
     });
 }
@@ -728,7 +823,7 @@ function LoadParties() {
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
         HideLoaderCenter();
-        alert("error");
+        alert("error LoadParties");
     });
 }
 
@@ -759,6 +854,10 @@ function AfterBindParties() {
 
                 $(element).append(buttonsHTML);
             }
+
+            $(element).dblclick(function () {
+                EditParty(tempId);
+            });
         }
     });
 }
@@ -819,7 +918,7 @@ function LoadUsers() {
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
         HideLoaderCenter();
-        alert("error");
+        alert("error LoadUsers");
     });
 }
 
@@ -924,29 +1023,32 @@ function MenuLabels() {
 }
 
 function LoadLabels(inCasesModule) {
-    if (inCasesModule) {
+    ShowLoaderCenter();
 
-    }
-    else {
-        ShowLoaderCenter();
-
+    if (!inCasesModule) {
         var _columns = [
             { field: 'Id' },
             { field: 'Name', title: 'Naziv', titleTooltip: 'Naziv', sortable: true },
             { field: 'Colors', title: 'Boja', titleTooltip: 'Boja', sortable: true }
-            //{ field: 'BackgroundColor', title: 'Boja pozadine', titleTooltip: 'Boja pozadine', sortable: false },
-            //{ field: 'FontColor', title: 'Boja fonta', titleTooltip: 'Boja fonta', sortable: false }
         ];
-
         $("#tblLabels").bootstrapTable("destroy");
+    }
 
-        $.get(AppPath + "api/label", {
-            UserId: CurrentUser.Id
-        })
-        .done(function (data) {
-            if (data != null && data.length > 0) {
-                Labels = data;
+    $.get(AppPath + "api/label", {
+        UserId: CurrentUser.Id
+    })
+    .done(function (data) {
+        if (data != null && data.length > 0) {
+            Labels = data;
 
+            if (inCasesModule) {
+                $("#ddlLabels").html('<option value="" selected="selected">----</option>');
+                $(Labels).each(function (index, _label) {
+                    $("#ddlLabels").append($("<option></option>").attr("value", _label.Id).text(_label.Name));
+                });
+                HideLoaderCenter();
+            }
+            else {
                 $(Labels).each(function (index, _label) {
 
                     _label.Colors = "<div style='padding:3px; display:inline-block; background-color:" + _label.BackgroundColor + "; color:" + _label.FontColor + "'>" + _label.Name + "</div>";
@@ -968,7 +1070,9 @@ function LoadLabels(inCasesModule) {
                     }
                 });
             }
-            else {
+        }
+        else {
+            if (!inCasesModule) {
                 $("#tblLabels").bootstrapTable({
                     data: [],
                     striped: true,
@@ -976,14 +1080,14 @@ function LoadLabels(inCasesModule) {
                     columns: _columns,
                     search: true
                 });
-                HideLoaderCenter();
             }
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
             HideLoaderCenter();
-            alert("error");
-        });
-    }
+        }
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+        HideLoaderCenter();
+        alert("error LoadLabels");
+    });
 }
 
 function AfterBindLabels() {
@@ -1114,7 +1218,7 @@ function LoadSudovi() {
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
         HideLoaderCenter();
-        alert("error");
+        alert("error LoadSudovi");
     });
 }
 
@@ -1379,7 +1483,7 @@ function EditCase(id) {
 
                 $("#txtCase_PravniOsnov").val(CurrentCase.PravniOsnov);
 
-                $("#modalCase").find(".modal-title").html("Izmijeni predmet: <span style='font-style: italic; color: gray;'>" + CurrentCase.NasBroj + "</span>");
+                $("#modalCase").find(".modal-title").html("Izmijeni predmet: <span style='font-style: italic; color: gray;'>" + CurrentCase.Naziv + "</span>");
 
                 ShowLoaderCenter();
                 $.get(AppPath + "api/licepredmet", {
@@ -1684,7 +1788,7 @@ function LoadUserGroups() {
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
         HideLoaderCenter();
-        alert("error");
+        alert("error LoadUserGroups");
     });
 }
 
@@ -1711,7 +1815,7 @@ function LoadCodeTableData(tableName, dropDown, columnName) {
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
         HideLoaderCenter();
-        alert("error");
+        alert("error LoadCodeTableData");
     });
 }
 
@@ -1783,7 +1887,7 @@ function LoadCodeTableUI(element, title, tableName, columnName, remark) {
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
         HideLoaderCenter();
-        alert("error");
+        alert("error LoadCodeTableUI");
     });
 }
 
@@ -1985,6 +2089,7 @@ function ClearModalParty() {
     $("#txtParty_Email").val("");
     $("#txtParty_JMBG_IDBroj").val("");
     $("#txtParty_Biljeske").val("");
+    $("#tblPartyCases").bootstrapTable("destroy")
     $("#modalParty").find(".modal-title").html("Nova stranka");
 }
 
@@ -2057,7 +2162,69 @@ function EditParty(id) {
             $("#modalParty").find(".modal-title").html("Izmijeni stranku: <span style='font-style: italic; color: gray;'>" + obj.Naziv + "</span>");
             $("#btnOpenModalEditParty").click();
 
+            LoadPartyCases(id);
+
             return false; // break loop
+        }
+    });
+}
+
+function LoadPartyCases(id) {
+    ShowLoaderCenter();
+
+    var _columns = [
+        { field: 'Id' },
+        { field: 'Naziv', title: 'Naziv', titleTooltip: 'Naziv', sortable: false }
+    ];
+
+    $("#tblPartyCases").bootstrapTable("destroy");
+
+    $.get(AppPath + "api/partyCases", {
+        UserId: CurrentUser.Id,
+        PartyId: id
+    })
+    .done(function (data) {
+        if (data != null && data.length > 0) {
+            $("#tblPartyCases").bootstrapTable({
+                data: data,
+                striped: true,
+                columns: _columns,
+                onPostBody: function () {
+                    AfterBindPartyCases();
+                    return false;
+                }
+            });
+            HideLoaderCenter();
+        }
+        else {
+            $("#tblPartyCases").bootstrapTable({
+                data: [],
+                striped: true,
+                columns: _columns,
+            });
+            HideLoaderCenter();
+        }
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+        HideLoaderCenter();
+        alert("error LoadPartyCases");
+    });
+}
+
+function AfterBindPartyCases() {
+    $("#tblPartyCases").find("tr").each(function (index, element) {
+        if (index != 0) {
+            var tempId = parseInt($(element).find("td:first-child").html());
+            $(element).find("td:first-child").hide();
+
+            $(element).dblclick(function () {
+                $("#modalParty").modal("toggle");
+                ShowLoaderCenter();
+                setTimeout(function () {
+                    EditCase(tempId);
+                    HideLoaderCenter();
+                }, 1000);
+            });
         }
     });
 }
@@ -2375,7 +2542,7 @@ function BindCaseDocuments(_data) {
         $(_data).each(function (index, _document) {
 
             if (_document.AbsoluteDocumentLink != undefined && _document.AbsoluteDocumentLink != null && _document.AbsoluteDocumentLink.length > 1)
-                _document.AbsoluteDocumentLinkString = "<input type='text' class='form-control' value='" + _document.AbsoluteDocumentLink + "' style='width:100%;' disabled/>";
+                _document.AbsoluteDocumentLinkString = "<input type='text' class='form-control' value='" + _document.AbsoluteDocumentLink.replace(/%20/g, ' ') + "' style='width:100%;' disabled/>";
 
             if (index == _data.length - 1) {
                 $("#tblCaseDocuments").bootstrapTable({
@@ -2694,7 +2861,7 @@ function SetUpStanjeAutocomplete() {
                 $("#spinner_txtSearch_CaseName").hide();
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
-                alert("error");
+                alert("error SetUpStanjeAutocomplete");
             });
         },
         delay: 500,
@@ -2722,7 +2889,7 @@ function SetUpPredatoUzAutocomplete() {
                 $("#spinner_txtCase_Document_PredatoUz").hide();
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
-                alert("error");
+                alert("error SetUpPredatoUzAutocomplete");
             });
         },
         delay: 500,
@@ -2751,7 +2918,7 @@ function SetUpCaseConnectionAutocomplete() {
                 $("#spinner_txtCase_Connection_ConnectionCase").hide();
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
-                alert("error");
+                alert("error SetUpCaseConnectionAutocomplete");
             });
         },
         delay: 500,
@@ -2792,3 +2959,32 @@ $("#txtLabel_FontColor").change(function () {
     $("#txtLabel_Name").css("color", $("#txtLabel_FontColor").val());
 });
 
+
+function BuildLabelsHTML(labelIds, contentType, contentId) {
+    var resultHTML = "<span id='spanContentLabels_" + contentType + "_" + contentId.toString() + "'>";
+    if (labelIds != undefined && labelIds != null && labelIds.length > 0) {
+        var labelIdsArray = labelIds.split(',');
+        for (var i = 0; i < labelIdsArray.length; i++) {
+            for (var indexLabels = 0; indexLabels < Labels.length; indexLabels++) {
+                if (Labels[indexLabels].Id == parseInt(labelIdsArray[i])) {
+                    resultHTML += "<span class='label' style='font-size:0.8em; margin:2px; background-color:" + Labels[indexLabels].BackgroundColor + ";color:" + Labels[indexLabels].FontColor + "'>"
+                            + Labels[indexLabels].Name
+                            + "&nbsp;&nbsp;<span data-toggle='tooltip' title='Izbriši oznaku' onclick='DeleteLabelConnection(this," + labelIdsArray[i].toString() + ",\"case\"," + contentId.toString() + "); return false;' style='cursor:pointer; border-left:2px solid " + Labels[indexLabels].FontColor + "; font-weight:bold;'>"
+                                + "&nbsp;&nbsp;X"
+                            + "</span>"
+                    + "</span><br>";
+                    break;
+                }
+            }
+        }
+    }
+    resultHTML += "</span>";
+    return resultHTML;
+}
+
+$("#ddlLabels").change(function () {
+    if ($("#ddlLabels").val() != -1)
+        $("#btnApplyLabel").removeAttr("disabled");
+    else
+        $("#btnApplyLabel").attr("disabled", "disabled");
+});
