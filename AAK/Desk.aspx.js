@@ -15,8 +15,8 @@ var CurrentCase = null;
 var SelectedCases = [];
 
 $(document).ready(function () {
-    //$(".g-signin2").click();
-    ValidateUser("meholjic.emir@gmail.com");
+    $(".g-signin2").click();
+    //ValidateUser("meholjic.emir@gmail.com");
     //ValidateUser("emir.meholjic@toptal.com");
 });
 
@@ -608,7 +608,7 @@ function LoadCases(caseId, callback, filter) {
                     _case.DatumArhiviranja = moment(_case.DatumArhiviranja).format("DD.MM.YYYY");
 
                 if (_case.VrijednostSpora != null)
-                    _case.VrijednostSporaString = _case.VrijednostSpora.toFixed(2);
+                    _case.VrijednostSporaString = GetMoneyFormat(_case.VrijednostSpora);
 
                 _case.PrivremeniZastupnici = _case.PrivremeniZastupnici ? "Da" : "Ne";
 
@@ -1612,7 +1612,7 @@ function GenerateTemplate() {
     })
     .done(function (data) {
         if (data && data.length > 0) {
-            window.location = AppPath + "/Temp/" + data;
+            window.location = AppPath + "/Temp/" + CurrentUser.Id.toString() + "/" + data;
             ShowAlert("success", "Uspješno generisan dokument.");
             HideLoaderCenter();
         }
@@ -1637,7 +1637,7 @@ function LoadTemplates(callback) {
             Templates = data;
             $("#ddlTemplates").html('<option value="">-----</option>');
             $(Templates).each(function (index, _template) {
-                $("#ddlTemplates").append($("<option></option>").attr("value", _template.Name).text(_template.Name));
+                $("#ddlTemplates").append($("<option></option>").attr("value", _template.Name).text(_template.Name.replace(".docx", "")));
                 if (index == Templates.length - 1) {
                     if (callback != undefined && typeof (callback) == "function")
                         callback();

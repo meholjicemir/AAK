@@ -33,7 +33,7 @@ namespace AAK.Controllers
             try
             {
                 List<KeyValuePair<string, string>> templateFields = Templates.Case_GetTemplateFields((int)data.CaseId, data.UserId);
-                string fileName = WordTemplateEngine.Utility.GenerateDocument(data.TemplateName, templateFields, (int)data.FilterNasBroj);
+                string fileName = WordTemplateEngine.Utility.GenerateDocument(data.TemplateName, templateFields, (int)data.FilterNasBroj, data.UserId);
                 return Request.CreateResponse<string>(System.Net.HttpStatusCode.OK, fileName);
             }
             catch (Exception ex)

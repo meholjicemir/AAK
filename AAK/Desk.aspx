@@ -29,7 +29,7 @@
     <script src="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
     <script src="Scripts/Utilities.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer="defer"></script>
-    <script src="Desk.aspx.js?v=4" defer="defer"></script>
+    <script src="Desk.aspx.js?v=5" defer="defer"></script>
 
     <div>
         <div class="g-signin2" data-onsuccess="onSignIn"></div>
@@ -761,7 +761,7 @@
                     <h4 class="modal-title">Odaberite predložak</h4>
                 </div>
                 <div class="modal-body">
-                    <select id="ddlTemplates" class="form-control fixed-width-field">
+                    <select id="ddlTemplates" class="form-control" style="width: 100%;">
                         <option value="">-----</option>
                     </select>
                 </div>

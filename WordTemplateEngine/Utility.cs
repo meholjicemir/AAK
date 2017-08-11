@@ -16,7 +16,7 @@ namespace WordTemplateEngine
 {
     public static class Utility
     {
-        public static string GenerateDocument(string templateName, List<KeyValuePair<string, string>> directData, int nasBroj)
+        public static string GenerateDocument(string templateName, List<KeyValuePair<string, string>> directData, int nasBroj, int userId)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace WordTemplateEngine
                     }),
                     Task.Factory.StartNew(() => {
                         // Thread 2 begin
-                        newFilePath = PrepareDocument(templatePath);
+                        newFilePath = PrepareDocument(templatePath, userId);
 
                         // Open template document
                         wordDoc = WordprocessingDocument.Open(newFilePath, true);
@@ -133,9 +133,14 @@ namespace WordTemplateEngine
         }
 
         #region Private methods
-        private static string PrepareDocument(string templatePath)
+        private static string PrepareDocument(string templatePath, int userId)
         {
-            string newFilePath = AppDomain.CurrentDomain.BaseDirectory + "Temp\\" + Guid.NewGuid().ToString("N");
+            string folderPath = AppDomain.CurrentDomain.BaseDirectory + "Temp\\" + userId.ToString() + "\\";
+            if (Directory.Exists(folderPath))
+                Directory.Delete(folderPath, true);
+            Directory.CreateDirectory(folderPath);
+
+            string newFilePath = folderPath + Guid.NewGuid().ToString("N");
             File.Copy(templatePath, newFilePath);
             return newFilePath;
         }

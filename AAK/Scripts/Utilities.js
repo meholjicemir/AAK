@@ -157,7 +157,9 @@ function LogOut() {
 }
 
 function GetMoneyFormat(input) {
-    return '$' + AddThousandsSeparator(parseFloat(Math.round(input * 100) / 100).toFixed(2));
+    var moneyFormat = AddThousandsSeparator(parseFloat(Math.round(input * 100) / 100).toFixed(2)) + " KM";
+    moneyFormat = moneyFormat.replace(/,/g, '#').replace(/\./g, ',').replace(/#/g, '.');
+    return moneyFormat;
 }
 
 function AddThousandsSeparator(nStr) {

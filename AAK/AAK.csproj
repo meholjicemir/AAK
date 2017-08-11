@@ -168,6 +168,7 @@
     <Content Include="LogIn.aspx.js" />
     <Content Include="Scripts\Utilities.js" />
     <Content Include="Styles\NewStyle.css" />
+    <Content Include="Temp\nothing.txt" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -331,7 +332,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Temp\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WordTemplateEngine\WordTemplateEngine.csproj">
