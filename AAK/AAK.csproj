@@ -190,6 +190,7 @@
     <Compile Include="Controllers\RadnjaController.cs" />
     <Compile Include="Controllers\RadnjaHomeController.cs" />
     <Compile Include="Controllers\SudController.cs" />
+    <Compile Include="Controllers\TemplateController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\UserGroupController.cs" />
     <Compile Include="DataProviders\CaseActivities.cs" />
@@ -204,6 +205,7 @@
     <Compile Include="DataProviders\Predmeti.cs" />
     <Compile Include="DataProviders\Radnje.cs" />
     <Compile Include="DataProviders\Sudovi.cs" />
+    <Compile Include="DataProviders\Templates.cs" />
     <Compile Include="DataProviders\UserGroups.cs" />
     <Compile Include="DataProviders\Users.cs" />
     <Compile Include="Desk.aspx.cs">
@@ -238,6 +240,7 @@
     <Compile Include="Models\Predmet.cs" />
     <Compile Include="Models\Radnja.cs" />
     <Compile Include="Models\Sud.cs" />
+    <Compile Include="Models\Template.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -328,6 +331,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Temp\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WordTemplateEngine\WordTemplateEngine.csproj">
+      <Project>{9b46968b-e03b-452b-8a03-d245345b9a17}</Project>
+      <Name>WordTemplateEngine</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

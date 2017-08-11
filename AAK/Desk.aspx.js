@@ -15,8 +15,8 @@ var CurrentCase = null;
 var SelectedCases = [];
 
 $(document).ready(function () {
-    $(".g-signin2").click();
-    //ValidateUser("meholjic.emir@gmail.com");
+    //$(".g-signin2").click();
+    ValidateUser("meholjic.emir@gmail.com");
     //ValidateUser("emir.meholjic@toptal.com");
 });
 
@@ -529,6 +529,7 @@ function ApplyLabel(_contentType) {
 }
 
 function DeleteLabelConnection(element, labelId, contentType, contentId) {
+
     ShowLoaderCenter()
     $.ajax({
         url: AppPath + "api/labelConnection?LabelId=" + labelId.toString() + "&ContentType=" + contentType + "&ContentId=" + contentId.toString(),
@@ -545,8 +546,13 @@ function DeleteLabelConnection(element, labelId, contentType, contentId) {
     });
 }
 
-function LoadCases(caseId, callback) {
+function LoadCases(caseId, callback, filter) {
     ShowLoaderCenter();
+
+    if (filter != undefined && filter != null && filter.length > 0) {
+        $("#txtCasesFilter").val(filter);
+        $("#txtCasesFilterNasBroj").val("");
+    }
 
     var _columns = [
         { field: 'Id' },
@@ -1585,7 +1591,65 @@ function EditCase(id) {
 }
 
 function GenerateTemplateForCase(id) {
+    $(Predmeti).each(function (index, _case) {
+        if (_case.Id == id) {
+            $("#modalTemplate").attr("case_id", id);
+            $("#modalTemplate").attr("case_nasBroj", _case.NasBroj);
+            LoadTemplates(function () { $("#btnOpenModalGenerateTemplate").click(); })
+            return false;
+        }
+    });
+}
 
+function GenerateTemplate() {
+
+    ShowLoaderCenter();
+    $.post(AppPath + "api/template", {
+        TemplateName: $("#ddlTemplates").val(),
+        CaseId: parseInt($("#modalTemplate").attr("case_id")),
+        UserId: CurrentUser.Id,
+        FilterNasBroj: parseInt($("#modalTemplate").attr("case_nasBroj"))
+    })
+    .done(function (data) {
+        if (data && data.length > 0) {
+            window.location = AppPath + "/Temp/" + data;
+            ShowAlert("success", "Uspješno generisan dokument.");
+            HideLoaderCenter();
+        }
+        else {
+            HideLoaderCenter();
+            ShowAlert("danger", "Greška pri generisanju dokumenta.");
+        }
+    })
+    .fail(function (response) {
+        HideLoaderCenter();
+        ShowAlert("danger", "Greška pri generisanju dokumenta.");
+    });
+}
+
+function LoadTemplates(callback) {
+    ShowLoaderCenter();
+    $.get(AppPath + "api/template", {
+        UserId: CurrentUser.Id
+    })
+    .done(function (data) {
+        if (data != null && data.length > 0) {
+            Templates = data;
+            $("#ddlTemplates").html('<option value="">-----</option>');
+            $(Templates).each(function (index, _template) {
+                $("#ddlTemplates").append($("<option></option>").attr("value", _template.Name).text(_template.Name));
+                if (index == Templates.length - 1) {
+                    if (callback != undefined && typeof (callback) == "function")
+                        callback();
+                }
+            });
+        }
+        HideLoaderCenter();
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+        HideLoaderCenter();
+        alert("error LoadTemplates");
+    });
 }
 
 //function DeleteCase(id) {
@@ -2213,7 +2277,10 @@ function LoadPartyCases(id) {
 
 function AfterBindPartyCases() {
     $("#tblPartyCases").find("tr").each(function (index, element) {
-        if (index != 0) {
+        if (index == 0) {
+            $(element).find("th:first-child").hide();
+        }
+        else {
             var tempId = parseInt($(element).find("td:first-child").html());
             $(element).find("td:first-child").hide();
 
@@ -2967,9 +3034,9 @@ function BuildLabelsHTML(labelIds, contentType, contentId) {
         for (var i = 0; i < labelIdsArray.length; i++) {
             for (var indexLabels = 0; indexLabels < Labels.length; indexLabels++) {
                 if (Labels[indexLabels].Id == parseInt(labelIdsArray[i])) {
-                    resultHTML += "<span class='label' style='font-size:0.8em; margin:2px; background-color:" + Labels[indexLabels].BackgroundColor + ";color:" + Labels[indexLabels].FontColor + "'>"
+                    resultHTML += "<span class='label' style='font-size:0.8em; margin:2px; cursor:pointer; background-color:" + Labels[indexLabels].BackgroundColor + ";color:" + Labels[indexLabels].FontColor + "' onclick='LoadCases(undefined, undefined, \"oznaka:" + Labels[indexLabels].Name + "\"); return false;'>"
                             + Labels[indexLabels].Name
-                            + "&nbsp;&nbsp;<span data-toggle='tooltip' title='Izbriši oznaku' onclick='DeleteLabelConnection(this," + labelIdsArray[i].toString() + ",\"case\"," + contentId.toString() + "); return false;' style='cursor:pointer; border-left:2px solid " + Labels[indexLabels].FontColor + "; font-weight:bold;'>"
+                            + "&nbsp;&nbsp;<span data-toggle='tooltip' title='Izbriši oznaku' onclick='(function(e, element) { e.preventDefault(); e.stopPropagation(); DeleteLabelConnection(element," + labelIdsArray[i].toString() + ",\"case\"," + contentId.toString() + "); return false; })(event, this)' style='cursor:pointer; border-left:2px solid " + Labels[indexLabels].FontColor + "; font-weight:bold;'>"
                                 + "&nbsp;&nbsp;X"
                             + "</span>"
                     + "</span><br>";

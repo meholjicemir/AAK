@@ -29,7 +29,7 @@
     <script src="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
     <script src="Scripts/Utilities.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer="defer"></script>
-    <script src="Desk.aspx.js?v=3" defer="defer"></script>
+    <script src="Desk.aspx.js?v=4" defer="defer"></script>
 
     <div>
         <div class="g-signin2" data-onsuccess="onSignIn"></div>
@@ -362,6 +362,7 @@
                                 </select>
                                 <label for="ddlCase_UlogaLica">Uloga:</label>
                                 <select class="form-control" id="ddlCase_UlogaOrdinalNo">
+                                    <option value=""></option>
                                     <option value="1" selected="selected">1.</option>
                                     <option value="2">2.</option>
                                     <option value="3">3.</option>
@@ -752,6 +753,26 @@
         </div>
     </div>
 
+    <div id="modalTemplate" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Odaberite predložak</h4>
+                </div>
+                <div class="modal-body">
+                    <select id="ddlTemplates" class="form-control fixed-width-field">
+                        <option value="">-----</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="GenerateTemplate(); return false;">Generiši dokument</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Odustani</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="modalUser" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -836,6 +857,8 @@
         <button id="btnOpenModalEditLabel" data-toggle='modal' data-target='#modalLabel'></button>
         <button id="btnOpenModalEditParty" data-toggle='modal' data-target='#modalParty'></button>
         <button id="btnOpenModalEditCase" data-toggle='modal' data-target='#modalCase'></button>
+        <button id="btnOpenModalGenerateTemplate" data-toggle='modal' data-target='#modalTemplate'></button>
+
 
         <button id="btnOpenModalPrompt" data-toggle='modal' data-target='#modalPrompt'></button>
         <button id="btnOpenModalEditUser" data-toggle='modal' data-target='#modalUser'></button>
