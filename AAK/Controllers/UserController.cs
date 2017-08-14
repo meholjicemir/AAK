@@ -36,17 +36,22 @@ namespace AAK.Controllers
                 if (user.FirstName.Equals(string.Empty) && user.LastName.Equals(string.Empty))
                 {
                     // Getting user for login
-                    DataTable dt = DBUtility.Utility.ExecuteStoredProcedure<string>("User_GetByEmail", "email", user.Email);
-                    if (dt.Rows.Count > 0)
+                    if (Google.Validator.ValidateToken(user.Email, user.Token))
                     {
-                        user = DBUtility.Utility.ParseDataRow<User>(dt.Rows[0]);
-                        if (user.Id > 0)
+                        DataTable dt = DBUtility.Utility.ExecuteStoredProcedure<string>("User_GetByEmail", "email", user.Email);
+                        if (dt.Rows.Count > 0)
                         {
-                            user.AccessToken = Guid.NewGuid().ToString();
-                            return Request.CreateResponse<User>(System.Net.HttpStatusCode.OK, user);
+                            user = DBUtility.Utility.ParseDataRow<User>(dt.Rows[0]);
+                            if (user.Id > 0)
+                            {
+                                user.AccessToken = Guid.NewGuid().ToString();
+                                return Request.CreateResponse<User>(System.Net.HttpStatusCode.OK, user);
+                            }
                         }
+                        return Request.CreateResponse<User>(System.Net.HttpStatusCode.OK, new User());
                     }
-                    return Request.CreateResponse<User>(System.Net.HttpStatusCode.OK, new User());
+                    else
+                        return Request.CreateResponse(System.Net.HttpStatusCode.Forbidden);
                 }
                 else
                 {

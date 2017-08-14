@@ -20,6 +20,8 @@ namespace AAK.Models
 
         public string GoogleDriveLocalFolderPath { get; set; }
 
+        public string Token { get; set; }
+
         public User()
         {
             this.Id = -1;
@@ -34,6 +36,8 @@ namespace AAK.Models
             this.UserGroupNames = string.Empty;
 
             this.GoogleDriveLocalFolderPath = string.Empty;
+
+            this.Token = string.Empty;
         }
     }
 }

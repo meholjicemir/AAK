@@ -14,6 +14,21 @@ var Radnje = null;
 var CurrentCase = null;
 var SelectedCases = [];
 
+window.userInteractionTimeout = null;
+window.userInteractionInHTMLArea = false;
+window.onBrowserHistoryButtonClicked = function () {
+    var locationToMoveTo = window.location.toString();
+    CurrentModule = GetQueryStringParameterByName("module", locationToMoveTo).toLowerCase();
+    if (CurrentModule != undefined && CurrentModule != null && CurrentModule.length > 0) {
+        try {
+            OpenMenuByModule();
+        }
+        catch (err) {
+        }
+    }
+};
+
+
 $(document).ready(function () {
     $(".g-signin2").click();
     //ValidateUser("meholjic.emir@gmail.com");
@@ -24,17 +39,23 @@ function onSignIn(googleUser) {
     var profile = googleUser.getBasicProfile();
     var email = profile.getEmail();
 
-    ValidateUser(email);
+    var token = googleUser.getAuthResponse().id_token;
+    console.log("ID Token: " + token);
+
+    ValidateUser(email, token);
 }
 
-function ValidateUser(email) {
+function ValidateUser(email, token) {
     ShowLoaderCenter();
 
     $.post(AppPath + "api/user", {
-        Email: email
+        Email: email,
+        Token: token
     })
     .done(function (data) {
         if (data.Id > 0) {
+            SetupHistoryHandling();
+
             //document.cookie = 'AccessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 
             //var expiry = new Date();
@@ -108,39 +129,12 @@ function RenderApp(user) {
 
     if (hasCaseRights) {
         CurrentModule = (module || "").toLowerCase();
-        switch (CurrentModule) {
-            case "home":
-                MenuHome();
-                break;
-            case "cases":
-                MenuCases();
-                break;
-            case "parties":
-                MenuParties();
-                break;
-            case "courts":
-                MenuSudovi();
-                break;
-            case "labels":
-                MenuLabels();
-                break;
-            case "users":
-                if (hasAdminRights)
-                    MenuUsers();
-                else
-                    MenuHome();
-                break;
-            case "reports":
-                MenuReports();
-                break;
-            default:
-                CurrentModule = "home";
-                MenuHome();
-                break;
-        }
+        OpenMenuByModule();
     }
-    else if (hasAdminRights)
+    else if (hasAdminRights) {
+        CurrentModule = "users";
         MenuUsers();
+    }
     else
         ShowAlert("danger", "Korisnik postoji ali nema dodijeljena potrebna prava za korištenje aplikacije.");
 
@@ -152,7 +146,52 @@ function RenderApp(user) {
         $(".modal-admin").css("margin-left", ((window.innerWidth - 1240) / 2).toString() + "px");
 }
 
+function OpenMenuByModule() {
+    switch (CurrentModule) {
+        case "home":
+            MenuHome();
+            break;
+        case "cases":
+            MenuCases();
+            break;
+        case "parties":
+            MenuParties();
+            break;
+        case "courts":
+            MenuSudovi();
+            break;
+        case "labels":
+            MenuLabels();
+            break;
+        case "users":
+            if (user.UserGroupCodes.indexOf("user_admin") >= 0)
+                MenuUsers();
+            else
+                MenuHome();
+            break;
+        case "reports":
+            MenuReports();
+            break;
+        default:
+            $("#liMenuCodeTables").find("a").each(function (index, element) {
+                if ($(element).html().toLowerCase() == CurrentModule) {
+                    $(element).click();
+                    return false;
+                }
+                if (index == $("#liMenuCodeTables").find("a").length - 1) {
+                    CurrentModule = "home";
+                    MenuHome();
+                }
+            });
+            break;
+    }
+}
+
 function MenuHome() {
+    CurrentModule = "home";
+    var location = document.location.href.split('?')[0] + "?module=" + CurrentModule;
+    history.pushState({ foo: "bar" }, "Početna", location);
+
     DeactivateAllMenuItems();
     $("#liMenuHome").addClass("active");
     $(".menu-div").hide();
@@ -448,6 +487,10 @@ function MenuCases_LoadDataOnly() {
 }
 
 function MenuCases() {
+    CurrentModule = "cases";
+    var location = document.location.href.split('?')[0] + "?module=" + CurrentModule;
+    history.pushState({ foo: "bar" }, "Predmeti", location);
+
     DeactivateAllMenuItems();
     $("#liMenuCases").addClass("active");
     $(".menu-div").hide();
@@ -739,6 +782,10 @@ function AfterBindCases() {
 }
 
 function MenuReports() {
+    CurrentModule = "reports";
+    var location = document.location.href.split('?')[0] + "?module=" + CurrentModule;
+    history.pushState({ foo: "bar" }, "Izvještaji", location);
+
     DeactivateAllMenuItems();
     $("#liMenuReports").addClass("active");
     $(".menu-div").hide();
@@ -746,6 +793,10 @@ function MenuReports() {
 }
 
 function MenuParties() {
+    CurrentModule = "parties";
+    var location = document.location.href.split('?')[0] + "?module=" + CurrentModule;
+    history.pushState({ foo: "bar" }, "Stranke", location);
+
     DeactivateAllMenuItems();
     $("#liMenuParties").addClass("active");
     $(".menu-div").hide();
@@ -869,6 +920,10 @@ function AfterBindParties() {
 }
 
 function MenuUsers() {
+    CurrentModule = "users";
+    var location = document.location.href.split('?')[0] + "?module=" + CurrentModule;
+    history.pushState({ foo: "bar" }, "Korisnici", location);
+
     DeactivateAllMenuItems();
     $("#liMenuUsers").addClass("active");
     $(".menu-div").hide();
@@ -1020,6 +1075,10 @@ function DeleteUser(id) {
 }
 
 function MenuLabels() {
+    CurrentModule = "labels";
+    var location = document.location.href.split('?')[0] + "?module=" + CurrentModule;
+    history.pushState({ foo: "bar" }, "Oznake", location);
+
     DeactivateAllMenuItems();
     //$("#liMenuLabels").addClass("active");
     $(".menu-div").hide();
@@ -1152,6 +1211,10 @@ function DeleteLabel(id) {
 }
 
 function MenuSudovi() {
+    CurrentModule = "courts";
+    var location = document.location.href.split('?')[0] + "?module=" + CurrentModule;
+    history.pushState({ foo: "bar" }, "Sudovi", location);
+
     DeactivateAllMenuItems();
     $("#liMenuSudovi").addClass("active");
     $(".menu-div").hide();
@@ -1884,6 +1947,10 @@ function LoadCodeTableData(tableName, dropDown, columnName) {
 }
 
 function LoadCodeTableUI(element, title, tableName, columnName, remark) {
+    CurrentModule = title;
+    var location = document.location.href.split('?')[0] + "?module=" + CurrentModule;
+    history.pushState({ foo: "bar" }, title, location);
+
     $(".menu-item").removeClass("active");
     $("#liMenuCodeTables").addClass("active");
     $(".menu-sub-item").css("background-color", "");

@@ -312,3 +312,30 @@ function GetDataFromMultiselect(dropdownId) {
     return data;
 }
 
+function SetupHistoryHandling() {
+    $(document).mousedown(function () {
+        clearTimeout(window.userInteractionTimeout);
+        window.userInteractionInHTMLArea = true;
+        window.userInteractionTimeout = setTimeout(function () {
+            window.userInteractionInHTMLArea = false;
+        }, 500);
+    });
+
+    $(document).keydown(function () {
+        clearTimeout(window.userInteractionTimeout);
+        window.userInteractionInHTMLArea = true;
+        window.userInteractionTimeout = setTimeout(function () {
+            window.userInteractionInHTMLArea = false;
+        }, 500);
+    });
+
+    if (window.history && window.history.pushState) {
+        $(window).on('popstate', function () {
+            //if (!window.userInteractionInHTMLArea) {
+            //    alert('Browser Back or Forward button was pressed.');
+            //}
+            if (window.onBrowserHistoryButtonClicked)
+                window.onBrowserHistoryButtonClicked();
+        });
+    }
+}
