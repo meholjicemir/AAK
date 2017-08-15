@@ -21,6 +21,9 @@ namespace AAK.Models
         public string BrojPredmeta { get; set; }
         public string KategorijaPredmeta { get; set; }
 
+        public string Token { get; set; }
+        public string Email { get; set; }
+
         public CaseActivity()
         {
             this.Id = -1;

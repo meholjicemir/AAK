@@ -17,8 +17,12 @@ namespace AAK.Controllers
         {
             try
             {
-                List<Template> templates = Templates.Templates_GetAll();
-                return Request.CreateResponse<List<Template>>(System.Net.HttpStatusCode.OK, templates);
+                if (Google.Validator.ValidateToken(data.Token, data.Email))
+                {
+                    List<Template> templates = Templates.Templates_GetAll();
+                    return Request.CreateResponse<List<Template>>(System.Net.HttpStatusCode.OK, templates);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {
@@ -32,9 +36,13 @@ namespace AAK.Controllers
         {
             try
             {
-                List<KeyValuePair<string, string>> templateFields = Templates.Case_GetTemplateFields((int)data.CaseId, data.UserId);
-                string fileName = WordTemplateEngine.Utility.GenerateDocument(data.TemplateName, templateFields, (int)data.FilterNasBroj, data.UserId);
-                return Request.CreateResponse<string>(System.Net.HttpStatusCode.OK, fileName);
+                if (Google.Validator.ValidateToken(data.Token, data.Email))
+                {
+                    List<KeyValuePair<string, string>> templateFields = Templates.Case_GetTemplateFields((int)data.CaseId, data.UserId);
+                    string fileName = WordTemplateEngine.Utility.GenerateDocument(data.TemplateName, templateFields, (int)data.FilterNasBroj, data.UserId);
+                    return Request.CreateResponse<string>(System.Net.HttpStatusCode.OK, fileName);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {

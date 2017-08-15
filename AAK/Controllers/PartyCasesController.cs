@@ -17,8 +17,12 @@ namespace AAK.Controllers
         {
             try
             {
-                List<Predmet> result = Predmeti.GetCasesForParty((int)data.PartyId);
-                return Request.CreateResponse<List<Predmet>>(System.Net.HttpStatusCode.OK, result);
+                if (Google.Validator.ValidateToken(data.Token, data.Email))
+                {
+                    List<Predmet> result = Predmeti.GetCasesForParty((int)data.PartyId);
+                    return Request.CreateResponse<List<Predmet>>(System.Net.HttpStatusCode.OK, result);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {

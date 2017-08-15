@@ -14,6 +14,9 @@ namespace AAK.Models
 
         public string ContentIds { get; set; }
 
+        public string Token { get; set; }
+        public string Email { get; set; }
+
         public LabelConnection()
         {
             this.Id = -1;

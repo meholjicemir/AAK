@@ -16,6 +16,9 @@ namespace AAK.Models
         public int? VrstaTroskaId { get; set; }
         public string VrstaTroskaName { get; set; }
 
+        public string Token { get; set; }
+        public string Email { get; set; }
+
         public Expense()
         {
             this.Id = -1;

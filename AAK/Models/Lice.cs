@@ -35,6 +35,9 @@ namespace AAK.Models
 
         public string Naziv { get; set; }
 
+        public string Token { get; set; }
+        public string ValidationEmail { get; set; }
+
         public Lice()
         {
             this.Id = -1;

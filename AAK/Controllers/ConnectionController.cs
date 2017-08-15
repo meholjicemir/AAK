@@ -12,12 +12,16 @@ namespace AAK.Controllers
     public class ConnectionController : ApiController
     {
         [HttpGet]
-        public HttpResponseMessage Connections_GetForCase([FromUri]Connection document)
+        public HttpResponseMessage Connections_GetForCase([FromUri]Connection connection)
         {
             try
             {
-                List<Connection> result = Connections.Connections_GetForCase(document.CaseId);
-                return Request.CreateResponse<List<Connection>>(System.Net.HttpStatusCode.OK, result);
+                if (Google.Validator.ValidateToken(connection.Token, connection.Email))
+                {
+                    List<Connection> result = Connections.Connections_GetForCase(connection.CaseId);
+                    return Request.CreateResponse<List<Connection>>(System.Net.HttpStatusCode.OK, result);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {

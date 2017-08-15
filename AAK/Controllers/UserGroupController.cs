@@ -18,8 +18,12 @@ namespace AAK.Controllers
         {
             try
             {
-                List<UserGroup> result = UserGroups.UserGroups_GetAll();
-                return Request.CreateResponse<List<UserGroup>>(System.Net.HttpStatusCode.OK, result);
+                if (Google.Validator.ValidateToken(data.Token, data.Email))
+                {
+                    List<UserGroup> result = UserGroups.UserGroups_GetAll();
+                    return Request.CreateResponse<List<UserGroup>>(System.Net.HttpStatusCode.OK, result);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {

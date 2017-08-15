@@ -11,21 +11,19 @@ namespace AAK.Controllers
 {
     public class NasBrojController : ApiController
     {
-        [HttpGet]
-        public HttpResponseMessage GetNextNasBroj()
-        {
-            try
-            {
-                int result = Predmeti.GetNextNasBroj();
-                return Request.CreateResponse<int>(System.Net.HttpStatusCode.OK, result);
-            }
-            catch (Exception ex)
-            {
-                LoggerUtility.Logger.LogException(ex, "GetNextNasBroj");
-                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
-            }
-        }
-
-
+        //[HttpGet]
+        //public HttpResponseMessage GetNextNasBroj()
+        //{
+        //    try
+        //    {
+        //        int result = Predmeti.GetNextNasBroj();
+        //        return Request.CreateResponse<int>(System.Net.HttpStatusCode.OK, result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        LoggerUtility.Logger.LogException(ex, "GetNextNasBroj");
+        //        return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+        //    }
+        //}
     }
 }

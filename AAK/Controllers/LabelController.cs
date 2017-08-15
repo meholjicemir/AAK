@@ -17,8 +17,12 @@ namespace AAK.Controllers
         {
             try
             {
-                List<Label> result = Labels.Labels_GetAll();
-                return Request.CreateResponse<List<Label>>(System.Net.HttpStatusCode.OK, result);
+                if (Google.Validator.ValidateToken(data.Token, data.Email))
+                {
+                    List<Label> result = Labels.Labels_GetAll();
+                    return Request.CreateResponse<List<Label>>(System.Net.HttpStatusCode.OK, result);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {
@@ -32,18 +36,22 @@ namespace AAK.Controllers
         {
             try
             {
-                if (label.Id > 0)
+                if (Google.Validator.ValidateToken(label.Token, label.Email))
                 {
-                    // Edit
-                    Labels.Label_Update(label);
-                    return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, label.Id);
+                    if (label.Id > 0)
+                    {
+                        // Edit
+                        Labels.Label_Update(label);
+                        return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, label.Id);
+                    }
+                    else
+                    {
+                        // Insert
+                        int? insertedId = Labels.Label_Insert(label);
+                        return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
+                    }
                 }
-                else
-                {
-                    // Insert
-                    int? insertedId = Labels.Label_Insert(label);
-                    return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
-                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {
@@ -57,8 +65,12 @@ namespace AAK.Controllers
         {
             try
             {
-                Labels.Label_Delete(label.Id);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                if (Google.Validator.ValidateToken(label.Token, label.Email))
+                {
+                    Labels.Label_Delete(label.Id);
+                    return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {

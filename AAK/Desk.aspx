@@ -29,16 +29,19 @@
     <script src="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
     <script src="Scripts/Utilities.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer="defer"></script>
-    <script src="Desk.aspx.js?v=5" defer="defer"></script>
+    <script src="Desk.aspx.js?v=6" defer="defer"></script>
 
-    <div>
+    <div id="divGoogleSignIn">
+        <h1>Advokatsko društvo Đonko</h1>
+        <hr />
         <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        <br />
     </div>
 
     <div id="divAll" class="container" style="padding: 0px; width: 100%; display: none;">
         <nav class="navbar navbar-default navbar-static-top">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navBarMenuContainer">
+                <button type="button" class="navbar-toggle pull-left" data-toggle="collapse" data-target="#navBarMenuContainer" style="margin-left: 10px;">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -865,7 +868,13 @@
     </div>
 
     <div class="pull-right" style="position: absolute; top: 0; right: 0; margin: 2px; font-size: xx-small; z-index: 1000;">
-        v1.0 DEV
+        <button id="btnLogOut" class="btn btn-sm btn-default" data-toggle="tooltip" title="Odjava" style="display: none;" onclick="LogOut(); return false;">
+            <span class="glyphicon glyphicon-log-out"></span>&nbsp;Odjava
+        </button>
+        <img id="imgUserPicture" height="50" width="50" alt="Slika korisnika" src="" data-toggle="tooltip" title="Slika korisnika" />
+    </div>
+    <div class="pull-right" style="position: fixed; bottom: 0; right: 0; margin: 2px; font-size: xx-small; z-index: 1000;">
+        <span class="pull-right">v1.0 DEV</span>
     </div>
 </body>
 </html>

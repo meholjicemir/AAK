@@ -14,5 +14,8 @@ namespace AAK.Models.Helper
         public int? CaseId { get; set; }
         public int? PartyId { get; set; }
         public string TemplateName { get; set; }
+
+        public string Token { get; set; }
+        public string Email { get; set; }
     }
 }

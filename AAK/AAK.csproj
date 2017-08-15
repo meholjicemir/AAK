@@ -229,7 +229,6 @@
     <Compile Include="Controllers\LabelController.cs" />
     <Compile Include="Controllers\LiceController.cs" />
     <Compile Include="Controllers\LicePredmetController.cs" />
-    <Compile Include="Controllers\NasBrojController.cs" />
     <Compile Include="Controllers\NoteController.cs" />
     <Compile Include="Controllers\PartyCasesController.cs" />
     <Compile Include="Controllers\PredmetController.cs" />

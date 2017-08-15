@@ -16,22 +16,26 @@ namespace AAK.Controllers
         {
             try
             {
-                if ((input.ContentIds ?? "").Length > 0)
+                if (Google.Validator.ValidateToken(input.Token, input.Email))
                 {
-                    input.ContentIds = input.ContentIds.Trim().Trim(',').Trim();
-                    List<string> contentIds = input.ContentIds.Split(',').ToList<string>();
-
-                    List<LabelConnection> updatedConnections = new List<LabelConnection>();
-                    foreach (string contentId in contentIds)
+                    if ((input.ContentIds ?? "").Length > 0)
                     {
-                        input.ContentId = Convert.ToInt32(contentId);
-                        LabelConnections.LabelConnection_Create(input);
-                        updatedConnections.Add(new LabelConnection(input.LabelId, input.ContentType, input.ContentId));
+                        input.ContentIds = input.ContentIds.Trim().Trim(',').Trim();
+                        List<string> contentIds = input.ContentIds.Split(',').ToList<string>();
+
+                        List<LabelConnection> updatedConnections = new List<LabelConnection>();
+                        foreach (string contentId in contentIds)
+                        {
+                            input.ContentId = Convert.ToInt32(contentId);
+                            LabelConnections.LabelConnection_Create(input);
+                            updatedConnections.Add(new LabelConnection(input.LabelId, input.ContentType, input.ContentId));
+                        }
+                        return Request.CreateResponse<List<LabelConnection>>(System.Net.HttpStatusCode.OK, updatedConnections);
                     }
-                    return Request.CreateResponse<List<LabelConnection>>(System.Net.HttpStatusCode.OK, updatedConnections);
+                    else
+                        throw new Exception("No content ids sent.");
                 }
-                else
-                    throw new Exception("No content ids sent.");
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {
@@ -45,8 +49,12 @@ namespace AAK.Controllers
         {
             try
             {
-                LabelConnections.LabelConnection_Delete(labelConnection);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                if (Google.Validator.ValidateToken(labelConnection.Token, labelConnection.Email))
+                {
+                    LabelConnections.LabelConnection_Delete(labelConnection);
+                    return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {

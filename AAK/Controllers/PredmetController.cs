@@ -17,8 +17,12 @@ namespace AAK.Controllers
         {
             try
             {
-                List<Predmet> result = Predmeti.Predmeti_GetAll(data.UserId, data.Filter, data.FilterNasBroj, data.RowCount, data.CaseId);
-                return Request.CreateResponse<List<Predmet>>(System.Net.HttpStatusCode.OK, result);
+                if (Google.Validator.ValidateToken(data.Token, data.Email))
+                {
+                    List<Predmet> result = Predmeti.Predmeti_GetAll(data.UserId, data.Filter, data.FilterNasBroj, data.RowCount, data.CaseId);
+                    return Request.CreateResponse<List<Predmet>>(System.Net.HttpStatusCode.OK, result);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {
@@ -32,18 +36,22 @@ namespace AAK.Controllers
         {
             try
             {
-                if (predmet.Id > 0)
+                if (Google.Validator.ValidateToken(predmet.Token, predmet.Email))
                 {
-                    // Edit
-                    Predmeti.Predmeti_Update(predmet);
-                    return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, predmet.Id);
+                    if (predmet.Id > 0)
+                    {
+                        // Edit
+                        Predmeti.Predmeti_Update(predmet);
+                        return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, predmet.Id);
+                    }
+                    else
+                    {
+                        // Insert
+                        int? insertedId = Predmeti.Predmeti_Insert(predmet);
+                        return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
+                    }
                 }
-                else
-                {
-                    // Insert
-                    int? insertedId = Predmeti.Predmeti_Insert(predmet);
-                    return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
-                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {
@@ -57,8 +65,12 @@ namespace AAK.Controllers
         {
             try
             {
-                Predmeti.Predmeti_Delete(predmet.Id);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                if (Google.Validator.ValidateToken(predmet.Token, predmet.Email))
+                {
+                    Predmeti.Predmeti_Delete(predmet.Id);
+                    return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {

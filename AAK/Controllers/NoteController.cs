@@ -16,8 +16,12 @@ namespace AAK.Controllers
         {
             try
             {
-                List<Note> result = Notes.Notes_GetForCase(note.CaseId);
-                return Request.CreateResponse<List<Note>>(System.Net.HttpStatusCode.OK, result);
+                if (Google.Validator.ValidateToken(note.Token, note.Email))
+                {
+                    List<Note> result = Notes.Notes_GetForCase(note.CaseId);
+                    return Request.CreateResponse<List<Note>>(System.Net.HttpStatusCode.OK, result);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {

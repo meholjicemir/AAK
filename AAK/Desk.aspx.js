@@ -30,7 +30,7 @@ window.onBrowserHistoryButtonClicked = function () {
 
 
 $(document).ready(function () {
-    $(".g-signin2").click();
+    //$(".g-signin2").click();
     //ValidateUser("meholjic.emir@gmail.com");
     //ValidateUser("emir.meholjic@toptal.com");
 });
@@ -68,8 +68,19 @@ function ValidateUser(email, token) {
                 UserGroupCodes: data.UserGroupCodes,
                 FirstName: data.FirstName,
                 LastName: data.LastName,
-                GoogleDriveLocalFolderPath: data.GoogleDriveLocalFolderPath
+                GoogleDriveLocalFolderPath: data.GoogleDriveLocalFolderPath,
+                PictureLink: data.PictureLink,
+                Token: data.Token
             };
+
+            $("#imgUserPicture")
+                    .attr("title", CurrentUser.FirstName + " " + CurrentUser.LastName + " (" + CurrentUser.Email + ")")
+                    .attr("alt", CurrentUser.FirstName + " " + CurrentUser.LastName);
+
+            if (CurrentUser.PictureLink != undefined && CurrentUser.PictureLink != null && CurrentUser.PictureLink.length > 0)
+                $("#imgUserPicture").attr("src", CurrentUser.PictureLink)
+
+            $("#imgUserPicture").show();
 
             RenderApp(data);
             HideLoaderCenter();
@@ -87,7 +98,7 @@ function ValidateUser(email, token) {
 }
 
 function RenderApp(user) {
-    $(".g-signin2").hide(); // Hide Google login button.
+    $("#divGoogleSignIn").hide(); // Hide Google login button.
 
     var module = GetQueryStringParameterByName("module");
 
@@ -220,7 +231,9 @@ function LoadRadnje() {
     $.get(AppPath + "api/radnjahome", {
         UserId: CurrentUser.Id,
         Filter: $("#txtRadnjeFilter").val(),
-        RowCount: $("#ddlRadnjeRowCount").val()
+        RowCount: $("#ddlRadnjeRowCount").val(),
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
     })
     .done(function (data) {
         if (data != null && data.length > 0) {
@@ -327,7 +340,9 @@ function LoadCaseActivities() {
     $.get(AppPath + "api/caseactivity", {
         UserId: CurrentUser.Id,
         Filter: $("#txtCaseActivitiesFilter").val(),
-        RowCount: $("#ddlCaseActivitiesRowCount").val()
+        RowCount: $("#ddlCaseActivitiesRowCount").val(),
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
     })
     .done(function (data) {
         if (data != null && data.length > 0) {
@@ -437,7 +452,7 @@ function DeleteCaseActivity(id) {
                 function () {
                     ShowLoaderCenter();
                     $.ajax({
-                        url: AppPath + "api/caseactivity?Id=" + id.toString(),
+                        url: AppPath + "api/caseactivity?Id=" + id.toString() + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
                         type: "DELETE",
                         success: function () {
                             LoadCaseActivities();
@@ -520,7 +535,9 @@ function ApplyLabel(_contentType) {
     var reqObj = {
         LabelId: $("#ddlLabels").val(),
         ContentType: _contentType,
-        ContentIds: contentIds
+        ContentIds: contentIds,
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
     };
 
     $.post(AppPath + "api/labelConnection", reqObj)
@@ -575,7 +592,9 @@ function DeleteLabelConnection(element, labelId, contentType, contentId) {
 
     ShowLoaderCenter()
     $.ajax({
-        url: AppPath + "api/labelConnection?LabelId=" + labelId.toString() + "&ContentType=" + contentType + "&ContentId=" + contentId.toString(),
+        url: AppPath + "api/labelConnection?LabelId="
+            + labelId.toString() + "&ContentType=" + contentType + "&ContentId=" + contentId.toString()
+            + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
         type: "DELETE",
         success: function () {
             $(element).parent().next().remove();
@@ -635,7 +654,9 @@ function LoadCases(caseId, callback, filter) {
         Filter: $("#txtCasesFilter").val(),
         FilterNasBroj: $("#txtCasesFilterNasBroj").val(),
         RowCount: $("#ddlCasesRowCount").val(),
-        CaseId: caseId
+        CaseId: caseId,
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
     })
     .done(function (data) {
         if (data != null && data.length > 0) {
@@ -839,7 +860,9 @@ function LoadParties() {
     $.get(AppPath + "api/lice", {
         UserId: CurrentUser.Id,
         Filter: $("#txtPartiesFilter").val(),
-        RowCount: $("#ddlPartiesRowCount").val()
+        RowCount: $("#ddlPartiesRowCount").val(),
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
     })
     .done(function (data) {
         if (data != null && data.length > 0) {
@@ -930,7 +953,6 @@ function MenuUsers() {
     $("#divUsers").show();
 
     LoadUserGroups();
-
     LoadUsers();
 }
 
@@ -950,7 +972,9 @@ function LoadUsers() {
     $("#tblUsers").bootstrapTable("destroy");
 
     $.get(AppPath + "api/user", {
-        UserId: CurrentUser.Id
+        UserId: CurrentUser.Id,
+        Token: CurrentUser.Token,
+        Email: Currentuser.Email
     })
     .done(function (data) {
         if (data != null && data.length > 0) {
@@ -1053,7 +1077,8 @@ function DeleteUser(id) {
                 function () {
                     ShowLoaderCenter();
                     $.ajax({
-                        url: AppPath + "api/user?Id=" + id.toString(),
+                        url: AppPath + "api/user?Id=" + id.toString()
+                            + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
                         type: "DELETE",
                         success: function () {
                             LoadUsers();
@@ -1100,7 +1125,9 @@ function LoadLabels(inCasesModule) {
     }
 
     $.get(AppPath + "api/label", {
-        UserId: CurrentUser.Id
+        UserId: CurrentUser.Id,
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
     })
     .done(function (data) {
         if (data != null && data.length > 0) {
@@ -1207,7 +1234,33 @@ function EditLabel(id) {
 }
 
 function DeleteLabel(id) {
-
+    $(Labels).each(function (index, obj) {
+        if (obj.Id == id) {
+            ShowPrompt(
+                "Da li ste sigurni da želite izbrisati oznaku?",
+                "<span style='font-style: italic; color: gray;'>" + obj.Name + "</span>",
+                function () {
+                    ShowLoaderCenter();
+                    $.ajax({
+                        url: AppPath + "api/label?Id=" + id.toString()
+                            + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
+                        type: "DELETE",
+                        success: function () {
+                            LoadLabels();
+                            HideLoaderCenter();
+                            ShowAlert("success", "Uspješno izbrisana oznaka.");
+                        },
+                        error: function () {
+                            HideLoaderCenter();
+                            ShowAlert("danger", "Greška pri brisanju oznake.");
+                        }
+                    });
+                },
+                function () { }
+            );
+            return false; // break loop
+        }
+    });
 }
 
 function MenuSudovi() {
@@ -1245,7 +1298,9 @@ function LoadSudovi() {
     $("#tblSudovi").bootstrapTable("destroy");
 
     $.get(AppPath + "api/sud", {
-        UserId: CurrentUser.Id
+        UserId: CurrentUser.Id,
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
     })
     .done(function (data) {
         if (data != null && data.length > 0) {
@@ -1353,7 +1408,8 @@ function DeleteSud(id) {
                 function () {
                     ShowLoaderCenter();
                     $.ajax({
-                        url: AppPath + "api/sud?Id=" + id.toString(),
+                        url: AppPath + "api/sud?Id=" + id.toString()
+                            + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
                         type: "DELETE",
                         success: function () {
                             LoadSudovi();
@@ -1368,7 +1424,6 @@ function DeleteSud(id) {
                 },
                 function () { }
             );
-
             return false; // break loop
         }
     });
@@ -1387,7 +1442,9 @@ function SaveCaseActivity() {
             Note: $("#txtCase_CaseActivity_Note").val(),
             ActivityDate: ConvertBSDateToUSDateString($("#txtCase_CaseActivity_ActivityDate").val()),
             ForAllUsers: $("#cbCase_CaseActivity_ForAllUsers").prop("checked"),
-            CreatedBy: CurrentUser.Id
+            CreatedBy: CurrentUser.Id,
+            Token: CurrentUser.Token,
+            Email: CurrentUser.Email
         })
         .done(function (data) {
             if (data && data > 0) {
@@ -1436,7 +1493,10 @@ function SaveCase() {
         Expenses: CurrentCase.Expenses,
         Radnje: CurrentCase.Radnje,
         Documents: CurrentCase.Documents,
-        Connections: CurrentCase.Connections
+        Connections: CurrentCase.Connections,
+
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
     };
 
     var tempId = $("#modalCase").attr("edit_id");
@@ -1556,7 +1616,9 @@ function EditCase(id) {
 
                 ShowLoaderCenter();
                 $.get(AppPath + "api/licepredmet", {
-                    Id: CurrentCase.Id
+                    Id: CurrentCase.Id,
+                    Token: CurrentUser.Token,
+                    Email: CurrentUser.Email
                 })
                 .done(function (data) {
                     CurrentCase.Parties = data;
@@ -1570,7 +1632,9 @@ function EditCase(id) {
 
                 ShowLoaderCenter();
                 $.get(AppPath + "api/note", {
-                    CaseId: CurrentCase.Id
+                    CaseId: CurrentCase.Id,
+                    Token: CurrentUser.Token,
+                    Email: CurrentUser.Email
                 })
                 .done(function (data) {
                     CurrentCase.Notes = data;
@@ -1584,7 +1648,9 @@ function EditCase(id) {
 
                 ShowLoaderCenter();
                 $.get(AppPath + "api/expense", {
-                    CaseId: CurrentCase.Id
+                    CaseId: CurrentCase.Id,
+                    Token: CurrentUser.Token,
+                    Email: CurrentUser.Email
                 })
                 .done(function (data) {
                     CurrentCase.Expenses = data;
@@ -1599,7 +1665,9 @@ function EditCase(id) {
                 ShowLoaderCenter();
                 $.get(AppPath + "api/radnja", {
                     PredmetId: CurrentCase.Id,
-                    UserId: CurrentUser.Id
+                    UserId: CurrentUser.Id,
+                    Token: CurrentUser.Token,
+                    Email: CurrentUser.Email
                 })
                 .done(function (data) {
                     CurrentCase.Radnje = data;
@@ -1614,7 +1682,9 @@ function EditCase(id) {
                 ShowLoaderCenter();
                 $.get(AppPath + "api/document", {
                     CaseId: CurrentCase.Id,
-                    UserId: CurrentUser.Id
+                    UserId: CurrentUser.Id,
+                    Token: CurrentUser.Token,
+                    Email: CurrentUser.Email
                 })
                 .done(function (data) {
                     CurrentCase.Documents = data;
@@ -1629,7 +1699,9 @@ function EditCase(id) {
                 ShowLoaderCenter();
                 $.get(AppPath + "api/connection", {
                     CaseId: CurrentCase.Id,
-                    UserId: CurrentUser.Id
+                    UserId: CurrentUser.Id,
+                    Token: CurrentUser.Token,
+                    Email: CurrentUser.Email
                 })
                 .done(function (data) {
                     CurrentCase.Connections = data;
@@ -1671,7 +1743,9 @@ function GenerateTemplate() {
         TemplateName: $("#ddlTemplates").val(),
         CaseId: parseInt($("#modalTemplate").attr("case_id")),
         UserId: CurrentUser.Id,
-        FilterNasBroj: parseInt($("#modalTemplate").attr("case_nasBroj"))
+        FilterNasBroj: parseInt($("#modalTemplate").attr("case_nasBroj")),
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
     })
     .done(function (data) {
         if (data && data.length > 0) {
@@ -1693,7 +1767,9 @@ function GenerateTemplate() {
 function LoadTemplates(callback) {
     ShowLoaderCenter();
     $.get(AppPath + "api/template", {
-        UserId: CurrentUser.Id
+        UserId: CurrentUser.Id,
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
     })
     .done(function (data) {
         if (data != null && data.length > 0) {
@@ -1714,36 +1790,6 @@ function LoadTemplates(callback) {
         alert("error LoadTemplates");
     });
 }
-
-//function DeleteCase(id) {
-//    $(Predmeti).each(function (index, obj) {
-//        if (obj.Id == id) {
-//            ShowPrompt(
-//                "Da li ste sigurni da želite izbrisati predmet?",
-//                "<span style='font-style: italic; color: gray;'>" + obj.NasBroj + "</span>",
-//                function () {
-//                    ShowLoaderCenter();
-//                    $.ajax({
-//                        url: AppPath + "api/predmet?Id=" + id.toString(),
-//                        type: "DELETE",
-//                        success: function () {
-//                            LoadCases();
-//                            HideLoaderCenter();
-//                            ShowAlert("success", "Uspješno izbrisan predmet.");
-//                        },
-//                        error: function () {
-//                            HideLoaderCenter();
-//                            ShowAlert("danger", "Greška pri brisanju predmeta.");
-//                        }
-//                    });
-//                },
-//                function () { }
-//            );
-
-//            return false; // break loop
-//        }
-//    });
-//}
 
 function ClearModalUser() {
     $("#modalUser").removeAttr("edit_id");
@@ -1766,7 +1812,9 @@ function SaveUser() {
         LastName: $("#txtUser_LastName").val(),
         Phone: $("#txtUser_Phone").val(),
         GoogleDriveLocalFolderPath: $("#txtUser_GoogleDriveLocalFolderPath").val(),
-        UserGroupCodes: GetDataFromMultiselect("ddlUser_UserGroups")
+        UserGroupCodes: GetDataFromMultiselect("ddlUser_UserGroups"),
+        Token: CurrentUser.Token,
+        ValidationEmail: CurrentUser.Email
     };
 
     var tempId = $("#modalUser").attr("edit_id");
@@ -1810,7 +1858,9 @@ function SaveLabel() {
     var reqObj = {
         Name: $("#txtLabel_Name").val(),
         BackgroundColor: $("#txtLabel_BackgroundColor").val(),
-        FontColor: $("#txtLabel_FontColor").val()
+        FontColor: $("#txtLabel_FontColor").val(),
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
     };
 
     var tempId = $("#modalLabel").attr("edit_id");
@@ -1861,7 +1911,10 @@ function SaveSud() {
         Telefon: $("#txtSud_Telefon").val(),
         Fax: $("#txtSud_Fax").val(),
         RacunTakse: $("#txtSud_RacunTakse").val(),
-        RacunVjestacenja: $("#txtSud_RacunVjestacenja").val()
+        RacunVjestacenja: $("#txtSud_RacunVjestacenja").val(),
+
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
     };
 
     var tempId = $("#modalSud").attr("edit_id");
@@ -1892,7 +1945,9 @@ function SaveSud() {
 function LoadUserGroups() {
     ShowLoaderCenter();
     $.get(AppPath + "api/usergroup", {
-        UserId: CurrentUser.Id
+        UserId: CurrentUser.Id,
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
     })
     .done(function (data) {
         if (data) {
@@ -1905,10 +1960,9 @@ function LoadUserGroups() {
                         //selectAllText: "Odaberi sve / ništa",
                         maxHeight: 200
                     });
-
-                    HideLoaderCenter();
                 }
             });
+            HideLoaderCenter();
         }
         else
             HideLoaderCenter();
@@ -1927,15 +1981,16 @@ function LoadCodeTableData(tableName, dropDown, columnName) {
     $.get(AppPath + "api/codetable", {
         Name: tableName,
         ColumnName: columnName,
-        Filter: ""
+        Filter: "",
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
     })
     .done(function (data) {
         if (data) {
             $(data).each(function (index, obj) {
                 dropDown.append($("<option></option>").attr("value", obj.Id).text(obj.Name));
-                if (index == data.length - 1)
-                    HideLoaderCenter();
             });
+            HideLoaderCenter();
         }
         else
             HideLoaderCenter();
@@ -1986,7 +2041,9 @@ function LoadCodeTableUI(element, title, tableName, columnName, remark) {
 
     $.get(AppPath + "api/codetable", {
         Name: tableName,
-        ColumnName: columnName
+        ColumnName: columnName,
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
     })
     .done(function (data) {
         if (data) {
@@ -2075,7 +2132,8 @@ function DeleteCodeTableRecord(id) {
                 function () {
                     ShowLoaderCenter();
                     $.ajax({
-                        url: AppPath + "api/codetable?TableName=" + CurrentCodeTable.TableName + "&Id=" + id.toString(),
+                        url: AppPath + "api/codetable?TableName=" + CurrentCodeTable.TableName + "&Id=" + id.toString()
+                            + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
                         type: "DELETE",
                         success: function () {
                             LoadCodeTableUI(CurrentCodeTable.Element, CurrentCodeTable.Title, CurrentCodeTable.TableName, CurrentCodeTable.ColumnName);
@@ -2101,7 +2159,10 @@ function SaveCodeTableRecord() {
 
     var reqObj = {
         TableName: CurrentCodeTable.TableName,
-        Name: $("#txtCodeTableRecord_Name").val()
+        Name: $("#txtCodeTableRecord_Name").val(),
+
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
     };
 
     var tempId = $("#modalCodeTableRecord").attr("edit_id");
@@ -2242,7 +2303,10 @@ function SaveParty() {
         Fax: $("#txtParty_Fax").val(),
         Email: $("#txtParty_Email").val(),
         JMBG_IDBroj: $("#txtParty_JMBG_IDBroj").val(),
-        Biljeske: $("#txtParty_Biljeske").val()
+        Biljeske: $("#txtParty_Biljeske").val(),
+
+        Token: CurrentUser.Token,
+        ValidationEmail: CurrentUser.Email
     };
 
     var tempId = $("#modalParty").attr("edit_id");
@@ -2312,7 +2376,9 @@ function LoadPartyCases(id) {
 
     $.get(AppPath + "api/partyCases", {
         UserId: CurrentUser.Id,
-        PartyId: id
+        PartyId: id,
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
     })
     .done(function (data) {
         if (data != null && data.length > 0) {
@@ -2372,7 +2438,8 @@ function DeleteParty(id) {
                 function () {
                     ShowLoaderCenter();
                     $.ajax({
-                        url: AppPath + "api/lice?Id=" + id.toString(),
+                        url: AppPath + "api/lice?Id=" + id.toString()
+                            + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
                         type: "DELETE",
                         success: function () {
                             LoadParties();
@@ -2983,7 +3050,9 @@ function SetUpStanjeAutocomplete() {
             $.get(AppPath + "api/codetable", {
                 Name: "StanjaPredmeta",
                 ColumnName: "Name",
-                Filter: $("#txtCase_StanjePredmeta").val()
+                Filter: $("#txtCase_StanjePredmeta").val(),
+                Token: CurrentUser.Token,
+                Email: CurrentUser.Email
             })
             .done(function (data) {
                 response($.map(data, function (item) {
@@ -3011,7 +3080,9 @@ function SetUpPredatoUzAutocomplete() {
             $.get(AppPath + "api/codetable", {
                 Name: "PredatoUzDokumenti",
                 ColumnName: "Name",
-                Filter: $("#txtCase_Document_PredatoUz").val()
+                Filter: $("#txtCase_Document_PredatoUz").val(),
+                Token: CurrentUser.Token,
+                Email: CurrentUser.Email
             })
             .done(function (data) {
                 response($.map(data, function (item) {
@@ -3039,7 +3110,9 @@ function SetUpCaseConnectionAutocomplete() {
             $.get(AppPath + "api/codetable", {
                 Name: "vCases",
                 ColumnName: "Name",
-                Filter: $("#txtCase_Connection_ConnectionCase").val()
+                Filter: $("#txtCase_Connection_ConnectionCase").val(),
+                Token: CurrentUser.Token,
+                Email: CurrentUser.Email
             })
             .done(function (data) {
                 response($.map(data, function (item) {
@@ -3122,3 +3195,58 @@ $("#ddlLabels").change(function () {
     else
         $("#btnApplyLabel").attr("disabled", "disabled");
 });
+
+$("#imgUserPicture").click(function () {
+    $("#btnLogOut").toggle();
+});
+
+function LogOut() {
+    var CurrentModule = "home";
+    var CurrentUser = null;
+    var CurrentCodeTable = null;
+    var Sudovi = null;
+    var Labels = null;
+    var Lica = null;
+    var Predmeti = null;
+    var Users = null;
+    var CaseActivities = null;
+    var Radnje = null;
+    var CurrentCase = null;
+    var SelectedCases = [];
+
+    DeactivateAllMenuItems();
+    $(".menu-item").hide();
+    $(".menu-div").hide();
+
+    ClearModalUser();
+    ClearModalLabel();
+    ClearModalSud();
+    ClearModalCase();
+    ClearModalParty();
+
+    $("#tblRadnje").bootstrapTable("destroy");
+    $("#tblCaseActivities").bootstrapTable("destroy");
+    $("#tblCases").bootstrapTable("destroy");
+    $("#tblParties").bootstrapTable("destroy");
+    $("#tblUsers").bootstrapTable("destroy");
+    $("#tblLabels").bootstrapTable("destroy");
+    $("#tblSudovi").bootstrapTable("destroy");
+    $("#tblCodeTableData").bootstrapTable("destroy");
+    $("#tblPartyCases").bootstrapTable("destroy");
+    $("#tblCaseParties").bootstrapTable("destroy");
+    $("#tblCaseNotes").bootstrapTable("destroy");
+    $("#tblCaseConnections").bootstrapTable("destroy");
+    $("#tblCaseDocuments").bootstrapTable("destroy");
+    $("#tblCaseRadnje").bootstrapTable("destroy");
+    $("#tblCaseExpenses").bootstrapTable("destroy");
+
+    $("#imgUserPicture")
+        .attr("title", "Slika korisnika")
+        .attr("alt", "Slika korisnika")
+        .attr("src", "");
+    $("#imgUserPicture").hide();
+    $("#btnLogOut").hide();
+
+    $("#divAll").hide();
+    $("#divGoogleSignIn").show();
+}

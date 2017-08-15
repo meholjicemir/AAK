@@ -13,14 +13,15 @@ namespace AAK.Models
         public string LastName { get; set; }
         public string Phone { get; set; }
 
-        public string AccessToken { get; set; }
-
         public string UserGroupCodes { get; set; }
         public string UserGroupNames { get; set; }
 
         public string GoogleDriveLocalFolderPath { get; set; }
 
+        public string PictureLink { get; set; }
+
         public string Token { get; set; }
+        public string ValidationEmail { get; set; }
 
         public User()
         {
@@ -30,14 +31,13 @@ namespace AAK.Models
             this.LastName = string.Empty;
             this.Phone = string.Empty;
 
-            this.AccessToken = string.Empty;
-
             this.UserGroupCodes = string.Empty;
             this.UserGroupNames = string.Empty;
 
             this.GoogleDriveLocalFolderPath = string.Empty;
 
             this.Token = string.Empty;
+            this.PictureLink = string.Empty;
         }
     }
 }

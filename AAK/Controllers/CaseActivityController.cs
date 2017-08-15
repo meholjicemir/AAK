@@ -17,8 +17,12 @@ namespace AAK.Controllers
         {
             try
             {
-                List<CaseActivity> result = CaseActivities.CaseActivities_GetAll(data.UserId, data.Filter, data.RowCount);
-                return Request.CreateResponse<List<CaseActivity>>(System.Net.HttpStatusCode.OK, result);
+                if (Google.Validator.ValidateToken(data.Token, data.Email))
+                {
+                    List<CaseActivity> result = CaseActivities.CaseActivities_GetAll(data.UserId, data.Filter, data.RowCount);
+                    return Request.CreateResponse<List<CaseActivity>>(System.Net.HttpStatusCode.OK, result);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {
@@ -32,8 +36,12 @@ namespace AAK.Controllers
         {
             try
             {
-                int? insertedId = CaseActivities.CaseActivity_Create(caseActivity);
-                return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
+                if (Google.Validator.ValidateToken(caseActivity.Token, caseActivity.Email))
+                {
+                    int? insertedId = CaseActivities.CaseActivity_Create(caseActivity);
+                    return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {
@@ -47,8 +55,12 @@ namespace AAK.Controllers
         {
             try
             {
-                CaseActivities.CaseActivity_Delete(caseActivity.Id);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                if (Google.Validator.ValidateToken(caseActivity.Token, caseActivity.Email))
+                {
+                    CaseActivities.CaseActivity_Delete(caseActivity.Id);
+                    return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {

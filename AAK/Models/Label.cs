@@ -12,6 +12,9 @@ namespace AAK.Models
         public string BackgroundColor { get; set; }
         public string FontColor { get; set; }
 
+        public string Token { get; set; }
+        public string Email { get; set; }
+
         public Label()
         {
             this.Id = -1;

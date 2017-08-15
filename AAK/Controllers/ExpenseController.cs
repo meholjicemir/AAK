@@ -16,8 +16,12 @@ namespace AAK.Controllers
         {
             try
             {
-                List<Expense> result = Expenses.Expenses_GetForCase(expense.CaseId);
-                return Request.CreateResponse<List<Expense>>(System.Net.HttpStatusCode.OK, result);
+                if (Google.Validator.ValidateToken(expense.Token, expense.Email))
+                {
+                    List<Expense> result = Expenses.Expenses_GetForCase(expense.CaseId);
+                    return Request.CreateResponse<List<Expense>>(System.Net.HttpStatusCode.OK, result);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {

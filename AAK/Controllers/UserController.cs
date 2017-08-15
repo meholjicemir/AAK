@@ -18,8 +18,12 @@ namespace AAK.Controllers
         {
             try
             {
-                List<User> result = Users.Users_GetAll();
-                return Request.CreateResponse<List<User>>(System.Net.HttpStatusCode.OK, result);
+                if (Google.Validator.ValidateToken(data.Token, data.Email))
+                {
+                    List<User> result = Users.Users_GetAll();
+                    return Request.CreateResponse<List<User>>(System.Net.HttpStatusCode.OK, result);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {
@@ -36,38 +40,46 @@ namespace AAK.Controllers
                 if (user.FirstName.Equals(string.Empty) && user.LastName.Equals(string.Empty))
                 {
                     // Getting user for login
-                    if (Google.Validator.ValidateToken(user.Email, user.Token))
+                    if (Google.Validator.ValidateToken(ref user))
                     {
                         DataTable dt = DBUtility.Utility.ExecuteStoredProcedure<string>("User_GetByEmail", "email", user.Email);
                         if (dt.Rows.Count > 0)
                         {
-                            user = DBUtility.Utility.ParseDataRow<User>(dt.Rows[0]);
+                            User tempUser = DBUtility.Utility.ParseDataRow<User>(dt.Rows[0]);
+                            user.Id = tempUser.Id;
+                            user.UserGroupCodes = tempUser.UserGroupCodes;
+                            user.FirstName = tempUser.FirstName;
+                            user.LastName = tempUser.LastName;
+
                             if (user.Id > 0)
                             {
-                                user.AccessToken = Guid.NewGuid().ToString();
+                                //user.AccessToken = Guid.NewGuid().ToString();
                                 return Request.CreateResponse<User>(System.Net.HttpStatusCode.OK, user);
                             }
                         }
                         return Request.CreateResponse<User>(System.Net.HttpStatusCode.OK, new User());
                     }
-                    else
-                        return Request.CreateResponse(System.Net.HttpStatusCode.Forbidden);
+                    return Request.CreateResponse(System.Net.HttpStatusCode.Forbidden);
                 }
                 else
                 {
-                    // Saving new user or updating existing one
-                    if (user.Id > 0)
+                    if (Google.Validator.ValidateToken(user.Token, user.ValidationEmail))
                     {
-                        // Edit
-                        Users.User_Update(user);
-                        return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, user.Id);
+                        // Saving new user or updating existing one
+                        if (user.Id > 0)
+                        {
+                            // Edit
+                            Users.User_Update(user);
+                            return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, user.Id);
+                        }
+                        else
+                        {
+                            // Insert
+                            int? insertedId = Users.User_Insert(user);
+                            return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
+                        }
                     }
-                    else
-                    {
-                        // Insert
-                        int? insertedId = Users.User_Insert(user);
-                        return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
-                    }
+                    return Request.CreateResponse(HttpStatusCode.Forbidden);
                 }
             }
             catch (Exception ex)
@@ -82,8 +94,12 @@ namespace AAK.Controllers
         {
             try
             {
-                Users.User_Delete(user.Id);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                if (Google.Validator.ValidateToken(user.Token, user.Email))
+                {
+                    Users.User_Delete(user.Id);
+                    return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {

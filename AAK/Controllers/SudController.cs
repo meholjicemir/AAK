@@ -17,8 +17,12 @@ namespace AAK.Controllers
         {
             try
             {
-                List<Sud> result = Sudovi.Sudovi_GetAll();
-                return Request.CreateResponse<List<Sud>>(System.Net.HttpStatusCode.OK, result);
+                if (Google.Validator.ValidateToken(data.Token, data.Email))
+                {
+                    List<Sud> result = Sudovi.Sudovi_GetAll();
+                    return Request.CreateResponse<List<Sud>>(System.Net.HttpStatusCode.OK, result);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {
@@ -32,18 +36,22 @@ namespace AAK.Controllers
         {
             try
             {
-                if (sud.Id > 0)
+                if (Google.Validator.ValidateToken(sud.Token, sud.Email))
                 {
-                    // Edit
-                    Sudovi.Sudovi_Update(sud);
-                    return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, sud.Id);
+                    if (sud.Id > 0)
+                    {
+                        // Edit
+                        Sudovi.Sudovi_Update(sud);
+                        return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, sud.Id);
+                    }
+                    else
+                    {
+                        // Insert
+                        int? insertedId = Sudovi.Sudovi_Insert(sud);
+                        return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
+                    }
                 }
-                else
-                {
-                    // Insert
-                    int? insertedId = Sudovi.Sudovi_Insert(sud);
-                    return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
-                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {
@@ -57,8 +65,12 @@ namespace AAK.Controllers
         {
             try
             {
-                Sudovi.Sudovi_Delete(sud.Id);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                if (Google.Validator.ValidateToken(sud.Token, sud.Email))
+                {
+                    Sudovi.Sudovi_Delete(sud.Id);
+                    return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {

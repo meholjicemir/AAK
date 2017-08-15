@@ -17,8 +17,12 @@ namespace AAK.Controllers
         {
             try
             {
-                List<CodeTableData> result = CodeTables.CodeTable_GetData(codeTable);
-                return Request.CreateResponse<List<CodeTableData>>(System.Net.HttpStatusCode.OK, result);
+                if (Google.Validator.ValidateToken(codeTable.Token, codeTable.Email))
+                {
+                    List<CodeTableData> result = CodeTables.CodeTable_GetData(codeTable);
+                    return Request.CreateResponse<List<CodeTableData>>(System.Net.HttpStatusCode.OK, result);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {
@@ -32,18 +36,22 @@ namespace AAK.Controllers
         {
             try
             {
-                if (codeTableData.Id > 0)
+                if (Google.Validator.ValidateToken(codeTableData.Token, codeTableData.Email))
                 {
-                    // Edit
-                    CodeTables.CodeTable_UpdateRecord(codeTableData);
-                    return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, codeTableData.Id);
+                    if (codeTableData.Id > 0)
+                    {
+                        // Edit
+                        CodeTables.CodeTable_UpdateRecord(codeTableData);
+                        return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, codeTableData.Id);
+                    }
+                    else
+                    {
+                        // Insert
+                        int? insertedId = CodeTables.CodeTable_InsertRecord(codeTableData);
+                        return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
+                    }
                 }
-                else
-                {
-                    // Insert
-                    int? insertedId = CodeTables.CodeTable_InsertRecord(codeTableData);
-                    return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
-                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {
@@ -57,8 +65,12 @@ namespace AAK.Controllers
         {
             try
             {
-                CodeTables.CodeTable_DeleteRecord(codeTableData);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                if (Google.Validator.ValidateToken(codeTableData.Token, codeTableData.Email))
+                {
+                    CodeTables.CodeTable_DeleteRecord(codeTableData);
+                    return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {

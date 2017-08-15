@@ -25,6 +25,9 @@ namespace AAK.Models
         public string ModifiedByName { get; set; }
         public DateTime? Modified { get; set; }
 
+        public string Token { get; set; }
+        public string Email { get; set; }
+
         public Sud()
         {
             this.Id = -1;

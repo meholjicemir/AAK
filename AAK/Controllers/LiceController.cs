@@ -17,8 +17,12 @@ namespace AAK.Controllers
         {
             try
             {
-                List<Lice> result = Lica.Lica_GetAll(data.UserId, data.Filter, data.RowCount);
-                return Request.CreateResponse<List<Lice>>(System.Net.HttpStatusCode.OK, result);
+                if (Google.Validator.ValidateToken(data.Token, data.Email))
+                {
+                    List<Lice> result = Lica.Lica_GetAll(data.UserId, data.Filter, data.RowCount);
+                    return Request.CreateResponse<List<Lice>>(System.Net.HttpStatusCode.OK, result);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {
@@ -32,18 +36,22 @@ namespace AAK.Controllers
         {
             try
             {
-                if (lice.Id > 0)
+                if (Google.Validator.ValidateToken(lice.Token, lice.ValidationEmail))
                 {
-                    // Edit
-                    Lica.Lica_Update(lice);
-                    return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, lice.Id);
+                    if (lice.Id > 0)
+                    {
+                        // Edit
+                        Lica.Lica_Update(lice);
+                        return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, lice.Id);
+                    }
+                    else
+                    {
+                        // Insert
+                        int? insertedId = Lica.Lica_Insert(lice);
+                        return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
+                    }
                 }
-                else
-                {
-                    // Insert
-                    int? insertedId = Lica.Lica_Insert(lice);
-                    return Request.CreateResponse<int?>(System.Net.HttpStatusCode.OK, insertedId);
-                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {
@@ -57,8 +65,12 @@ namespace AAK.Controllers
         {
             try
             {
-                Lica.Lica_Delete(lice.Id);
-                return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                if (Google.Validator.ValidateToken(lice.Token, lice.ValidationEmail))
+                {
+                    Lica.Lica_Delete(lice.Id);
+                    return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {

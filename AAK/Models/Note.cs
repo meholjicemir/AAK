@@ -14,6 +14,9 @@ namespace AAK.Models
         public int? CreatedBy { get; set; }
         public string CreatedByName { get; set; }
 
+        public string Token { get; set; }
+        public string Email { get; set; }
+
         public Note()
         {
             this.Id = -1;

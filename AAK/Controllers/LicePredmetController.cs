@@ -16,8 +16,12 @@ namespace AAK.Controllers
         {
             try
             {
-                List<LicePredmet> result = Predmeti.LicePredmet_GetForPredmet(predmet.Id);
-                return Request.CreateResponse<List<LicePredmet>>(System.Net.HttpStatusCode.OK, result);
+                if (Google.Validator.ValidateToken(predmet.Token, predmet.Email))
+                {
+                    List<LicePredmet> result = Predmeti.LicePredmet_GetForPredmet(predmet.Id);
+                    return Request.CreateResponse<List<LicePredmet>>(System.Net.HttpStatusCode.OK, result);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
             }
             catch (Exception ex)
             {

@@ -437,3 +437,28 @@ select.fixed-width-field {
 tr:hover td {
     background-color: #b0d3dd !important;
 }
+
+#imgUserPicture {
+    display: none;
+    border: 2px solid #31b0d5;
+    border-radius: 10px;
+    margin-right: 10px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+
+#divGoogleSignIn {
+    margin: 10%;
+    border: 3px solid #31b0d5;
+    border-radius: 20px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.g-signin2{
+  width: 100%;
+}
+
+.g-signin2 > div{
+  margin: 0 auto;
+}
