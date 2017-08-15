@@ -86,12 +86,15 @@ function ValidateUser(email, token) {
             HideLoaderCenter();
         }
         else {
-            alert("Prijava nije uspjela. Korisnik nema prava.");
             HideLoaderCenter();
-            ShowAlert("danger", "Prijava nije uspjela. Korisnik nema prava.");
+            ShowAlert("danger", "Prijava nije uspjela.", true, undefined, $("#divGoogleSignInAlert"));
         }
     })
-    .fail(function (msg) {
+    .fail(function (jqXHR) {
+        if (jqXHR.status == 403)
+            ShowAlert("danger", "Prijava nije uspjela.", true, undefined, $("#divGoogleSignInAlert"));
+        else
+            ShowAlert("danger", "Greška prilikom prijave. Probajte ponovo ili kontaktirajte administratora.", true, undefined, $("#divGoogleSignInAlert"));
         ShowAlert("danger", "Prijava nije uspjela.");
         HideLoaderCenter();
     });
@@ -175,7 +178,7 @@ function OpenMenuByModule() {
             MenuLabels();
             break;
         case "users":
-            if (user.UserGroupCodes.indexOf("user_admin") >= 0)
+            if (CurrentUser.UserGroupCodes.indexOf("user_admin") >= 0)
                 MenuUsers();
             else
                 MenuHome();
@@ -280,8 +283,11 @@ function LoadRadnje() {
         }
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom učitavanja radnji. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        alert("error LoadRadnje");
     });
 }
 
@@ -390,8 +396,11 @@ function LoadCaseActivities() {
         }
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom učitavanja pozvanih predmeta. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        alert("error LoadCaseActivities");
     });
 }
 
@@ -459,9 +468,12 @@ function DeleteCaseActivity(id) {
                             HideLoaderCenter();
                             ShowAlert("success", "Uspješno izbrisano.");
                         },
-                        error: function () {
+                        error: function (jqXHR) {
+                            if (jqXHR.status == 403)
+                                AlertUserSessionError();
+                            else
+                                ShowAlert("danger", "Greška prilikom brisanja stavke pozvanih predmeta. Probajte ponovo ili kontaktirajte administratora.");
                             HideLoaderCenter();
-                            ShowAlert("danger", "Greška pri brisanju stavke pozvanih predmeta.");
                         }
                     });
                 },
@@ -583,8 +595,11 @@ function ApplyLabel(_contentType) {
         }
     })
     .fail(function (response) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom dodavanja oznake. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        ShowAlert("danger", "Greška pri dodavanju oznake.");
     });
 }
 
@@ -601,9 +616,12 @@ function DeleteLabelConnection(element, labelId, contentType, contentId) {
             $(element).parent().remove();
             HideLoaderCenter();
         },
-        error: function () {
+        error: function (jqXHR) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom brisanja oznake. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-            ShowAlert("danger", "Greška pri brisanju oznake.");
         }
     });
 }
@@ -756,8 +774,11 @@ function LoadCases(caseId, callback, filter) {
         }
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom učitavanja predmeta. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        alert("error LoadCases");
     });
 }
 
@@ -902,8 +923,11 @@ function LoadParties() {
         }
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom učitavanja stranki. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        alert("error LoadParties");
     });
 }
 
@@ -974,7 +998,7 @@ function LoadUsers() {
     $.get(AppPath + "api/user", {
         UserId: CurrentUser.Id,
         Token: CurrentUser.Token,
-        Email: Currentuser.Email
+        Email: CurrentUser.Email
     })
     .done(function (data) {
         if (data != null && data.length > 0) {
@@ -1002,8 +1026,11 @@ function LoadUsers() {
         }
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom učitavanja korisnika. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        alert("error LoadUsers");
     });
 }
 
@@ -1085,9 +1112,12 @@ function DeleteUser(id) {
                             HideLoaderCenter();
                             ShowAlert("success", "Uspješno izbrisan korisnik.");
                         },
-                        error: function () {
+                        error: function (jqXHR) {
+                            if (jqXHR.status == 403)
+                                AlertUserSessionError();
+                            else
+                                ShowAlert("danger", "Greška prilikom brisanja korisnika. Probajte ponovo ili kontaktirajte administratora.");
                             HideLoaderCenter();
-                            ShowAlert("danger", "Greška pri brisanju korisnika.");
                         }
                     });
                 },
@@ -1177,8 +1207,11 @@ function LoadLabels(inCasesModule) {
         }
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom učitavanja oznaka. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        alert("error LoadLabels");
     });
 }
 
@@ -1250,9 +1283,12 @@ function DeleteLabel(id) {
                             HideLoaderCenter();
                             ShowAlert("success", "Uspješno izbrisana oznaka.");
                         },
-                        error: function () {
+                        error: function (jqXHR) {
+                            if (jqXHR.status == 403)
+                                AlertUserSessionError();
+                            else
+                                ShowAlert("danger", "Greška prilikom brisanja oznake. Probajte ponovo ili kontaktirajte administratora.");
                             HideLoaderCenter();
-                            ShowAlert("danger", "Greška pri brisanju oznake.");
                         }
                     });
                 },
@@ -1341,8 +1377,11 @@ function LoadSudovi() {
         }
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom učitavanja sudova. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        alert("error LoadSudovi");
     });
 }
 
@@ -1416,9 +1455,12 @@ function DeleteSud(id) {
                             HideLoaderCenter();
                             ShowAlert("success", "Uspješno izbrisan sud.");
                         },
-                        error: function () {
+                        error: function (jqXHR) {
+                            if (jqXHR.status == 403)
+                                AlertUserSessionError();
+                            else
+                                ShowAlert("danger", "Greška prilikom brisanja suda. Probajte ponovo ili kontaktirajte administratora.");
                             HideLoaderCenter();
-                            ShowAlert("danger", "Greška pri brisanju suda.");
                         }
                     });
                 },
@@ -1456,9 +1498,12 @@ function SaveCaseActivity() {
                 ShowAlert("danger", "Greška pri spašavanju pozivanja predmeta.");
             }
         })
-        .fail(function (response) {
+        .fail(function (jqXHR) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom spašavanja pozivanja predmeta. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-            ShowAlert("danger", "Greška pri spašavanju pozivanja predmeta.");
         });
     }
 }
@@ -1522,9 +1567,12 @@ function SaveCase() {
             ShowAlert("danger", "Greška pri spašavanju predmeta.");
         }
     })
-    .fail(function (response) {
+    .fail(function (jqXHR) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom spašavanja predmeta. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        ShowAlert("danger", "Greška pri spašavanju predmeta.");
     });
 }
 
@@ -1626,8 +1674,11 @@ function EditCase(id) {
                     HideLoaderCenter();
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status == 403)
+                        AlertUserSessionError();
+                    else
+                        ShowAlert("danger", "Greška prilikom učitavanja stranki. Probajte ponovo ili kontaktirajte administratora.");
                     HideLoaderCenter();
-                    alert("error loading parties");
                 });
 
                 ShowLoaderCenter();
@@ -1642,8 +1693,11 @@ function EditCase(id) {
                     HideLoaderCenter();
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status == 403)
+                        AlertUserSessionError();
+                    else
+                        ShowAlert("danger", "Greška prilikom učitavanja bilješki. Probajte ponovo ili kontaktirajte administratora.");
                     HideLoaderCenter();
-                    alert("error loading notes");
                 });
 
                 ShowLoaderCenter();
@@ -1658,8 +1712,11 @@ function EditCase(id) {
                     HideLoaderCenter();
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status == 403)
+                        AlertUserSessionError();
+                    else
+                        ShowAlert("danger", "Greška prilikom učitavanja troškova. Probajte ponovo ili kontaktirajte administratora.");
                     HideLoaderCenter();
-                    alert("error loading expenses");
                 });
 
                 ShowLoaderCenter();
@@ -1675,8 +1732,11 @@ function EditCase(id) {
                     HideLoaderCenter();
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status == 403)
+                        AlertUserSessionError();
+                    else
+                        ShowAlert("danger", "Greška prilikom učitavanja radnji. Probajte ponovo ili kontaktirajte administratora.");
                     HideLoaderCenter();
-                    alert("error loading radnje");
                 });
 
                 ShowLoaderCenter();
@@ -1692,8 +1752,11 @@ function EditCase(id) {
                     HideLoaderCenter();
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status == 403)
+                        AlertUserSessionError();
+                    else
+                        ShowAlert("danger", "Greška prilikom učitavanja dokumenata. Probajte ponovo ili kontaktirajte administratora.");
                     HideLoaderCenter();
-                    alert("error loading documents");
                 });
 
                 ShowLoaderCenter();
@@ -1709,8 +1772,11 @@ function EditCase(id) {
                     HideLoaderCenter();
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status == 403)
+                        AlertUserSessionError();
+                    else
+                        ShowAlert("danger", "Greška prilikom učitavanja veza. Probajte ponovo ili kontaktirajte administratora.");
                     HideLoaderCenter();
-                    alert("error loading veze");
                 });
 
                 $("#btnOpenModalEditCase").click();
@@ -1758,9 +1824,12 @@ function GenerateTemplate() {
             ShowAlert("danger", "Greška pri generisanju dokumenta.");
         }
     })
-    .fail(function (response) {
+    .fail(function (jqXHR) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom generisanja dokumenta. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        ShowAlert("danger", "Greška pri generisanju dokumenta.");
     });
 }
 
@@ -1786,8 +1855,11 @@ function LoadTemplates(callback) {
         HideLoaderCenter();
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom učitavanja predložaka. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        alert("error LoadTemplates");
     });
 }
 
@@ -1834,9 +1906,12 @@ function SaveUser() {
             ShowAlert("danger", "Greška pri spašavanju korisnika.");
         }
     })
-    .fail(function (response) {
+    .fail(function (jqXHR) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom spašavanja korisnika. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        ShowAlert("danger", "Greška pri spašavanju korisnika.");
     });
 }
 
@@ -1880,9 +1955,12 @@ function SaveLabel() {
             ShowAlert("danger", "Greška pri spašavanju oznake.");
         }
     })
-    .fail(function (response) {
+    .fail(function (jqXHR) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom spašavanja oznake. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        ShowAlert("danger", "Greška pri spašavanju oznake.");
     });
 }
 
@@ -1936,9 +2014,12 @@ function SaveSud() {
             ShowAlert("danger", "Greška pri spašavanju suda.");
         }
     })
-    .fail(function (response) {
+    .fail(function (jqXHR) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom spašavanja suda. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        ShowAlert("danger", "Greška pri spašavanju suda.");
     });
 }
 
@@ -1968,8 +2049,11 @@ function LoadUserGroups() {
             HideLoaderCenter();
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom učitavanja korisničkih grupa. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        alert("error LoadUserGroups");
     });
 }
 
@@ -1996,8 +2080,11 @@ function LoadCodeTableData(tableName, dropDown, columnName) {
             HideLoaderCenter();
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom učitavanja podataka kodne tabele. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        alert("error LoadCodeTableData");
     });
 }
 
@@ -2074,8 +2161,11 @@ function LoadCodeTableUI(element, title, tableName, columnName, remark) {
             HideLoaderCenter();
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom učitavanja kodne tabele. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        alert("error LoadCodeTableUI");
     });
 }
 
@@ -2140,9 +2230,12 @@ function DeleteCodeTableRecord(id) {
                             HideLoaderCenter();
                             ShowAlert("success", "Uspješno izbrisano.");
                         },
-                        error: function () {
+                        error: function (jqXHR) {
+                            if (jqXHR.status == 403)
+                                AlertUserSessionError();
+                            else
+                                ShowAlert("danger", "Greška prilikom brisanja podatka. Probajte ponovo ili kontaktirajte administratora.");
                             HideLoaderCenter();
-                            ShowAlert("danger", "Greška pri brisanju.");
                         }
                     });
                 },
@@ -2182,9 +2275,12 @@ function SaveCodeTableRecord() {
             ShowAlert("danger", "Greška pri spašavanju podatka.");
         }
     })
-    .fail(function (response) {
+    .fail(function (jqXHR) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom spašavanja podatka. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        ShowAlert("danger", "Greška pri spašavanju podatka.");
     });
 }
 
@@ -2328,9 +2424,12 @@ function SaveParty() {
             ShowAlert("danger", "Greška pri spašavanju stranke.");
         }
     })
-    .fail(function (response) {
+    .fail(function (jqXHR) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom spašavanja stranke. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        ShowAlert("danger", "Greška pri spašavanju stranke.");
     });
 }
 
@@ -2403,8 +2502,11 @@ function LoadPartyCases(id) {
         }
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom učitavanja predmeta stranke. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
-        alert("error LoadPartyCases");
     });
 }
 
@@ -2446,9 +2548,12 @@ function DeleteParty(id) {
                             HideLoaderCenter();
                             ShowAlert("success", "Uspješno izbrisana stranka.");
                         },
-                        error: function () {
+                        error: function (jqXHR) {
+                            if (jqXHR.status == 403)
+                                AlertUserSessionError();
+                            else
+                                ShowAlert("danger", "Greška prilikom brisanja lica. Probajte ponovo ili kontaktirajte administratora.");
                             HideLoaderCenter();
-                            ShowAlert("danger", "Greška pri brisanju lica.");
                         }
                     });
                 },
@@ -3064,7 +3169,11 @@ function SetUpStanjeAutocomplete() {
                 $("#spinner_txtSearch_CaseName").hide();
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
-                alert("error SetUpStanjeAutocomplete");
+                if (jqXHR.status == 403)
+                    AlertUserSessionError();
+                else
+                    ShowAlert("danger", "Greška prilikom učitavanja stanja predmeta za odabir. Probajte ponovo ili kontaktirajte administratora.");
+                HideLoaderCenter();
             });
         },
         delay: 500,
@@ -3094,7 +3203,11 @@ function SetUpPredatoUzAutocomplete() {
                 $("#spinner_txtCase_Document_PredatoUz").hide();
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
-                alert("error SetUpPredatoUzAutocomplete");
+                if (jqXHR.status == 403)
+                    AlertUserSessionError();
+                else
+                    ShowAlert("danger", "Greška prilikom učitavanja 'predato uz' podataka za odabir. Probajte ponovo ili kontaktirajte administratora.");
+                HideLoaderCenter();
             });
         },
         delay: 500,
@@ -3125,7 +3238,11 @@ function SetUpCaseConnectionAutocomplete() {
                 $("#spinner_txtCase_Connection_ConnectionCase").hide();
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
-                alert("error SetUpCaseConnectionAutocomplete");
+                if (jqXHR.status == 403)
+                    AlertUserSessionError();
+                else
+                    ShowAlert("danger", "Greška prilikom učitavanja predmeta za dodavanje veza. Probajte ponovo ili kontaktirajte administratora.");
+                HideLoaderCenter();
             });
         },
         delay: 500,
@@ -3201,18 +3318,19 @@ $("#imgUserPicture").click(function () {
 });
 
 function LogOut() {
-    var CurrentModule = "home";
-    var CurrentUser = null;
-    var CurrentCodeTable = null;
-    var Sudovi = null;
-    var Labels = null;
-    var Lica = null;
-    var Predmeti = null;
-    var Users = null;
-    var CaseActivities = null;
-    var Radnje = null;
-    var CurrentCase = null;
-    var SelectedCases = [];
+    CurrentModule = "home";
+    CurrentUser = null;
+    CurrentCodeTable = null;
+    Sudovi = null;
+    Labels = null;
+    Lica = null;
+    Predmeti = null;
+    Users = null;
+    CaseActivities = null;
+    Radnje = null;
+    CurrentCase = null;
+    SelectedCases = [];
+    menuCases_DataLoaded = false
 
     DeactivateAllMenuItems();
     $(".menu-item").hide();
@@ -3249,4 +3367,8 @@ function LogOut() {
 
     $("#divAll").hide();
     $("#divGoogleSignIn").show();
+}
+
+function AlertUserSessionError() {
+    ShowAlert("danger", "Greška - osvježite aplikaciju (F5) ili se ponovo prijavite.", true);
 }

@@ -19,6 +19,7 @@ namespace AAK.Controllers
             {
                 if (Google.Validator.ValidateToken(data.Token, data.Email))
                 {
+
                     List<Predmet> result = Predmeti.Predmeti_GetAll(data.UserId, data.Filter, data.FilterNasBroj, data.RowCount, data.CaseId);
                     return Request.CreateResponse<List<Predmet>>(System.Net.HttpStatusCode.OK, result);
                 }

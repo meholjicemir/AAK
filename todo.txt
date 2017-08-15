@@ -5,14 +5,14 @@
 + CRUD lica
 + CRUD predmeta (sa licima)
 	
-- Izbaciti prikaz našeg broja dok se pravi predmet
++ Izbaciti prikaz našeg broja dok se pravi predmet
 
 
 
 add foreign keys to columns, to prevent deleting stuff unsafely
 add created, created by, modified, modified by across db
 handle alert("error");
-- Security: AccessToken, sessions, cookies
++ Security: AccessToken, sessions, cookies
 
 - Handle this: alert("error")
 - validations, required fields
@@ -22,12 +22,12 @@ handle alert("error");
 
 
 
-- Radnje
-- Troškovi
++ Radnje
++ Troškovi
 - Dokumenti
-- Pravni osnov
-- Bilješke
-- Veze
++ Pravni osnov
++ Bilješke
++ Veze
 + Glavne stranke
 
 

@@ -29,12 +29,14 @@
     <script src="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
     <script src="Scripts/Utilities.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer="defer"></script>
-    <script src="Desk.aspx.js?v=6" defer="defer"></script>
+    <script src="Desk.aspx.js?v=7" defer="defer"></script>
 
     <div id="divGoogleSignIn">
         <h1>Advokatsko društvo Đonko</h1>
         <hr />
         <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        <br />
+        <div id="divGoogleSignInAlert"></div>
         <br />
     </div>
 

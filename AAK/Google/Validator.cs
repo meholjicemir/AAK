@@ -54,7 +54,6 @@ namespace AAK.Google
                         return false;
                     }
 
-
                     string emailVerified = item["email"];
 
                     if (user.Email.Equals(emailVerified) && item["aud"].ToString().Contains(ConfigurationManager.AppSettings["Google_ClientId"].ToString()))
