@@ -587,6 +587,7 @@ function ApplyLabel(_contentType) {
                 if ($(element).prop("checked"))
                     $(element).trigger("click");
             });
+            $("#divOznake").hide();
             HideLoaderCenter();
         }
         else {
@@ -832,6 +833,12 @@ function MenuReports() {
     $("#liMenuReports").addClass("active");
     $(".menu-div").hide();
     $("#divReports").show();
+
+    LoadCodeTableData("KategorijePredmeta", $("#ddlCase_Search_Kategorija"), undefined, function () { SetMultiSelect($("#ddlCase_Search_Kategorija"), "Sve kategorije"); });
+    LoadCodeTableData("Sudovi", $("#ddlCase_Search_Sud"), "Sud", function () { SetMultiSelect($("#ddlCase_Search_Sud"), "Svi sudovi"); });
+    LoadCodeTableData("Sudije", $("#ddlCase_Search_Sudija"), undefined, function () { SetMultiSelect($("#ddlCase_Search_Sudija"), "Sve sudije"); });
+    LoadCodeTableData("Uloge", $("#ddlCase_Search_Uloga"), undefined, function () { SetMultiSelect($("#ddlCase_Search_Uloga"), "Sve uloge"); });
+    LoadCodeTableData("VrstePredmeta", $("#ddlCase_Search_VrstaPredmeta"), undefined, function () { SetMultiSelect($("#ddlCase_Search_VrstaPredmeta"), "Sve vrste predmeta"); });
 }
 
 function MenuParties() {
@@ -2039,6 +2046,7 @@ function LoadUserGroups() {
                         includeSelectAllOption: false,
                         allSelectedText: "Sve grupe",
                         //selectAllText: "Odaberi sve / ništa",
+                        nonSelectedText: "Ništa nije odabrano",
                         maxHeight: 200
                     });
                 }
@@ -2057,7 +2065,17 @@ function LoadUserGroups() {
     });
 }
 
-function LoadCodeTableData(tableName, dropDown, columnName) {
+function SetMultiSelect(element, _allSelectedText) {
+    element.multiselect({
+        includeSelectAllOption: true,
+        allSelectedText: _allSelectedText,
+        selectAllText: "Odaberi sve / ništa",
+        nonSelectedText: "Ništa nije odabrano",
+        maxHeight: 200
+    });
+}
+
+function LoadCodeTableData(tableName, dropDown, columnName, callback) {
     if (columnName == undefined)
         columnName = "Name";
 
@@ -2073,6 +2091,10 @@ function LoadCodeTableData(tableName, dropDown, columnName) {
         if (data) {
             $(data).each(function (index, obj) {
                 dropDown.append($("<option></option>").attr("value", obj.Id).text(obj.Name));
+                if (index == data.length - 1) {
+                    if (callback != undefined && typeof (callback) == "function")
+                        callback();
+                }
             });
             HideLoaderCenter();
         }

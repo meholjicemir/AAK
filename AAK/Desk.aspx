@@ -29,7 +29,7 @@
     <script src="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
     <script src="Scripts/Utilities.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer="defer"></script>
-    <script src="Desk.aspx.js?v=7" defer="defer"></script>
+    <script src="Desk.aspx.js?v=8" defer="defer"></script>
 
     <div id="divGoogleSignIn">
         <h1>Advokatsko društvo Đonko</h1>
@@ -237,6 +237,60 @@
 
         <div id="divReports" class="panel panel-default menu-div">
             <div class="panel-body">
+                <div class="row" style="padding-bottom: 15px;">
+                    <div class="col-lg-5">
+                        <form class="form-inline pull-left" role="form">
+                            <label for="txtCase_Search_NasBroj" class="fixed-width-label">Naš broj:</label>
+                            <input type="text" class="form-control dynamic-width-field" id="txtCase_Search_NasBroj" value="" />
+                            <br />
+                            <label for="ddlCase_Search_Kategorija" class="fixed-width-label">Kategorija:</label>
+                            <select class="form-control dynamic-width-field" id="ddlCase_Search_Kategorija" multiple="multiple">
+                            </select>
+                            <br />
+                            <label for="ddlCase_Search_Uloga" class="fixed-width-label">Uloga u postupku:</label>
+                            <select class="form-control" id="ddlCase_Search_Uloga" multiple="multiple">
+                            </select>
+                            <br />
+                            <label for="cbCase_Search_PrivremeniZastupnici" class="fixed-width-label">Privremeni zastupnici</label>
+                            <input id="cbCase_Search_PrivremeniZastupnici" type="checkbox" />
+                        </form>
+                    </div>
+                    <div class="col-lg-7 case-column-for-stanje">
+                        <form class="form-inline pull-left" role="form">
+                            <label for="txtCase_Search_BrojPredmeta" class="fixed-width-label">Broj predmeta:</label>
+                            <input type="text" class="form-control fixed-width-field" id="txtCase_Search_BrojPredmeta" />
+                            <br />
+                            <label for="ddlCase_Search_Sud" class="fixed-width-label">Sud:</label>
+                            <select class="form-control fixed-width-field" id="ddlCase_Search_Sud" multiple="multiple">
+                            </select>
+                            <br />
+                            <label for="ddlCase_Search_Sudija" class="fixed-width-label">Sudija:</label>
+                            <select class="form-control fixed-width-field" id="ddlCase_Search_Sudija" multiple="multiple">
+                            </select>
+                            <br />
+                            <label for="txtCase_Search_VrijednostSpora" class="fixed-width-label">Vrijednost spora:</label>
+                            <input type="text" class="form-control fixed-width-field" id="txtCase_Search_VrijednostSpora" />
+                            <br />
+                            <label for="ddlCase_Search_VrstaPredmeta" class="fixed-width-label">Vrsta predmeta:</label>
+                            <select class="form-control fixed-width-field" id="ddlCase_Search_VrstaPredmeta" multiple="multiple">
+                            </select>
+                            <h4></h4>
+                            <label for="dateTimePicker_Search_DatumStanjaPredmeta">Stanje predmeta:</label>
+                            <br />
+                            <span class="input-group date" id="dateTimePicker_Search_DatumStanjaPredmeta">
+                                <input type="text" class="form-control" id="txtCase_Search_DatumStanjaPredmeta" />
+                                <span class="input-group-addon btn">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </span>
+                            <span class="form-group has-feedback">
+                                <%--<label for="txtCase_StanjePredmeta" class="fixed-width-label">Stanje:</label>--%>
+                                <input type="text" class="form-control fixed-width-field" id="txtCase_Search_StanjePredmeta" />
+                                <i id="spinner_txtCase_Search_StanjePredmeta" class="glyphicon glyphicon-refresh spinning form-control-feedback" style="display: none;"></i>
+                            </span>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
 
