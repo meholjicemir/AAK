@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multbuiselect.css" />
     <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" />
     <link rel="stylesheet" href="Libraries/jQuery/jquery-ui.min.css" />
-    <link rel="stylesheet" href="Styles/NewStyle.css" />
+    <link rel="stylesheet" href="Styles/NewStyle.css?v=9" />
 </head>
 <body>
     <script src="Libraries/jQuery/jquery-1.12.0.min.js"></script>
@@ -29,7 +29,7 @@
     <script src="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
     <script src="Scripts/Utilities.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer="defer"></script>
-    <script src="Desk.aspx.js?v=8" defer="defer"></script>
+    <script src="Desk.aspx.js?v=9" defer="defer"></script>
 
     <div id="divGoogleSignIn">
         <h1>Advokatsko društvo Đonko</h1>
@@ -60,7 +60,7 @@
                     <li class="menu-item" id="liMenuHome" style="display: none;"><a href="#" onclick="MenuHome(); return false;"><strong>Početna</strong></a></li>
                     <li class="menu-item" id="liMenuCases" style="display: none;"><a href="#" onclick="MenuCases(); return false;"><strong>Predmeti</strong></a></li>
                     <li class="menu-item" id="liMenuParties" style="display: none;"><a href="#" onclick="MenuParties(); return false;"><strong>Stranke</strong></a></li>
-                    <li class="menu-item" id="liMenuReports" style="display: none;"><a href="#" onclick="MenuReports(); return false;"><strong>Izvještaji</strong></a></li>
+                    <li class="menu-item" id="liMenuReports" style="display: none;"><a href="#" onclick="MenuReports(); return false;"><strong>Napredna pretraga</strong></a></li>
                     <li class="menu-item" id="liMenuSudovi" style="display: none;"><a href="#" onclick="MenuSudovi(); return false;"><strong>Sudovi</strong></a></li>
                     <li class="menu-item dropdown" id="liMenuCodeTables">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><strong>Kodne tabele</strong><span class="caret"></span></a>
@@ -236,7 +236,7 @@
         </div>
 
         <div id="divReports" class="panel panel-default menu-div">
-            <div class="panel-body">
+            <div class="panel-heading">
                 <div class="row" style="padding-bottom: 15px;">
                     <div class="col-lg-5">
                         <form class="form-inline pull-left" role="form">
@@ -250,9 +250,9 @@
                             <label for="ddlCase_Search_Uloga" class="fixed-width-label">Uloga u postupku:</label>
                             <select class="form-control" id="ddlCase_Search_Uloga" multiple="multiple">
                             </select>
-                            <br />
+                            <%--<br />
                             <label for="cbCase_Search_PrivremeniZastupnici" class="fixed-width-label">Privremeni zastupnici</label>
-                            <input id="cbCase_Search_PrivremeniZastupnici" type="checkbox" />
+                            <input id="cbCase_Search_PrivremeniZastupnici" type="checkbox" />--%>
                         </form>
                     </div>
                     <div class="col-lg-7 case-column-for-stanje">
@@ -268,15 +268,16 @@
                             <select class="form-control fixed-width-field" id="ddlCase_Search_Sudija" multiple="multiple">
                             </select>
                             <br />
-                            <label for="txtCase_Search_VrijednostSpora" class="fixed-width-label">Vrijednost spora:</label>
-                            <input type="text" class="form-control fixed-width-field" id="txtCase_Search_VrijednostSpora" />
+                            <label for="txtCase_Search_VrijednostSporaFrom" class="fixed-width-label">Vrijednost spora:</label>
+                            <input type="text" class="form-control fixed-width-field-narrow" id="txtCase_Search_VrijednostSporaFrom" />
+                            -
+                            <input type="text" class="form-control fixed-width-field-narrow" id="txtCase_Search_VrijednostSporaTo" />
                             <br />
                             <label for="ddlCase_Search_VrstaPredmeta" class="fixed-width-label">Vrsta predmeta:</label>
                             <select class="form-control fixed-width-field" id="ddlCase_Search_VrstaPredmeta" multiple="multiple">
                             </select>
                             <h4></h4>
-                            <label for="dateTimePicker_Search_DatumStanjaPredmeta">Stanje predmeta:</label>
-                            <br />
+                            <label for="dateTimePicker_Search_DatumStanjaPredmeta" class="fixed-width-label">Stanje predmeta:</label>
                             <span class="input-group date" id="dateTimePicker_Search_DatumStanjaPredmeta">
                                 <input type="text" class="form-control" id="txtCase_Search_DatumStanjaPredmeta" />
                                 <span class="input-group-addon btn">
@@ -291,6 +292,14 @@
                         </form>
                     </div>
                 </div>
+                <button id="btnExecuteAdvancedSearch" class="btn btn-primary pull-right" onclick="ExecuteAdvancedSearch(); return false;">
+                    <span class="glyphicon glyphicon-list"></span>&nbsp;Pretraži
+                </button>
+                <br />
+                <br />
+            </div>
+            <div class="panel-body">
+                <table id="tblCasesSearch" class="table table-condensed" style="word-break: break-word;"></table>
             </div>
         </div>
 

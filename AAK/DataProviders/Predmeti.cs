@@ -332,5 +332,28 @@ namespace AAK.DataProviders
         }
 
         #endregion
+
+        #region Advanced Search
+        public static List<Predmet> Predmeti_GeForAdvancedSearch(AdvancedSearchParameters parameters)
+        {
+            DBUtility.ParameterCollection collection = new DBUtility.ParameterCollection();
+            collection.AddParameter<int>("userId", parameters.UserId);
+            collection.AddParameter<int>("nasBroj", parameters.NasBroj ?? -1);
+            collection.AddParameter<string>("kategorije", parameters.Kategorije ?? "");
+            collection.AddParameter<string>("ulogeUPostupku", parameters.UlogeUPostupku ?? "");
+            collection.AddParameter<string>("brojPredmeta", parameters.BrojPredmeta ?? "");
+            collection.AddParameter<string>("sudovi", parameters.Sudovi ?? "");
+            collection.AddParameter<string>("sudije", parameters.Sudije ?? "");
+            collection.AddParameter<decimal>("vrijednostSporaFrom", parameters.VrijednostSporaFrom);
+            collection.AddParameter<decimal>("vrijednostSporaTo", parameters.VrijednostSporaTo);
+            collection.AddParameter<string>("vrstePredmeta", parameters.VrstePredmeta ?? "");
+            collection.AddParameter<DateTime?>("datumStanjaPredmeta", parameters.DatumStanjaPredmeta);
+            collection.AddParameter<string>("stanjePredmeta", parameters.StanjePredmeta ?? "");
+            collection.AddParameter<int>("rowCount", parameters.RowCount);
+
+            DataTable dt = DBUtility.Utility.ExecuteStoredProcedure("Predmeti_GetForAdvancedSearch", ref collection);
+            return DBUtility.Utility.ParseDataTable<Predmet>(dt);
+        }
+        #endregion
     }
 }

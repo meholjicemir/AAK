@@ -319,6 +319,11 @@ li > a.menu-item {
     margin-top: 5px;
 }
 
+.fixed-width-field-narrow {
+    min-width: 100px;
+    margin-top: 5px;
+}
+
 select.fixed-width-field {
     max-width: 300px;
 }
@@ -455,10 +460,10 @@ tr:hover td {
     text-align: center;
 }
 
-.g-signin2{
-  width: 100%;
+.g-signin2 {
+    width: 100%;
 }
 
-.g-signin2 > div{
-  margin: 0 auto;
-}
+    .g-signin2 > div {
+        margin: 0 auto;
+    }

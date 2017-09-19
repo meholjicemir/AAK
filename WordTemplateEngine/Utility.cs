@@ -22,6 +22,8 @@ namespace WordTemplateEngine
             {
                 string templatePath = AppDomain.CurrentDomain.BaseDirectory + "Templates\\" + templateName;
 
+                LoggerUtility.Logger.LogMessage("debug", templatePath);
+
                 List<TagNameValuePair> data = new List<TagNameValuePair>();
                 IEnumerable<Text> textsMain = null;
                 List<DRW.Text> textsObjectsList = null;
@@ -43,6 +45,7 @@ namespace WordTemplateEngine
                         // Thread 1 end
                     }),
                     Task.Factory.StartNew(() => {
+                        try {
                         // Thread 2 begin
                         newFilePath = PrepareDocument(templatePath, userId);
 
@@ -85,8 +88,13 @@ namespace WordTemplateEngine
                         };
 
                         Task.WaitAll(tasksAccessDocument);
-                        
-                        // Thread 2 end
+
+                            // Thread 2 end
+                        }
+                        catch(Exception ex)
+                        {
+                            LoggerUtility.Logger.LogException(ex, "GenerateDocument");
+                        }
                     })
                 };
 

@@ -43,8 +43,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DBUtility">
-      <HintPath>..\..\..\..\TopTal\SPG\Toptal\DBUtility\bin\Release\DBUtility.dll</HintPath>
+    <Reference Include="DBUtility, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DBUtility.dll</HintPath>
     </Reference>
     <Reference Include="Google.Apis, Version=1.28.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Apis.1.28.0\lib\net45\Google.Apis.dll</HintPath>
@@ -72,7 +73,7 @@
     </Reference>
     <Reference Include="LoggerUtility, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\TopTal\SPG\Stealth\Stealth4.5\lib\LoggerUtility.dll</HintPath>
+      <HintPath>..\packages\LoggerUtility.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
@@ -220,6 +221,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AdvancedSearchController.cs" />
     <Compile Include="Controllers\CaseActivityController.cs" />
     <Compile Include="Controllers\CodeTableController.cs" />
     <Compile Include="Controllers\ConnectionController.cs" />
@@ -271,6 +273,7 @@
     <Compile Include="LogIn.aspx.designer.cs">
       <DependentUpon>LogIn.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Models\AdvancedSearchParameters.cs" />
     <Compile Include="Models\CaseActivity.cs" />
     <Compile Include="Models\CodeTableData.cs" />
     <Compile Include="Models\Connection.cs" />
@@ -383,6 +386,9 @@
       <Project>{9b46968b-e03b-452b-8a03-d245345b9a17}</Project>
       <Name>WordTemplateEngine</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

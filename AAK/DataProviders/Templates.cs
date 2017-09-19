@@ -40,8 +40,18 @@ namespace AAK.DataProviders
 
                 List<KeyValuePair<string, string>> templateFields = new List<KeyValuePair<string, string>>();
 
+                string tempValue = "";
                 foreach (DataColumn dc in dt.Columns)
-                    templateFields.Add(new KeyValuePair<string, string>(dc.ColumnName, dt.Rows[0][dc].ToString()));
+                {
+                    tempValue = dt.Rows[0][dc].ToString();
+                    templateFields.Add(new KeyValuePair<string, string>(dc.ColumnName, tempValue));
+                    if (tempValue.Length > 0)
+                    {
+                        templateFields.Add(new KeyValuePair<string, string>(dc.ColumnName + "_ms", tempValue.ToLowerInvariant()));
+                        templateFields.Add(new KeyValuePair<string, string>(dc.ColumnName + "_vs", tempValue.ToUpperInvariant()));
+                        templateFields.Add(new KeyValuePair<string, string>(dc.ColumnName + "_pvs", tempValue[0].ToString().ToUpperInvariant() + tempValue.Substring(1).ToLowerInvariant()));
+                    }
+                }
 
                 return templateFields;
             }

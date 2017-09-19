@@ -16,6 +16,9 @@ namespace AAK.Google
 
         public static bool ValidateToken(string token, string email)
         {
+            //TEMP
+            //return true;
+
             User user = new User();
             user.Token = token;
             user.Email = email;
@@ -24,6 +27,9 @@ namespace AAK.Google
 
         public static bool ValidateToken(ref User user)
         {
+            //TEMP
+            //return true;
+
             try
             {
                 if (UserSessions.ContainsKey(user.Token) && UserSessions[user.Token].Email.Equals(user.Email))
