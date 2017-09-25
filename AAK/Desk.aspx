@@ -29,7 +29,9 @@
     <script src="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
     <script src="Scripts/Utilities.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer="defer"></script>
-    <script src="Desk.aspx.js?v=9" defer="defer"></script>
+    <script src="Desk.aspx.js?v=11" defer="defer"></script>
+
+    <iframe id="iframeDownload" style="position: absolute; left: -1000px;"></iframe>
 
     <div id="divGoogleSignIn">
         <h1>Advokatsko društvo Đonko</h1>
@@ -238,7 +240,7 @@
         <div id="divReports" class="panel panel-default menu-div">
             <div class="panel-heading">
                 <div class="row" style="padding-bottom: 15px;">
-                    <div class="col-lg-5">
+                    <div class="col-lg-6">
                         <form class="form-inline pull-left" role="form">
                             <label for="txtCase_Search_NasBroj" class="fixed-width-label">Naš broj:</label>
                             <input type="text" class="form-control dynamic-width-field" id="txtCase_Search_NasBroj" value="" />
@@ -253,12 +255,52 @@
                             <%--<br />
                             <label for="cbCase_Search_PrivremeniZastupnici" class="fixed-width-label">Privremeni zastupnici</label>
                             <input id="cbCase_Search_PrivremeniZastupnici" type="checkbox" />--%>
+                            <br />
+                            <label for="dateTimePicker_Search_IniciranFrom" class="fixed-width-label">Iniciran:</label>
+                            <span class="input-group date" id="dateTimePicker_Search_IniciranFrom">
+                                <input type="text" class="form-control" id="txtCase_Search_IniciranFrom" />
+                                <span class="input-group-addon btn">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </span>
+                            -
+                            <span class="input-group date" id="dateTimePicker_Search_IniciranTo">
+                                <input type="text" class="form-control" id="txtCase_Search_IniciranTo" />
+                                <span class="input-group-addon btn">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </span>
+                            <br />
+                            <label for="dateTimePicker_Search_ArhiviranFrom" class="fixed-width-label">Datum arhiviranja:</label>
+                            <span class="input-group date" id="dateTimePicker_Search_ArhiviranFrom">
+                                <input type="text" class="form-control" id="txtCase_Search_ArhiviranFrom" />
+                                <span class="input-group-addon btn">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </span>
+                            -
+                            <span class="input-group date" id="dateTimePicker_Search_ArhiviranTo">
+                                <input type="text" class="form-control" id="txtCase_Search_ArhiviranTo" />
+                                <span class="input-group-addon btn">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </span>
+                            <br />
+                            <label for="ddlCase_Search_UspjehFrom" class="fixed-width-label">Uspjeh:</label>
+                            <select class="form-control dynamic-width-field" id="ddlCase_Search_UspjehFrom">
+                            </select>
+                            -
+                            <select class="form-control dynamic-width-field" id="ddlCase_Search_UspjehTo">
+                            </select>
+
                         </form>
                     </div>
-                    <div class="col-lg-7 case-column-for-stanje">
+                    <div class="col-lg-6 case-column-for-stanje">
                         <form class="form-inline pull-left" role="form">
                             <label for="txtCase_Search_BrojPredmeta" class="fixed-width-label">Broj predmeta:</label>
                             <input type="text" class="form-control fixed-width-field" id="txtCase_Search_BrojPredmeta" />
+                            <label for="cbCase_Search_BezBrojaPredmeta">Bez broja</label>
+                            <input id="cbCase_Search_BezBrojaPredmeta" type="checkbox" />
                             <br />
                             <label for="ddlCase_Search_Sud" class="fixed-width-label">Sud:</label>
                             <select class="form-control fixed-width-field" id="ddlCase_Search_Sud" multiple="multiple">
@@ -276,7 +318,7 @@
                             <label for="ddlCase_Search_VrstaPredmeta" class="fixed-width-label">Vrsta predmeta:</label>
                             <select class="form-control fixed-width-field" id="ddlCase_Search_VrstaPredmeta" multiple="multiple">
                             </select>
-                            <h4></h4>
+                            <br />
                             <label for="dateTimePicker_Search_DatumStanjaPredmeta" class="fixed-width-label">Stanje predmeta:</label>
                             <span class="input-group date" id="dateTimePicker_Search_DatumStanjaPredmeta">
                                 <input type="text" class="form-control" id="txtCase_Search_DatumStanjaPredmeta" />
@@ -289,6 +331,28 @@
                                 <input type="text" class="form-control fixed-width-field" id="txtCase_Search_StanjePredmeta" />
                                 <i id="spinner_txtCase_Search_StanjePredmeta" class="glyphicon glyphicon-refresh spinning form-control-feedback" style="display: none;"></i>
                             </span>
+                            <br />
+                            <label for="ddlCase_Search_Labels" class="fixed-width-label">Oznake:</label>
+                            <select class="form-control fixed-width-field" id="ddlCase_Search_Labels" multiple="multiple">
+                            </select>
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <form class="form-inline pull-left" role="form">
+                            <div class="form-group">
+                                <label for="ddlAdvancedSearchRowCount">Broj redova:</label>
+                                <select class="form-control" id="ddlAdvancedSearchRowCount">
+                                    <option value="10">10</option>
+                                    <option value="20" selected="selected">20</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="1000">1000</option>
+                                    <option value="5000">5000</option>
+                                    <option value="2147483647">Sve</option>
+                                </select>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -298,8 +362,18 @@
                 <br />
                 <br />
             </div>
-            <div class="panel-body">
-                <table id="tblCasesSearch" class="table table-condensed" style="word-break: break-word;"></table>
+            <div id="divAdvancedSearchResults" class="panel-body" style="display: none;">
+                <div class="btn-group">
+                    <button id="btnPrintAdvancedSearchResults" class="btn btn-default pull-left" onclick="PrintAdvancedSearchResults(); return false;">
+                        <span class="glyphicon glyphicon-print"></span>&nbsp;Printaj
+                    </button>
+                    <button id="btnExportAdvancedSearchResults" class="btn btn-success pull-left" onclick="ExportAdvancedSearchResults(); return false;">
+                        <span class="glyphicon glyphicon-th-large"></span>&nbsp;Printaj u Excel tabelu
+                    </button>
+                </div>
+                <div id="divAdvancedSearchResults_Printable">
+                    <table id="tblCasesSearch" class="table table-condensed" style="word-break: break-word;"></table>
+                </div>
             </div>
         </div>
 

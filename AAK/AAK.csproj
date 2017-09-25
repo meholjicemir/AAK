@@ -47,6 +47,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DBUtility.dll</HintPath>
     </Reference>
+    <Reference Include="FastMember">
+      <HintPath>..\packages\FastMember.dll</HintPath>
+    </Reference>
     <Reference Include="Google.Apis, Version=1.28.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Apis.1.28.0\lib\net45\Google.Apis.dll</HintPath>
       <Private>True</Private>
@@ -382,6 +385,10 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ExporterUtility\ExporterUtility.csproj">
+      <Project>{b555b420-4e97-4d65-b5e2-f8a9c9fd12c7}</Project>
+      <Name>ExporterUtility</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WordTemplateEngine\WordTemplateEngine.csproj">
       <Project>{9b46968b-e03b-452b-8a03-d245345b9a17}</Project>
       <Name>WordTemplateEngine</Name>

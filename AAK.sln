@@ -9,6 +9,8 @@ Project("{159641D6-6404-4A2A-AE62-294DE0FE8301}") = "Access2SQL", "Access2SQL\Ac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordTemplateEngine", "WordTemplateEngine\WordTemplateEngine.csproj", "{9B46968B-E03B-452B-8A03-D245345B9A17}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExporterUtility", "ExporterUtility\ExporterUtility.csproj", "{B555B420-4E97-4D65-B5E2-F8A9C9FD12C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,12 @@ Global
 		{9B46968B-E03B-452B-8A03-D245345B9A17}.Development|Any CPU.Build.0 = Debug|Any CPU
 		{9B46968B-E03B-452B-8A03-D245345B9A17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B46968B-E03B-452B-8A03-D245345B9A17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B555B420-4E97-4D65-B5E2-F8A9C9FD12C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B555B420-4E97-4D65-B5E2-F8A9C9FD12C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B555B420-4E97-4D65-B5E2-F8A9C9FD12C7}.Development|Any CPU.ActiveCfg = Debug|Any CPU
+		{B555B420-4E97-4D65-B5E2-F8A9C9FD12C7}.Development|Any CPU.Build.0 = Debug|Any CPU
+		{B555B420-4E97-4D65-B5E2-F8A9C9FD12C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B555B420-4E97-4D65-B5E2-F8A9C9FD12C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

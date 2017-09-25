@@ -342,6 +342,7 @@ namespace AAK.DataProviders
             collection.AddParameter<string>("kategorije", parameters.Kategorije ?? "");
             collection.AddParameter<string>("ulogeUPostupku", parameters.UlogeUPostupku ?? "");
             collection.AddParameter<string>("brojPredmeta", parameters.BrojPredmeta ?? "");
+            collection.AddParameter<bool>("bezBrojaPredmeta", parameters.BezBrojaPredmeta);
             collection.AddParameter<string>("sudovi", parameters.Sudovi ?? "");
             collection.AddParameter<string>("sudije", parameters.Sudije ?? "");
             collection.AddParameter<decimal>("vrijednostSporaFrom", parameters.VrijednostSporaFrom);
@@ -349,6 +350,13 @@ namespace AAK.DataProviders
             collection.AddParameter<string>("vrstePredmeta", parameters.VrstePredmeta ?? "");
             collection.AddParameter<DateTime?>("datumStanjaPredmeta", parameters.DatumStanjaPredmeta);
             collection.AddParameter<string>("stanjePredmeta", parameters.StanjePredmeta ?? "");
+            collection.AddParameter<string>("labels", parameters.Labels ?? "");
+            collection.AddParameter<DateTime?>("iniciranFrom", parameters.IniciranFrom);
+            collection.AddParameter<DateTime?>("iniciranTo", parameters.IniciranTo);
+            collection.AddParameter<DateTime?>("arhiviranFrom", parameters.ArhiviranFrom);
+            collection.AddParameter<DateTime?>("arhiviranTo", parameters.ArhiviranTo);
+            collection.AddParameter<int>("uspjehFrom", Convert.ToInt32((parameters.UspjehFrom ?? "0").Replace("%", "")));
+            collection.AddParameter<int>("uspjehTo", Convert.ToInt32((parameters.UspjehTo ?? "100").Replace("%", "")));
             collection.AddParameter<int>("rowCount", parameters.RowCount);
 
             DataTable dt = DBUtility.Utility.ExecuteStoredProcedure("Predmeti_GetForAdvancedSearch", ref collection);
