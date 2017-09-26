@@ -59,7 +59,7 @@ window.onBrowserHistoryButtonClicked = function () {
 
 $(document).ready(function () {
     //$(".g-signin2").click();
-    //ValidateUser("meholjic.emir@gmail.com");
+    ValidateUser("meholjic.emir@gmail.com");
     //ValidateUser("emir.meholjic@toptal.com");
 });
 
@@ -96,7 +96,7 @@ function ValidateUser(email, token) {
                 UserGroupCodes: data.UserGroupCodes,
                 FirstName: data.FirstName,
                 LastName: data.LastName,
-                GoogleDriveLocalFolderPath: data.GoogleDriveLocalFolderPath,
+                //GoogleDriveLocalFolderPath: data.GoogleDriveLocalFolderPath,
                 PictureLink: data.PictureLink,
                 Token: data.Token
             };
@@ -1005,8 +1005,8 @@ function LoadUsers() {
         { field: 'FirstName', title: 'Ime', titleTooltip: 'Ime', sortable: true },
         { field: 'LastName', title: 'Prezime', titleTooltip: 'Prezime', sortable: true },
         { field: 'Phone', title: 'Telefon', titleTooltip: 'Telefon', sortable: true },
-        { field: 'UserGroupNames', title: 'Korisničke grupe', titleTooltip: 'Korisničke grupe', sortable: true },
-        { field: 'GoogleDriveLocalFolderPath', title: 'Google Drive direktorij', titleTooltip: 'Google Drive direktorij (lokalna putanja)', sortable: true }
+        { field: 'UserGroupNames', title: 'Korisničke grupe', titleTooltip: 'Korisničke grupe', sortable: true }
+        //{ field: 'GoogleDriveLocalFolderPath', title: 'Google Drive direktorij', titleTooltip: 'Google Drive direktorij (lokalna putanja)', sortable: true }
     ];
 
     $("#tblUsers").bootstrapTable("destroy");
@@ -1091,7 +1091,7 @@ function EditUser(id) {
             $("#txtUser_LastName").val(obj.LastName);
             $("#txtUser_Phone").val(obj.Phone);
             $("#ddlUser_UserGroups").val("");
-            $("#txtUser_GoogleDriveLocalFolderPath").val(obj.GoogleDriveLocalFolderPath);
+            //$("#txtUser_GoogleDriveLocalFolderPath").val(obj.GoogleDriveLocalFolderPath);
 
             if (obj.UserGroupCodes.indexOf(',') != -1) {
                 var userGroupCodes = obj.UserGroupCodes.split(',');
@@ -1897,7 +1897,7 @@ function ClearModalUser() {
     $("#txtUser_FirstName").val("");
     $("#txtUser_LastName").val("");
     $("#txtUser_Phone").val("");
-    $("#txtUser_GoogleDriveLocalFolderPath").val("");
+    //$("#txtUser_GoogleDriveLocalFolderPath").val("");
     $("#ddlUser_UserGroups").val("");
     $("#ddlUser_UserGroups").multiselect('refresh');
     $("#modalUser").find(".modal-title").html("Novi korisnik");
@@ -1911,7 +1911,7 @@ function SaveUser() {
         FirstName: $("#txtUser_FirstName").val(),
         LastName: $("#txtUser_LastName").val(),
         Phone: $("#txtUser_Phone").val(),
-        GoogleDriveLocalFolderPath: $("#txtUser_GoogleDriveLocalFolderPath").val(),
+        //GoogleDriveLocalFolderPath: $("#txtUser_GoogleDriveLocalFolderPath").val(),
         UserGroupCodes: GetDataFromMultiselect("ddlUser_UserGroups"),
         Token: CurrentUser.Token,
         ValidationEmail: CurrentUser.Email
@@ -2870,7 +2870,7 @@ function AppendDocumentToCase() {
             //PredatoUzDokumentId: $("#ddlCase_Document_TipDokumenta").val(),
             PredatoUzDokumentName: $("#txtCase_Document_PredatoUz").val(),
             Note: $("#txtCase_Document_Note").val(),
-            DocumentLink: $("#txtCase_Document_DocumentLink").val().replace(CurrentUser.GoogleDriveLocalFolderPath, ""),
+            //DocumentLink: $("#txtCase_Document_DocumentLink").val().replace(CurrentUser.GoogleDriveLocalFolderPath, ""),
             AbsoluteDocumentLink: $("#txtCase_Document_DocumentLink").val(),
             CaseId: CurrentCase.Id
         });
@@ -2957,7 +2957,7 @@ function AppendRadnjaToCase() {
             DatumRadnje: $("#txtCase_Radnja_DatumRadnje").val(),
             Troskovi: '', //$("#ddlCase_Radnja_Troskovi").val(),
             Biljeske: $("#txtCase_Radnja_Biljeske").val(),
-            DocumentLink: $("#txtCase_Radnja_DocumentLink").val().replace(CurrentUser.GoogleDriveLocalFolderPath, ""),
+            //DocumentLink: $("#txtCase_Radnja_DocumentLink").val().replace(CurrentUser.GoogleDriveLocalFolderPath, ""),
             AbsoluteDocumentLink: $("#txtCase_Radnja_DocumentLink").val(),
             PredmetId: CurrentCase.Id
         });
@@ -3303,22 +3303,22 @@ function SetUpCaseConnectionAutocomplete() {
     });
 }
 
-$("#txtCase_Radnja_DocumentLink").change(function () {
-    if ($("#txtCase_Radnja_DocumentLink").val() != "" && $("#txtCase_Radnja_DocumentLink").val().indexOf(CurrentUser.GoogleDriveLocalFolderPath) != 0) {
-        $("#txtCase_Radnja_DocumentLink").val("");
-        ShowAlert("danger", "Odabrani dokument mora biti u Vašem Google Drive folderu: " + (CurrentUser.GoogleDriveLocalFolderPath == null ? "" : CurrentUser.GoogleDriveLocalFolderPath),
-            undefined, undefined, $("#divRadnjeAlert"));
-    }
-});
+//$("#txtCase_Radnja_DocumentLink").change(function () {
+//    if ($("#txtCase_Radnja_DocumentLink").val() != "" && $("#txtCase_Radnja_DocumentLink").val().indexOf(CurrentUser.GoogleDriveLocalFolderPath) != 0) {
+//        $("#txtCase_Radnja_DocumentLink").val("");
+//        ShowAlert("danger", "Odabrani dokument mora biti u Vašem Google Drive folderu: " + (CurrentUser.GoogleDriveLocalFolderPath == null ? "" : CurrentUser.GoogleDriveLocalFolderPath),
+//            undefined, undefined, $("#divRadnjeAlert"));
+//    }
+//});
 
 
-$("#txtCase_Document_DocumentLink").change(function () {
-    if ($("#txtCase_Document_DocumentLink").val() != "" && $("#txtCase_Document_DocumentLink").val().indexOf(CurrentUser.GoogleDriveLocalFolderPath) != 0) {
-        $("#txtCase_Document_DocumentLink").val("");
-        ShowAlert("danger", "Odabrani dokument mora biti u Vašem Google Drive folderu: " + (CurrentUser.GoogleDriveLocalFolderPath == null ? "" : CurrentUser.GoogleDriveLocalFolderPath),
-            undefined, undefined, $("#divDocumentsAlert"));
-    }
-});
+//$("#txtCase_Document_DocumentLink").change(function () {
+//    if ($("#txtCase_Document_DocumentLink").val() != "" && $("#txtCase_Document_DocumentLink").val().indexOf(CurrentUser.GoogleDriveLocalFolderPath) != 0) {
+//        $("#txtCase_Document_DocumentLink").val("");
+//        ShowAlert("danger", "Odabrani dokument mora biti u Vašem Google Drive folderu: " + (CurrentUser.GoogleDriveLocalFolderPath == null ? "" : CurrentUser.GoogleDriveLocalFolderPath),
+//            undefined, undefined, $("#divDocumentsAlert"));
+//    }
+//});
 
 $("#txtLabel_BackgroundColor").change(function () {
     $("#txtLabel_Name").css("background-color", $("#txtLabel_BackgroundColor").val());

@@ -936,12 +936,9 @@
                         <label for="txtUser_Phone" class="fixed-width-label">Phone:</label>
                         <input type="text" class="form-control fixed-width-field" id="txtUser_Phone" />
                         <br />
-                        <label for="txtUser_GoogleDriveLocalFolderPath" class="fixed-width-label">Google Drive direktorij (lokalna putanja):</label>
+                        <%--<label for="txtUser_GoogleDriveLocalFolderPath" class="fixed-width-label">Google Drive direktorij (lokalna putanja):</label>
                         <input type="text" class="form-control fixed-width-field" id="txtUser_GoogleDriveLocalFolderPath" />
-                        <br />
-
-
-
+                        <br />--%>
                         <label for="ddlUser_UserGroups" class="fixed-width-label">Korisničke grupe:</label>
                         <select id="ddlUser_UserGroups" multiple="multiple" class="form-control fixed-width-field">
                         </select>
