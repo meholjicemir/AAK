@@ -228,7 +228,7 @@ namespace AAK.DataProviders
                             select tempRadnja).FirstOrDefault();
 
                     if (temp == null)
-                        Radnje.Radnja_Delete(radnja.Id);
+                        Radnje.Radnja_Delete(radnja);
                 }
 
                 foreach (Radnja radnja in predmet.Radnje)

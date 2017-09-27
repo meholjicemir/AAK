@@ -17,7 +17,7 @@ namespace GoogleDriveIntegration
     {
         private static DriveService Service = null;
         private static string[] Scopes = { DriveService.Scope.Drive };
-        private static string ApplicationName = "Drive API .NET Quickstart";
+        private static string ApplicationName = "Google Drive Integration - Emir";
 
         private static DriveService GetService()
         {
@@ -35,7 +35,6 @@ namespace GoogleDriveIntegration
                     "user",
                     CancellationToken.None,
                     new FileDataStore(credPath, true)).Result;
-                //Console.WriteLine("Credential file saved to: " + credPath);
             }
 
             // Create Drive API service.
@@ -44,8 +43,6 @@ namespace GoogleDriveIntegration
                 HttpClientInitializer = credential,
                 ApplicationName = ApplicationName,
             });
-
-
 
             return service;
         }
@@ -84,8 +81,8 @@ namespace GoogleDriveIntegration
                     Service = GetService();
 
                 // TEMP
-                IList<Google.Apis.Drive.v3.Data.File> files = new List<Google.Apis.Drive.v3.Data.File>();
-                GetFolders(ref files);
+                //IList<Google.Apis.Drive.v3.Data.File> files = new List<Google.Apis.Drive.v3.Data.File>();
+                //GetFolders(ref files);
 
                 var fileMetadata = new Google.Apis.Drive.v3.Data.File()
                 {

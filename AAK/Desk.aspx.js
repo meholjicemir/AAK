@@ -2959,7 +2959,8 @@ function AppendRadnjaToCase() {
             Biljeske: $("#txtCase_Radnja_Biljeske").val(),
             //DocumentLink: $("#txtCase_Radnja_DocumentLink").val().replace(CurrentUser.GoogleDriveLocalFolderPath, ""),
             AbsoluteDocumentLink: $("#txtCase_Radnja_DocumentLink").val(),
-            PredmetId: CurrentCase.Id
+            PredmetId: CurrentCase.Id,
+            CaseFullName: CurrentCase.Naziv
         });
 
         BindCaseRadnje(CurrentCase.Radnje);

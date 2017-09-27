@@ -31,6 +31,8 @@ namespace AAK.Models
         public string DocumentLink { get; set; }
         public string AbsoluteDocumentLink { get; set; }
 
+        public string GoogleEventId { get; set; }
+
         public int UserId { get; set; }
 
         public string Token { get; set; }
@@ -61,6 +63,8 @@ namespace AAK.Models
 
             this.DocumentLink = string.Empty;
             this.AbsoluteDocumentLink = string.Empty;
+
+            this.GoogleEventId = string.Empty;
 
             this.UserId = -1;
         }
