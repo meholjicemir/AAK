@@ -29,5 +29,24 @@ namespace AAK.Controllers
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
             }
         }
+
+        [HttpPost]
+        public HttpResponseMessage Radnja_UpdateGoogleEventId([FromBody]Radnja radnja)
+        {
+            try
+            {
+                if (Google.Validator.ValidateToken(radnja.Token, radnja.Email))
+                {
+                    Radnje.Radnja_UpdateGoogleEventId(radnja);
+                    return Request.CreateResponse(System.Net.HttpStatusCode.OK);
+                }
+                return Request.CreateResponse(HttpStatusCode.Forbidden);
+            }
+            catch (Exception ex)
+            {
+                LoggerUtility.Logger.LogException(ex, "Radnja_UpdateGoogleEventId");
+                return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+            }
+        }
     }
 }

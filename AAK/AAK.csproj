@@ -223,6 +223,7 @@
     <Content Include="Libraries\Moment\moment.js" />
     <Content Include="LogIn.aspx" />
     <Content Include="LogIn.aspx.js" />
+    <Content Include="Scripts\google.js" />
     <Content Include="Scripts\Utilities.js" />
     <Content Include="Styles\NewStyle.css" />
     <Content Include="Temp\nothing.txt" />
@@ -315,6 +316,9 @@
     <Content Include="Libraries\Bootstrap\fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="Libraries\Bootstrap\fonts\glyphicons-halflings-regular.woff" />
     <Content Include="Libraries\Bootstrap\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="client_secret.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Properties\PublishProfiles\AAK deploy.pubxml" />
     <Content Include="Templates\Dopis Agenciji za ident dokumente radi dostave podataka.docx" />
     <Content Include="Templates\Dopis kojim se dostavlja potpisan vansudski sporazum.docx" />
@@ -429,6 +433,8 @@
           <DevelopmentServerPort>62582</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:62582/</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>http://localhost:62582/</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

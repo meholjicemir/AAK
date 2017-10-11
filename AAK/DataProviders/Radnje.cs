@@ -26,11 +26,11 @@ namespace AAK.DataProviders
         {
             radnja.DocumentLink = (radnja.DocumentLink ?? "").TrimStart('\\').TrimStart('/');
 
-            if (createGoogleEvent)
-                radnja.GoogleEventId = GoogleCalendarIntegration.Utility.CreateEvent(
-                    radnja.VrstaRadnjeName + " (" + radnja.CaseFullName + ")", radnja.Biljeske,
-                    radnja.DatumRadnje.Value.AddHours(8), radnja.DatumRadnje.Value.AddHours(10),
-                    ConfigurationManager.AppSettings["GoogleCalendarId"].ToString());
+            //if (createGoogleEvent)
+            //    radnja.GoogleEventId = GoogleCalendarIntegration.Utility.CreateEvent(radnja.UserId,
+            //        radnja.VrstaRadnjeName + " (" + radnja.CaseFullName + ")", radnja.Biljeske,
+            //        radnja.DatumRadnje.Value, radnja.DatumRadnje.Value.AddHours(1),
+            //        ConfigurationManager.AppSettings["GoogleCalendarId"].ToString());
 
             DBUtility.ParameterCollection collection = new DBUtility.ParameterCollection();
             collection.AddParameter<int>("caseId", radnja.PredmetId);
@@ -51,11 +51,11 @@ namespace AAK.DataProviders
         {
             radnja.DocumentLink = (radnja.DocumentLink ?? "").TrimStart('\\').TrimStart('/');
 
-            if (updateGoogleEvent && (radnja.GoogleEventId ?? "").Length > 0)
-                GoogleCalendarIntegration.Utility.UpdateEvent(radnja.GoogleEventId,
-                    radnja.VrstaRadnjeName + " (" + radnja.CaseFullName + ")", radnja.Biljeske,
-                    radnja.DatumRadnje.Value.AddHours(8), radnja.DatumRadnje.Value.AddHours(10),
-                    ConfigurationManager.AppSettings["GoogleCalendarId"].ToString());
+            //if (updateGoogleEvent && (radnja.GoogleEventId ?? "").Length > 0)
+            //    GoogleCalendarIntegration.Utility.UpdateEvent(radnja.UserId, radnja.GoogleEventId,
+            //        radnja.VrstaRadnjeName + " (" + radnja.CaseFullName + ")", radnja.Biljeske,
+            //        radnja.DatumRadnje.Value.AddHours(8), radnja.DatumRadnje.Value.AddHours(10),
+            //        ConfigurationManager.AppSettings["GoogleCalendarId"].ToString());
 
             DBUtility.ParameterCollection collection = new DBUtility.ParameterCollection();
             collection.AddParameter<int>("caseId", radnja.PredmetId);
@@ -74,11 +74,19 @@ namespace AAK.DataProviders
 
         public static void Radnja_Delete(Radnja radnja, bool deleteGoogleEvent = true)
         {
-            if (deleteGoogleEvent && (radnja.GoogleEventId ?? "").Length > 0)
-                GoogleCalendarIntegration.Utility.DeleteEvent(radnja.GoogleEventId,
-                    ConfigurationManager.AppSettings["GoogleCalendarId"].ToString());
+            //if (deleteGoogleEvent && (radnja.GoogleEventId ?? "").Length > 0)
+            //    GoogleCalendarIntegration.Utility.DeleteEvent(radnja.UserId, radnja.GoogleEventId,
+            //        ConfigurationManager.AppSettings["GoogleCalendarId"].ToString());
 
             DBUtility.Utility.ExecuteStoredProcedureVoid<int>("Radnja_Delete", "id", radnja.Id);
+        }
+
+        public static void Radnja_UpdateGoogleEventId(Radnja radnja)
+        {
+            DBUtility.Utility.ExecuteStoredProcedureVoid<int, string>(
+                "Radnja_UpdateGoogleEventId",
+                "id", radnja.Id,
+                "googleEventId", radnja.GoogleEventId);
         }
     }
 }

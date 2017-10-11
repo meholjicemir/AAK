@@ -9,11 +9,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="google-signin-client_id" content="304849379317-d7tvq3acv8ukdpi30ntgvinbcuekf9n2.apps.googleusercontent.com" />
+    <%--<meta name="google-signin-client_id" content="304849379317-766dl8pe6i0m78o35c9hmiuoou1rn14h.apps.googleusercontent.com" />--%>
 
     <link rel="stylesheet" href="Libraries/Bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-table/dist/bootstrap-table.min.css" />
-    <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multbuiselect.css" />
+    <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multiselect.css" />
     <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" />
     <link rel="stylesheet" href="Libraries/jQuery/jquery-ui.min.css" />
     <link rel="stylesheet" href="Styles/NewStyle.css?v=9" />
@@ -28,15 +28,34 @@
     <script src="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multiselect.js"></script>
     <script src="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
     <script src="Scripts/Utilities.js"></script>
-    <script src="https://apis.google.com/js/platform.js" async defer="defer"></script>
-    <script src="Desk.aspx.js?v=11" defer="defer"></script>
+    <%--<script src="https://apis.google.com/js/platform.js" async defer="defer"></script>--%>
+
+
+
+    <script src="Desk.aspx.js?v=19" defer="defer"></script>
+    <%--<script src="Scripts/google.js"></script>--%>
+
+    <%--    <script async defer src="https://apis.google.com/js/api.js"
+        onload="this.onload=function(){};handleClientLoad()"
+        onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>--%>
 
     <iframe id="iframeDownload" style="position: absolute; left: -1000px;"></iframe>
 
     <div id="divGoogleSignIn">
         <h1>Advokatsko društvo Đonko</h1>
         <hr />
-        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        <%--<div class="g-signin2" data-onsuccess="onSignIn"></div>--%>
+
+        <!--Add buttons to initiate auth sequence and sign out-->
+        <button id="authorize-button" style="display: none;">Authorize</button>
+        <button id="signout-button" style="display: none;">Sign Out</button>
+
+        <script src="Scripts/google.js"></script>
+        <script async defer src="https://apis.google.com/js/api.js"
+            onload="this.onload=function(){};handleClientLoad()"
+            onreadystatechange="if (this.readyState === 'complete') this.onload()">
+        </script>
         <br />
         <div id="divGoogleSignInAlert"></div>
         <br />
@@ -99,7 +118,7 @@
 
         <div id="divHome" class="panel panel-default menu-div" style="display: none;">
             <div class="pull-right" style="margin-right: 5px;">
-                <span class="label" style="background-color: #ff8888;">KAŠNJENJE</span>
+                <span class="label" style="background-color: #ff0000;">KAŠNJENJE</span>
                 <span class="label" style="background-color: #21b04b;">DANAS</span>
                 <span class="label" style="background-color: #00b6ee;">SUTRA</span>
             </div>
@@ -292,11 +311,20 @@
                             -
                             <select class="form-control dynamic-width-field" id="ddlCase_Search_UspjehTo">
                             </select>
-
+                            <br />
+                            <label for="txtCase_Search_PravniOsnov" class="fixed-width-label">Pravni osnov:</label>
+                            <textarea class="form-control dynamic-width-field" rows="3" cols="60" id="txtCase_Search_PravniOsnov"></textarea>
                         </form>
                     </div>
                     <div class="col-lg-6 case-column-for-stanje">
                         <form class="form-inline pull-left" role="form">
+                            <label for="ddlCase_Search_PristupPredmetu" class="fixed-width-label">Pristup putem Interneta:</label>
+                            <select class="form-control" id="ddlCase_Search_PristupPredmetu">
+                                <option value="null">-----</option>
+                                <option value="yes">Da</option>
+                                <option value="no">Ne</option>
+                            </select>
+                            <br />
                             <label for="txtCase_Search_BrojPredmeta" class="fixed-width-label">Broj predmeta:</label>
                             <input type="text" class="form-control fixed-width-field" id="txtCase_Search_BrojPredmeta" />
                             <label for="cbCase_Search_BezBrojaPredmeta">Bez broja</label>
@@ -444,6 +472,9 @@
                                 <br />
                                 <label for="cbCase_PrivremeniZastupnici" class="fixed-width-label-narrow">Privremeni zastupnici</label>
                                 <input id="cbCase_PrivremeniZastupnici" type="checkbox" />
+                                <br />
+                                <label for="cbCase_PristupPredmetu" class="fixed-width-label-narrow">Pristup predmetu putem interneta</label>
+                                <input id="cbCase_PristupPredmetu" type="checkbox" />
                             </form>
                         </div>
                         <div class="col-lg-7 case-column-for-stanje">
@@ -477,11 +508,16 @@
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
                                 </span>
-                                <span class="form-group has-feedback">
-                                    <%--<label for="txtCase_StanjePredmeta" class="fixed-width-label">Stanje:</label>--%>
+                                <br />
+                                <select class="form-control fixed-width-field" id="ddlCase_Search_StanjaPredmeta">
+                                    <option value="-1">-----</option>
+                                </select>
+                                <label>ili</label>
+                                <input type="text" class="form-control fixed-width-field" id="txtCase_StanjePredmeta" />
+                                <%--<span class="form-group has-feedback">
                                     <input type="text" class="form-control fixed-width-field" id="txtCase_StanjePredmeta" />
                                     <i id="spinner_txtCase_StanjePredmeta" class="glyphicon glyphicon-refresh spinning form-control-feedback" style="display: none;"></i>
-                                </span>
+                                </span>--%>
                                 <%--<select class="form-control fixed-width-field" id="ddlCase_StanjePredmeta">
                                     <option value="-1">-----</option>
                                 </select>--%>

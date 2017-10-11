@@ -1,6 +1,7 @@
 ﻿/// <reference path="Scripts/Utilities.js" />
+/// <reference path="Scripts/google.js" />
 
-var AppPath = window.location.href.split('?')[0].toLowerCase().replace("/desk.aspx", "") + "/";
+var AppPath = window.location.href.split('?')[0].toLowerCase().replace("/desk.aspx", "").replace(/#/g, '') + "/";
 var CurrentModule = "home";
 var CurrentUser = null;
 var CurrentCodeTable = null;
@@ -34,6 +35,7 @@ var _columnsCases = [
     { field: 'VrijednostSporaString', title: 'Vrijednost spora', titleTooltip: 'Vrijednost spora', sortable: true, align: "right", visible: false },
     { field: 'UlogaName', title: 'Uloga', titleTooltip: 'Uloga', sortable: true, visible: false },
     { field: 'PrivremeniZastupnici', title: 'Pr. zast.', titleTooltip: 'Privremeni zastupnici', sortable: true, visible: false },
+    { field: 'PristupPredmetu', title: 'Pristup putem Interneta', titleTooltip: 'Pristup predmetu putem interneta', sortable: true, visible: false },
     { field: 'PravniOsnov', title: 'Pravni osnov', titleTooltip: 'Pravni osnov', sortable: true, visible: false },
 
     { field: 'NacinOkoncanjaName', title: 'Način okončanja', titleTooltip: 'Način okončanja', sortable: true, visible: false },
@@ -59,19 +61,19 @@ window.onBrowserHistoryButtonClicked = function () {
 
 $(document).ready(function () {
     //$(".g-signin2").click();
-    ValidateUser("meholjic.emir@gmail.com");
+    //ValidateUser("meholjic.emir@gmail.com");
     //ValidateUser("emir.meholjic@toptal.com");
 });
 
-function onSignIn(googleUser) {
-    var profile = googleUser.getBasicProfile();
-    var email = profile.getEmail();
+//function onSignIn(googleUser) {
+//    var profile = googleUser.getBasicProfile();
+//    var email = profile.getEmail();
 
-    var token = googleUser.getAuthResponse().id_token;
-    console.log("ID Token: " + token);
+//    var token = googleUser.getAuthResponse().id_token;
+//    console.log("ID Token: " + token);
 
-    ValidateUser(email, token);
-}
+//    ValidateUser(email, token);
+//}
 
 function ValidateUser(email, token) {
     ShowLoaderCenter();
@@ -180,8 +182,12 @@ function RenderApp(user) {
     else
         ShowAlert("danger", "Korisnik postoji ali nema dodijeljena potrebna prava za korištenje aplikacije.");
 
-    $('#dateTimePicker_DatumStanjaPredmeta,#dateTimePicker_DatumArhiviranja,#dateTimePicker_NoteDate,#dateTimePicker_ExpenseDate,#dateTimePicker_Radnja_DatumRadnje,#dateTimePicker_CaseActivity_ActivityDate,#dateTimePicker_Search_DatumStanjaPredmeta,#dateTimePicker_Search_IniciranFrom,#dateTimePicker_Search_IniciranTo,#dateTimePicker_Search_ArhiviranFrom,#dateTimePicker_Search_ArhiviranTo').datetimepicker({
+    $('#dateTimePicker_DatumStanjaPredmeta,#dateTimePicker_DatumArhiviranja,#dateTimePicker_NoteDate,#dateTimePicker_ExpenseDate,#dateTimePicker_CaseActivity_ActivityDate,#dateTimePicker_Search_DatumStanjaPredmeta,#dateTimePicker_Search_IniciranFrom,#dateTimePicker_Search_IniciranTo,#dateTimePicker_Search_ArhiviranFrom,#dateTimePicker_Search_ArhiviranTo').datetimepicker({
         format: 'DD.MM.YYYY'
+    });
+
+    $("#dateTimePicker_Radnja_DatumRadnje").datetimepicker({
+        format: 'DD.MM.YYYY HH:mm'
     });
 
     if (window.innerWidth > 1240)
@@ -271,15 +277,15 @@ function LoadRadnje() {
             Radnje = data;
             $(data).each(function (index, _radnja) {
 
-                if (Date.parse(_radnja.DatumRadnje) === Date.parse(tomorrowDate))
+                if (new Date(_radnja.DatumRadnje).setHours(0, 0, 0, 0) === Date.parse(tomorrowDate))
                     _radnja.Color = "#00b6ee";
-                else if (Date.parse(_radnja.DatumRadnje) === Date.parse(todayDate))
+                else if (new Date(_radnja.DatumRadnje).setHours(0, 0, 0, 0) === Date.parse(todayDate))
                     _radnja.Color = "#21b04b";
                 else
                     _radnja.Color = "white";
 
                 if (Date.parse(_radnja.DatumRadnje))
-                    _radnja.DatumRadnje = moment(_radnja.DatumRadnje).format("DD.MM.YYYY");
+                    _radnja.DatumRadnje = moment(_radnja.DatumRadnje).format("DD.MM.YYYY HH:mm");
 
                 _radnja.VrstaRadnjeName_DatumRadnje = "<strong style='text-decoration:underline;'>" + _radnja.VrstaRadnjeName + "</strong><br>" + (_radnja.DatumRadnje || "");
                 _radnja.CaseNasBroj_CaseFullName_Biljeska = "<strong>" + _radnja.CaseFullName + "</strong><br><strong style='font-style: italic;'>" + _radnja.Biljeske + "</strong>";
@@ -390,7 +396,7 @@ function LoadCaseActivities() {
                 else if (Date.parse(_caseActivity.ActivityDate) === Date.parse(todayDate))
                     _caseActivity.Color = "#21b04b";
                 else if (Date.parse(_caseActivity.ActivityDate) < Date.parse(todayDate))
-                    _caseActivity.Color = "#ff8888";
+                    _caseActivity.Color = "#ff0000";
                 else
                     _caseActivity.Color = "white";
 
@@ -529,8 +535,9 @@ function MenuCases_LoadDataOnly() {
         LoadCodeTableData("VrsteTroskova", $("#ddlCase_ExpenseVrstaTroska"));
         LoadCodeTableData("VrsteRadnji", $("#ddlCase_Radnja_VrstaRadnje"));
         LoadCodeTableData("TipoviDokumenata", $("#ddlCase_Document_TipDokumenta"));
+        LoadCodeTableData("StanjaPredmeta", $("#ddlCase_Search_StanjaPredmeta"));
 
-        SetUpStanjeAutocomplete();
+        //SetUpStanjeAutocomplete();
         SetUpPredatoUzAutocomplete();
         SetUpCaseConnectionAutocomplete();
 
@@ -694,6 +701,7 @@ function LoadCases(caseId, callback, filter) {
                     _case.VrijednostSporaString = GetMoneyFormat(_case.VrijednostSpora);
 
                 _case.PrivremeniZastupnici = _case.PrivremeniZastupnici ? "Da" : "Ne";
+                _case.PristupPredmetu = _case.PristupPredmetu ? "Da" : "Ne";
 
                 _case.NasBrojName = "<strong>" + _case.NasBroj + "</strong>";
 
@@ -707,7 +715,7 @@ function LoadCases(caseId, callback, filter) {
                         break;
                     case 7:
                         // ARHIVIRAN
-                        _case.KategorijaPredmetaName = "<span style='color: #ff8888; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
+                        _case.KategorijaPredmetaName = "<span style='color: #ff0000; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
                         break;
                     case 9:
                         //PO ŽALBI/PRIGOVORU
@@ -1539,11 +1547,18 @@ function SaveCaseActivity() {
 function SaveCase() {
     ShowLoaderCenter();
 
+    var _stanjePredmetaName = "";
+    if ($("#ddlCase_Search_StanjaPredmeta").val() != -1)
+        _stanjePredmetaName = $("#ddlCase_Search_StanjaPredmeta option:selected").text();
+    else
+        _stanjePredmetaName = $("#txtCase_StanjePredmeta").val();
+
     var reqObj = {
         CreatedBy: CurrentUser.Id,
         KategorijaPredmetaId: $("#ddlCase_Kategorija").val(),
         UlogaId: $("#ddlCase_Uloga").val(),
         PrivremeniZastupnici: $("#cbCase_PrivremeniZastupnici").prop("checked"),
+        PristupPredmetu: $("#cbCase_PristupPredmetu").prop("checked"),
         BrojPredmeta: $("#txtCase_BrojPredmeta").val(),
         SudId: $("#ddlCase_Sud").val(),
         SudijaId: $("#ddlCase_Sudija").val(),
@@ -1551,7 +1566,7 @@ function SaveCase() {
         VrstaPredmetaId: $("#ddlCase_VrstaPredmeta").val(),
         DatumStanjaPredmeta: ConvertBSDateToUSDateString($("#txtCase_DatumStanjaPredmeta").val()),
         //StanjePredmetaId: $("#ddlCase_StanjePredmeta").val(),
-        StanjePredmetaName: $("#txtCase_StanjePredmeta").val(),
+        StanjePredmetaName: _stanjePredmetaName,
 
         NacinOkoncanjaId: $("#ddlCase_NacinOkoncanja").val(),
         Uspjeh: $("#ddlCase_Uspjeh").val(),
@@ -1583,6 +1598,9 @@ function SaveCase() {
     .done(function (data) {
         if (data && data > 0) {
             ShowAlert("success", "Uspješno spašen predmet.");
+
+            UpdateRadnje_GoogleEvents();
+
             SaveCaseActivity();
             HideLoaderCenter();
             if (CurrentModule == "home") // Case activities loaded in SaveCaseActivity()
@@ -1601,6 +1619,50 @@ function SaveCase() {
         else
             ShowAlert("danger", "Greška prilikom spašavanja predmeta. Probajte ponovo ili kontaktirajte administratora.");
         HideLoaderCenter();
+    });
+}
+
+function UpdateRadnje_GoogleEvents() {
+    $.get(AppPath + "api/radnja", {
+        PredmetId: CurrentCase.Id,
+        UserId: CurrentUser.Id,
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
+    })
+    .done(function (data) {
+        CurrentCase.Radnje = data;
+
+        $(CurrentCase.Radnje).each(function (index, _radnja) {
+            if (_radnja.GoogleEventId == undefined || _radnja.GoogleEventId == null || _radnja.GoogleEventId == "")
+                CreateGoogleCalendarEvent(_radnja, UpdateRadnja_GoogleEventId);
+        });
+
+        $(CurrentCase.DeletedRadnje).each(function (index, _radnja) {
+            DeleteGoogleCalendarEvent(_radnja);
+        });
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom učitavanja radnji. Probajte ponovo ili kontaktirajte administratora.");
+    });
+}
+
+function UpdateRadnja_GoogleEventId(radnja) {
+    $.post(AppPath + "api/radnja", {
+        Id: radnja.Id,
+        GoogleEventId: radnja.GoogleEventId,
+        Token: CurrentUser.Token,
+        Email: CurrentUser.Email
+    })
+    .done(function (data) {
+    })
+    .fail(function (jqXHR) {
+        if (jqXHR.status == 403)
+            AlertUserSessionError();
+        else
+            ShowAlert("danger", "Greška prilikom kreiranja radnje u Google kalendaru. Kontaktirajte administratora.");
     });
 }
 
@@ -1671,14 +1733,15 @@ function EditCase(id) {
                 $("#ddlCase_Kategorija").val(CurrentCase.KategorijaPredmetaId);
                 $("#ddlCase_Uloga").val(CurrentCase.UlogaId);
                 $("#cbCase_PrivremeniZastupnici").prop("checked", CurrentCase.PrivremeniZastupnici);
+                $("#cbCase_PristupPredmetu").prop("checked", CurrentCase.PristupPredmetu);
                 $("#txtCase_BrojPredmeta").val(CurrentCase.BrojPredmeta);
                 $("#ddlCase_Sud").val(CurrentCase.SudId);
                 $("#ddlCase_Sudija").val(CurrentCase.SudijaId);
                 $("#txtCase_VrijednostSpora").val(CurrentCase.VrijednostSpora);
                 $("#ddlCase_VrstaPredmeta").val(CurrentCase.VrstaPredmetaId);
                 $("#txtCase_DatumStanjaPredmeta").val(CurrentCase.DatumStanjaPredmeta);
-                //$("#ddlCase_StanjePredmeta").val(CurrentCase.StanjePredmetaId);
-                $("#txtCase_StanjePredmeta").val(CurrentCase.StanjePredmetaName);
+                $("#ddlCase_Search_StanjaPredmeta").val(CurrentCase.StanjePredmetaId);
+                //$("#txtCase_StanjePredmeta").val(CurrentCase.StanjePredmetaName);
 
                 $("#ddlCase_NacinOkoncanja").val(CurrentCase.NacinOkoncanjaId);
                 $("#ddlCase_Uspjeh").val(CurrentCase.Uspjeh);
@@ -1756,6 +1819,7 @@ function EditCase(id) {
                 })
                 .done(function (data) {
                     CurrentCase.Radnje = data;
+                    CurrentCase.DeletedRadnje = [];
                     BindCaseRadnje(CurrentCase.Radnje);
                     HideLoaderCenter();
                 })
@@ -2336,6 +2400,7 @@ function ClearModalCase() {
     $("#ddlCase_Kategorija").val(-1);
     $("#ddlCase_Uloga").val(-1);
     $("#cbCase_PrivremeniZastupnici").prop("checked", false);
+    $("#cbCase_PristupPredmetu").prop("checked", false);
     $("#txtCase_BrojPredmeta").val("");
     $("#ddlCase_Sud").val(-1);
     $("#ddlCase_Sudija").val(-1);
@@ -2616,6 +2681,7 @@ function StartBuildingNewCase() {
     CurrentCase.Notes = [];
     CurrentCase.Expenses = [];
     CurrentCase.Radnje = [];
+    Currentcase.DeletedRadnje = [];
     CurrentCase.Documents = [];
     CurrentCase.Connections = [];
 
@@ -2954,13 +3020,14 @@ function AppendRadnjaToCase() {
         CurrentCase.Radnje.push({
             VrstaRadnjeId: $("#ddlCase_Radnja_VrstaRadnje").val(),
             VrstaRadnjeName: $("#ddlCase_Radnja_VrstaRadnje option:selected").text(),
-            DatumRadnje: $("#txtCase_Radnja_DatumRadnje").val(),
+            DatumRadnje: ConvertBSDateToUSDateString($("#txtCase_Radnja_DatumRadnje").val()),
             Troskovi: '', //$("#ddlCase_Radnja_Troskovi").val(),
             Biljeske: $("#txtCase_Radnja_Biljeske").val(),
             //DocumentLink: $("#txtCase_Radnja_DocumentLink").val().replace(CurrentUser.GoogleDriveLocalFolderPath, ""),
             AbsoluteDocumentLink: $("#txtCase_Radnja_DocumentLink").val(),
             PredmetId: CurrentCase.Id,
-            CaseFullName: CurrentCase.Naziv
+            CaseFullName: CurrentCase.Naziv,
+            UserId: CurrentUser.Id
         });
 
         BindCaseRadnje(CurrentCase.Radnje);
@@ -2981,7 +3048,7 @@ function BindCaseRadnje(_data) {
     if (_data && _data.length > 0) {
         $(_data).each(function (index, _radnja) {
             if (Date.parse(_radnja.DatumRadnje))
-                _radnja.DatumRadnje = moment(_radnja.DatumRadnje).format("DD.MM.YYYY");
+                _radnja.DatumRadnje = moment(_radnja.DatumRadnje).format("DD.MM.YYYY HH:mm");
 
             if (_radnja.AbsoluteDocumentLink != undefined && _radnja.AbsoluteDocumentLink != null && _radnja.AbsoluteDocumentLink.length > 1)
                 _radnja.AbsoluteDocumentLinkString = "<input type='text' class='form-control' value='" + _radnja.AbsoluteDocumentLink + "' style='width:100%;' disabled/>";
@@ -3037,6 +3104,11 @@ function AfterBindCaseRadnje() {
 }
 
 function DeleteCaseRadnja(index) {
+    // Save deleted ones for deleting from Google
+    if (CurrentCase.Radnje == undefined)
+        CurrentCase.Radnje = [];
+    CurrentCase.DeletedRadnje.push(CurrentCase.Radnje[index]);
+
     CurrentCase.Radnje.splice(index, 1);
     BindCaseRadnje(CurrentCase.Radnje);
 }
@@ -3193,39 +3265,39 @@ function OpenOtherTab(element, divId) {
 }
 
 
-function SetUpStanjeAutocomplete() {
-    $("#txtCase_StanjePredmeta").autocomplete({
-        source: function (request, response) {
-            $("#spinner_txtCase_StanjePredmeta").show();
+//function SetUpStanjeAutocomplete() {
+//    $("#txtCase_StanjePredmeta").autocomplete({
+//        source: function (request, response) {
+//            $("#spinner_txtCase_StanjePredmeta").show();
 
-            $.get(AppPath + "api/codetable", {
-                Name: "StanjaPredmeta",
-                ColumnName: "Name",
-                Filter: $("#txtCase_StanjePredmeta").val(),
-                Token: CurrentUser.Token,
-                Email: CurrentUser.Email
-            })
-            .done(function (data) {
-                response($.map(data, function (item) {
-                    return {
-                        label: item.Name,
-                        value: item.Name
-                    };
-                }));
-                $("#spinner_txtSearch_CaseName").hide();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                if (jqXHR.status == 403)
-                    AlertUserSessionError();
-                else
-                    ShowAlert("danger", "Greška prilikom učitavanja stanja predmeta za odabir. Probajte ponovo ili kontaktirajte administratora.");
-                HideLoaderCenter();
-            });
-        },
-        delay: 500,
-        appendTo: ".case-column-for-stanje"
-    });
-}
+//            $.get(AppPath + "api/codetable", {
+//                Name: "StanjaPredmeta",
+//                ColumnName: "Name",
+//                Filter: $("#txtCase_StanjePredmeta").val(),
+//                Token: CurrentUser.Token,
+//                Email: CurrentUser.Email
+//            })
+//            .done(function (data) {
+//                response($.map(data, function (item) {
+//                    return {
+//                        label: item.Name,
+//                        value: item.Name
+//                    };
+//                }));
+//                $("#spinner_txtSearch_CaseName").hide();
+//            })
+//            .fail(function (jqXHR, textStatus, errorThrown) {
+//                if (jqXHR.status == 403)
+//                    AlertUserSessionError();
+//                else
+//                    ShowAlert("danger", "Greška prilikom učitavanja stanja predmeta za odabir. Probajte ponovo ili kontaktirajte administratora.");
+//                HideLoaderCenter();
+//            });
+//        },
+//        delay: 500,
+//        appendTo: ".case-column-for-stanje"
+//    });
+//}
 
 function SetUpPredatoUzAutocomplete() {
     $("#txtCase_Document_PredatoUz").autocomplete({
@@ -3428,6 +3500,16 @@ function ExecuteAdvancedSearch(exportToExcel) {
     if (exportToExcel != true)
         exportToExcel = false;
 
+    var _pristupPredmetu = null;
+    switch ($("#ddlCase_Search_PristupPredmetu").val()) {
+        case "yes":
+            _pristupPredmetu = true;
+            break;
+        case "no":
+            _pristupPredmetu = false;
+            break;
+    }
+
     var reqObj = {
         ExportToExcel: exportToExcel,
 
@@ -3455,6 +3537,8 @@ function ExecuteAdvancedSearch(exportToExcel) {
         ArhiviranTo: $("#txtCase_Search_ArhiviranTo").val(),
         UspjehFrom: $("#ddlCase_Search_UspjehFrom").val(),
         UspjehTo: $("#ddlCase_Search_UspjehTo").val(),
+        PristupPredmetu: _pristupPredmetu,
+        PravniOsnov: $("#txtCase_Search_PravniOsnov").val(),
 
         RowCount: $("#ddlAdvancedSearchRowCount").val()
     };
@@ -3486,6 +3570,7 @@ function ExecuteAdvancedSearch(exportToExcel) {
                         _case.VrijednostSporaString = GetMoneyFormat(_case.VrijednostSpora);
 
                     _case.PrivremeniZastupnici = _case.PrivremeniZastupnici ? "Da" : "Ne";
+                    _case.PristupPredmetu = _case.PristupPredmetu ? "Da" : "Ne";
 
                     _case.NasBrojName = "<strong>" + _case.NasBroj + "</strong>";
 
@@ -3499,7 +3584,7 @@ function ExecuteAdvancedSearch(exportToExcel) {
                             break;
                         case 7:
                             // ARHIVIRAN
-                            _case.KategorijaPredmetaName = "<span style='color: #ff8888; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
+                            _case.KategorijaPredmetaName = "<span style='color: #ff0000; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
                             break;
                         case 9:
                             //PO ŽALBI/PRIGOVORU
@@ -3575,3 +3660,6 @@ $("#cbCase_Search_BezBrojaPredmeta").click(function () {
     else
         $("#txtCase_Search_BrojPredmeta").removeAttr("disabled");
 });
+
+
+

@@ -17,7 +17,7 @@ namespace AAK.Google
         public static bool ValidateToken(string token, string email)
         {
             //TEMP
-            return true;
+            //return true;
 
             User user = new User();
             user.Token = token;
@@ -28,9 +28,7 @@ namespace AAK.Google
         public static bool ValidateToken(ref User user)
         {
             //TEMP
-            //GoogleDriveIntegration.Utility.DownloadFile("0B9A-gSuvyVSOazNzclhmSmR0MkE", "ocr issue 1.jpg", 1);
-            //GoogleDriveIntegration.Utility.UploadFile(@"C:\Users\emir\Desktop\ocr issue 1.jpg", "ocr issue 1.jpg", "0B9A-gSuvyVSOWW5uZnc2NDdoRDg");
-            return true;
+            //return true;
 
             try
             {

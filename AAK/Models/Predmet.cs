@@ -55,6 +55,7 @@ namespace AAK.Models
         public string StanjePredmetaName { get; set; }
 
         public bool PrivremeniZastupnici { get; set; }
+        public bool PristupPredmetu { get; set; }
 
         public int? CreatedBy { get; set; }
         public string CreatedByName { get; set; }
@@ -124,6 +125,7 @@ namespace AAK.Models
             this.StanjePredmetaName = string.Empty;
 
             this.PrivremeniZastupnici = false;
+            this.PristupPredmetu = false;
 
             this.CreatedBy = null;
             this.CreatedByName = string.Empty;

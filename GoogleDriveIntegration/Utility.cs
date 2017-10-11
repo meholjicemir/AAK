@@ -10,6 +10,7 @@ using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using System.IO;
 using System.Threading;
+using System.Configuration;
 
 namespace GoogleDriveIntegration
 {
@@ -17,7 +18,6 @@ namespace GoogleDriveIntegration
     {
         private static DriveService Service = null;
         private static string[] Scopes = { DriveService.Scope.Drive };
-        private static string ApplicationName = "Google Drive Integration - Emir";
 
         private static DriveService GetService()
         {
@@ -26,22 +26,19 @@ namespace GoogleDriveIntegration
             string jsonPath = AppDomain.CurrentDomain.BaseDirectory + "bin/client_secret.json";
             using (var stream = new FileStream(jsonPath, FileMode.Open, FileAccess.Read))
             {
-                string credPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-                credPath = Path.Combine(credPath, ".credentials/drive-dotnet-quickstart.json");
-
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                     GoogleClientSecrets.Load(stream).Secrets,
                     Scopes,
                     "user",
-                    CancellationToken.None,
-                    new FileDataStore(credPath, true)).Result;
+                    CancellationToken.None
+                    ).Result;
             }
 
             // Create Drive API service.
             var service = new DriveService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = credential,
-                ApplicationName = ApplicationName,
+                ApplicationName = ConfigurationManager.AppSettings["ApplicationName"] == null ? null : ConfigurationManager.AppSettings["ApplicationName"].ToString()
             });
 
             return service;

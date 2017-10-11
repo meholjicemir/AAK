@@ -33,6 +33,7 @@ namespace AAK.DataProviders
             collection.AddParameter<int>("kategorijaPredmetaId", predmet.KategorijaPredmetaId);
             collection.AddParameter<int>("ulogaId", predmet.UlogaId);
             collection.AddParameter<bool>("privremeniZastupnici", predmet.PrivremeniZastupnici);
+            collection.AddParameter<bool>("pristupPredmetu", predmet.PristupPredmetu);
             collection.AddParameter<string>("brojPredmeta", predmet.BrojPredmeta);
             collection.AddParameter<int?>("sudId", predmet.SudId);
             collection.AddParameter<int>("sudijaId", predmet.SudijaId);
@@ -102,6 +103,7 @@ namespace AAK.DataProviders
             collection.AddParameter<int>("kategorijaPredmetaId", predmet.KategorijaPredmetaId);
             collection.AddParameter<int>("ulogaId", predmet.UlogaId);
             collection.AddParameter<bool>("privremeniZastupnici", predmet.PrivremeniZastupnici);
+            collection.AddParameter<bool>("pristupPredmetu", predmet.PristupPredmetu);
             collection.AddParameter<string>("brojPredmeta", predmet.BrojPredmeta);
             collection.AddParameter<int?>("sudId", predmet.SudId);
             collection.AddParameter<int>("sudijaId", predmet.SudijaId);
@@ -207,7 +209,7 @@ namespace AAK.DataProviders
 
                     temp = (from Expense tempExpense in existingExpenses
                             where tempExpense.CaseId == expense.CaseId && tempExpense.ExpenseDate == expense.ExpenseDate && tempExpense.VrstaTroskaId == expense.VrstaTroskaId
-                                && tempExpense.PaidBy.ToLowerInvariant().Equals(expense.PaidBy.ToLowerInvariant())
+                                && tempExpense.PaidBy.ToLowerInvariant().Trim().Equals((expense.PaidBy ?? "").ToLowerInvariant().Trim())
                             select tempExpense).FirstOrDefault();
 
                     if (temp == null)
@@ -236,8 +238,9 @@ namespace AAK.DataProviders
                     radnja.PredmetId = predmet.Id;
                     if (radnja.Id == -1)
                         Radnje.Radnja_Insert(radnja);
-                    else
-                        Radnje.Radnja_Update(radnja);
+                    // They never update (app does not allow this)
+                    //else
+                    //    Radnje.Radnja_Update(radnja);
                 }
             }
             #endregion
@@ -357,6 +360,8 @@ namespace AAK.DataProviders
             collection.AddParameter<DateTime?>("arhiviranTo", parameters.ArhiviranTo);
             collection.AddParameter<int>("uspjehFrom", Convert.ToInt32((parameters.UspjehFrom ?? "0").Replace("%", "")));
             collection.AddParameter<int>("uspjehTo", Convert.ToInt32((parameters.UspjehTo ?? "100").Replace("%", "")));
+            collection.AddParameter<bool?>("pristupPredmetu", parameters.PristupPredmetu);
+            collection.AddParameter<string>("pravniOsnov", parameters.PravniOsnov);
             collection.AddParameter<int>("rowCount", parameters.RowCount);
 
             DataTable dt = DBUtility.Utility.ExecuteStoredProcedure("Predmeti_GetForAdvancedSearch", ref collection);

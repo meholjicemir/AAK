@@ -33,6 +33,10 @@ namespace AAK.Models
         public string UspjehFrom { get; set; }
         public string UspjehTo { get; set; }
 
+        public bool PristupPredmetu { get; set; }
+
+        public string PravniOsnov { get; set; }
+
         public int RowCount { get; set; }
 
         public string Token { get; set; }
