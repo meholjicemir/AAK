@@ -75,7 +75,7 @@ $(document).ready(function () {
 //    ValidateUser(email, token);
 //}
 
-function ValidateUser(email, token) {
+function ValidateUser(email, token, access_token) {
     ShowLoaderCenter();
 
     $.post(AppPath + "api/user", {
@@ -100,7 +100,8 @@ function ValidateUser(email, token) {
                 LastName: data.LastName,
                 //GoogleDriveLocalFolderPath: data.GoogleDriveLocalFolderPath,
                 PictureLink: data.PictureLink,
-                Token: data.Token
+                Token: data.Token,
+                AccessToken: access_token
             };
 
             $("#imgUserPicture")
@@ -1638,7 +1639,7 @@ function UpdateRadnje_GoogleEvents() {
         });
 
         $(CurrentCase.DeletedRadnje).each(function (index, _radnja) {
-            DeleteGoogleCalendarEvent(_radnja);
+            DeleteGoogleCalendarEvent(_radnja.GoogleEventId);
         });
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
@@ -2937,7 +2938,6 @@ function AppendDocumentToCase() {
             PredatoUzDokumentName: $("#txtCase_Document_PredatoUz").val(),
             Note: $("#txtCase_Document_Note").val(),
             //DocumentLink: $("#txtCase_Document_DocumentLink").val().replace(CurrentUser.GoogleDriveLocalFolderPath, ""),
-            AbsoluteDocumentLink: $("#txtCase_Document_DocumentLink").val(),
             CaseId: CurrentCase.Id
         });
 
@@ -2950,7 +2950,7 @@ function BindCaseDocuments(_data) {
         { field: 'TipDokumentaName', title: 'Tip dokumenta', titleTooltip: 'Tip dokumenta', sortable: true },
         { field: 'PredatoUzDokumentName', title: 'Predato uz', titleTooltip: 'Predato uz', sortable: true },
         { field: 'Note', title: 'Bilješke', titleTooltip: 'Bilješke', sortable: true },
-        { field: 'AbsoluteDocumentLinkString', title: 'Dokument', titleTooltip: 'Dokument', sortable: true }
+        { field: 'GoogleDriveDocIdHTML', title: 'Dokument', titleTooltip: 'Dokument', sortable: true }
     ];
 
     $("#tblCaseDocuments").bootstrapTable("destroy");
@@ -2958,8 +2958,10 @@ function BindCaseDocuments(_data) {
     if (_data && _data.length > 0) {
         $(_data).each(function (index, _document) {
 
-            if (_document.AbsoluteDocumentLink != undefined && _document.AbsoluteDocumentLink != null && _document.AbsoluteDocumentLink.length > 1)
-                _document.AbsoluteDocumentLinkString = "<input type='text' class='form-control' value='" + _document.AbsoluteDocumentLink.replace(/%20/g, ' ') + "' style='width:100%;' disabled/>";
+            if (_document.GoogleDriveDocId != undefined && _document.GoogleDriveDocId != null && _document.GoogleDriveDocId.length > 1)
+                _document.GoogleDriveDocIdHTML = "<label style='color:blue;cursor:pointer;' onclick='DownloadFileFromGoogleDrive(\"" + _document.GoogleDriveDocId + "\", \"" + _document.DocumentName + "\"); '>" + _document.DocumentName + "</label>";
+            else
+                _document.GoogleDriveDocIdHTML = _document.DocumentName;
 
             if (index == _data.length - 1) {
                 $("#tblCaseDocuments").bootstrapTable({
@@ -3024,7 +3026,6 @@ function AppendRadnjaToCase() {
             Troskovi: '', //$("#ddlCase_Radnja_Troskovi").val(),
             Biljeske: $("#txtCase_Radnja_Biljeske").val(),
             //DocumentLink: $("#txtCase_Radnja_DocumentLink").val().replace(CurrentUser.GoogleDriveLocalFolderPath, ""),
-            AbsoluteDocumentLink: $("#txtCase_Radnja_DocumentLink").val(),
             PredmetId: CurrentCase.Id,
             CaseFullName: CurrentCase.Naziv,
             UserId: CurrentUser.Id
@@ -3040,7 +3041,7 @@ function BindCaseRadnje(_data) {
         { field: 'DatumRadnje', title: 'Datum', titleTooltip: 'Datum', sortable: true, sorter: DateSorterFunction },
         //{ field: 'Troskovi', title: 'Troškovi', titleTooltip: 'Troškovi', sortable: true, align: "right" },
         { field: 'Biljeske', title: 'Bilješke', titleTooltip: 'Bilješke', sortable: true },
-        { field: 'AbsoluteDocumentLinkString', title: 'Dokument', titleTooltip: 'Dokument', sortable: true }
+        { field: 'GoogleDriveDocIdHTML', title: 'Dokument', titleTooltip: 'Dokument', sortable: true }
     ];
 
     $("#tblCaseRadnje").bootstrapTable("destroy");
@@ -3050,8 +3051,10 @@ function BindCaseRadnje(_data) {
             if (Date.parse(_radnja.DatumRadnje))
                 _radnja.DatumRadnje = moment(_radnja.DatumRadnje).format("DD.MM.YYYY HH:mm");
 
-            if (_radnja.AbsoluteDocumentLink != undefined && _radnja.AbsoluteDocumentLink != null && _radnja.AbsoluteDocumentLink.length > 1)
-                _radnja.AbsoluteDocumentLinkString = "<input type='text' class='form-control' value='" + _radnja.AbsoluteDocumentLink + "' style='width:100%;' disabled/>";
+            if (_radnja.GoogleDriveDocId != undefined && _radnja.GoogleDriveDocId != null && _radnja.GoogleDriveDocId.length > 1)
+                _radnja.GoogleDriveDocIdHTML = "<label style='color:blue;cursor:pointer;' onclick='DownloadFileFromGoogleDrive(\"" + _radnja.GoogleDriveDocId + "\", \"" + _radnja.DocumentName + "\"); '>" + _radnja.DocumentName + "</label>";
+            else
+                _radnja.GoogleDriveDocIdHTML = _radnja.DocumentName;
 
             if (index == _data.length - 1) {
                 $("#tblCaseRadnje").bootstrapTable({

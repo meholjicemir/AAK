@@ -19,12 +19,22 @@ namespace AAK.DataProviders
         public static List<Radnja> Radnje_GetForCase(int caseId, int userId)
         {
             DataTable dt = DBUtility.Utility.ExecuteStoredProcedure<int, int>("Radnje_GetForCase", "caseId", caseId, "userId", userId);
-            return DBUtility.Utility.ParseDataTable<Radnja>(dt);
+
+            List<Radnja> radnje = DBUtility.Utility.ParseDataTable<Radnja>(dt);
+
+            foreach (Radnja radnja in radnje)
+            {
+                radnja.DocumentName = radnja.DocumentName.Replace("%20", " ");
+                if (radnja.DocumentName.Contains('\\'))
+                    radnja.DocumentName = radnja.DocumentName.Substring(radnja.DocumentName.LastIndexOf('\\') + 1);
+            }
+
+            return radnje;
         }
 
         public static int? Radnja_Insert(Radnja radnja, bool createGoogleEvent = true)
         {
-            radnja.DocumentLink = (radnja.DocumentLink ?? "").TrimStart('\\').TrimStart('/');
+            //radnja.DocumentLink = (radnja.DocumentLink ?? "").TrimStart('\\').TrimStart('/');
 
             //if (createGoogleEvent)
             //    radnja.GoogleEventId = GoogleCalendarIntegration.Utility.CreateEvent(radnja.UserId,
@@ -42,14 +52,14 @@ namespace AAK.DataProviders
             collection.AddParameter<decimal?>("vrijednostRadnje", radnja.VrijednostRadnje);
             collection.AddParameter<int?>("radnjuObavioId", radnja.RadnjuObavioId);
             collection.AddParameter<int?>("nacinObavljanjaId", radnja.NacinObavljanjaId);
-            collection.AddParameter<string>("documentLink", radnja.DocumentLink);
+            collection.AddParameter<string>("googleDriveDocId", radnja.GoogleDriveDocId);
             collection.AddParameter<string>("googleEventId", radnja.GoogleEventId);
             return DBUtility.Utility.ExecuteStoredProcedure<int>("Radnja_Insert", ref collection);
         }
 
         public static void Radnja_Update(Radnja radnja, bool updateGoogleEvent = true)
         {
-            radnja.DocumentLink = (radnja.DocumentLink ?? "").TrimStart('\\').TrimStart('/');
+            //radnja.DocumentLink = (radnja.DocumentLink ?? "").TrimStart('\\').TrimStart('/');
 
             //if (updateGoogleEvent && (radnja.GoogleEventId ?? "").Length > 0)
             //    GoogleCalendarIntegration.Utility.UpdateEvent(radnja.UserId, radnja.GoogleEventId,
@@ -67,7 +77,7 @@ namespace AAK.DataProviders
             collection.AddParameter<decimal?>("vrijednostRadnje", radnja.VrijednostRadnje);
             collection.AddParameter<int?>("radnjuObavioId", radnja.RadnjuObavioId);
             collection.AddParameter<int?>("nacinObavljanjaId", radnja.NacinObavljanjaId);
-            collection.AddParameter<string>("documentLink", radnja.DocumentLink);
+            collection.AddParameter<string>("googleDriveDocId", radnja.GoogleDriveDocId);
             collection.AddParameter<int>("id", radnja.Id);
             DBUtility.Utility.ExecuteStoredProcedureVoid("Radnja_Update", ref collection);
         }

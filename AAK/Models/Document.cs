@@ -17,8 +17,9 @@ namespace AAK.Models
         public int? PredatoUzDokumentId { get; set; }
         public string PredatoUzDokumentName { get; set; }
 
-        public string DocumentLink { get; set; }
-        public string AbsoluteDocumentLink { get; set; }
+        public string GoogleDriveDocId { get; set; }
+
+        public string DocumentName { get; set; }
 
         public int UserId { get; set; }
 
@@ -37,8 +38,9 @@ namespace AAK.Models
             this.PredatoUzDokumentId = null;
             this.PredatoUzDokumentName = string.Empty;
 
-            this.DocumentLink = string.Empty;
-            this.AbsoluteDocumentLink = string.Empty;
+            this.GoogleDriveDocId = string.Empty;
+
+            this.DocumentName = string.Empty;
 
             this.UserId = -1;
         }

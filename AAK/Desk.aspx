@@ -9,7 +9,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <%--<meta name="google-signin-client_id" content="304849379317-766dl8pe6i0m78o35c9hmiuoou1rn14h.apps.googleusercontent.com" />--%>
 
     <link rel="stylesheet" href="Libraries/Bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-table/dist/bootstrap-table.min.css" />
@@ -28,17 +27,14 @@
     <script src="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multiselect.js"></script>
     <script src="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
     <script src="Scripts/Utilities.js"></script>
-    <%--<script src="https://apis.google.com/js/platform.js" async defer="defer"></script>--%>
 
+    <script>
+        var Google_ClientId = "<%=ConfigurationManager.AppSettings["Google_ClientId"].ToString()%>";
+        var Google_ClientSecret = "<%=ConfigurationManager.AppSettings["Google_ClientSecret"].ToString()%>";
+        var GoogleCalendarId = "<%=ConfigurationManager.AppSettings["GoogleCalendarId"].ToString()%>";
+    </script>
 
-
-    <script src="Desk.aspx.js?v=19" defer="defer"></script>
-    <%--<script src="Scripts/google.js"></script>--%>
-
-    <%--    <script async defer src="https://apis.google.com/js/api.js"
-        onload="this.onload=function(){};handleClientLoad()"
-        onreadystatechange="if (this.readyState === 'complete') this.onload()">
-    </script>--%>
+    <script src="Desk.aspx.js?v=21" defer="defer"></script>
 
     <iframe id="iframeDownload" style="position: absolute; left: -1000px;"></iframe>
 
@@ -51,7 +47,7 @@
         <button id="authorize-button" style="display: none;">Authorize</button>
         <button id="signout-button" style="display: none;">Sign Out</button>
 
-        <script src="Scripts/google.js"></script>
+        <script src="Scripts/google.js?v=21"></script>
         <script async defer src="https://apis.google.com/js/api.js"
             onload="this.onload=function(){};handleClientLoad()"
             onreadystatechange="if (this.readyState === 'complete') this.onload()">

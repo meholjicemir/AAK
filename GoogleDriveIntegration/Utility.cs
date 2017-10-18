@@ -23,7 +23,7 @@ namespace GoogleDriveIntegration
         {
             UserCredential credential;
 
-            string jsonPath = AppDomain.CurrentDomain.BaseDirectory + "bin/client_secret.json";
+            string jsonPath = AppDomain.CurrentDomain.BaseDirectory + "client_secret.json";
             using (var stream = new FileStream(jsonPath, FileMode.Open, FileAccess.Read))
             {
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
@@ -44,7 +44,7 @@ namespace GoogleDriveIntegration
             return service;
         }
 
-        private static void GetFolders(ref IList<Google.Apis.Drive.v3.Data.File> files)
+        public static void GetFiles(ref List<Google.Apis.Drive.v3.Data.File> files, string name = null, string pageToken = null)
         {
             try
             {
@@ -53,16 +53,52 @@ namespace GoogleDriveIntegration
 
                 // Define parameters of request.
                 FilesResource.ListRequest listRequest = Service.Files.List();
-                //listRequest.PageSize = 10;
-                listRequest.Fields = "nextPageToken, files(id, name, mimeType)";
+                listRequest.PageSize = 1000;
+
+                if (name != null)
+                    listRequest.Q = "name='" + name + "'";
+
+                listRequest.Fields = "nextPageToken, files(id, name, mimeType, parents)";
+                listRequest.PageToken = pageToken;
 
                 // List files.
-                files = listRequest.Execute().Files;
+                FileList fl = listRequest.Execute();
+                files.AddRange(fl.Files);
+                if (fl.NextPageToken != null)
+                    GetFiles(ref files, name, fl.NextPageToken);
+            }
+            catch (Exception ex)
+            {
+                LoggerUtility.Logger.LogException(ex, "GoogleDriveIntegration.Utility.GetFolders");
+            }
+        }
 
-                // Exclude everything that's not a folder.
-                for (int i = files.Count - 1; i >= 0; i--)
-                    if (!files[i].MimeType.Equals("application/vnd.google-apps.folder"))
-                        files.RemoveAt(i);
+        public static void GetFolders(ref List<Google.Apis.Drive.v3.Data.File> folders, string rootFolderId = null, string name = null, string pageToken = null)
+        {
+            try
+            {
+                if (Service == null)
+                    Service = GetService();
+
+                // Define parameters of request.
+                FilesResource.ListRequest listRequest = Service.Files.List();
+                listRequest.PageSize = 1000;
+
+                listRequest.Q = "mimeType='application/vnd.google-apps.folder'";
+                if (rootFolderId != null)
+                    listRequest.Q += " and '" + rootFolderId + "' in parents";
+                if (name != null)
+                    listRequest.Q += " and name='" + name + "'";
+
+                listRequest.Fields = "nextPageToken, files(id, name)";
+                listRequest.PageToken = pageToken;
+
+                // List files.
+                FileList fl = listRequest.Execute();
+                folders.AddRange(fl.Files);
+
+                if (fl.NextPageToken != null)
+                    GetFolders(ref folders, rootFolderId, name, fl.NextPageToken);
             }
             catch (Exception ex)
             {

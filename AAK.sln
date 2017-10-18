@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleDriveIntegration", "G
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleCalendarIntegration", "GoogleCalendarIntegration\GoogleCalendarIntegration.csproj", "{C4EFD98D-1CEA-4D4E-91E4-BE7D0A9B710D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetGoogleDocIds", "GetGoogleDocIds\GetGoogleDocIds.csproj", "{A79CD4AC-E0B4-41A3-880B-066E703B00DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,12 @@ Global
 		{C4EFD98D-1CEA-4D4E-91E4-BE7D0A9B710D}.Development|Any CPU.Build.0 = Debug|Any CPU
 		{C4EFD98D-1CEA-4D4E-91E4-BE7D0A9B710D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4EFD98D-1CEA-4D4E-91E4-BE7D0A9B710D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A79CD4AC-E0B4-41A3-880B-066E703B00DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A79CD4AC-E0B4-41A3-880B-066E703B00DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A79CD4AC-E0B4-41A3-880B-066E703B00DF}.Development|Any CPU.ActiveCfg = Debug|Any CPU
+		{A79CD4AC-E0B4-41A3-880B-066E703B00DF}.Development|Any CPU.Build.0 = Debug|Any CPU
+		{A79CD4AC-E0B4-41A3-880B-066E703B00DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A79CD4AC-E0B4-41A3-880B-066E703B00DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

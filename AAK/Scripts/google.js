@@ -1,14 +1,11 @@
 ﻿/// <reference path="../Desk.aspx.js" />
 
-// Client ID and API key from the Developer Console
-var CLIENT_ID = '304849379317-766dl8pe6i0m78o35c9hmiuoou1rn14h.apps.googleusercontent.com';
-
 // Array of API discovery doc URLs for APIs used by the quickstart
 var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-var SCOPES = "profile email https://www.googleapis.com/auth/calendar";
+var SCOPES = "profile email https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/drive";
 
 var authorizeButton = document.getElementById('authorize-button');
 var signoutButton = document.getElementById('signout-button');
@@ -27,7 +24,7 @@ function handleClientLoad() {
 function initClient() {
     gapi.client.init({
         discoveryDocs: DISCOVERY_DOCS,
-        clientId: CLIENT_ID,
+        clientId: Google_ClientId,
         scope: SCOPES
     }).then(function () {
         // Listen for sign-in state changes.
@@ -51,7 +48,7 @@ function updateSigninStatus(isSignedIn) {
 
         var email = gapi.auth2.getAuthInstance().currentUser.Ab.w3.U3;
         var token = gapi.auth2.getAuthInstance().currentUser.Ab.Zi.id_token;
-        ValidateUser(email, token);
+        ValidateUser(email, token, gapi.auth2.getAuthInstance().currentUser.Ab.Zi.access_token);
     } else {
         authorizeButton.style.display = 'block';
         signoutButton.style.display = 'none';
@@ -76,11 +73,10 @@ function CreateGoogleCalendarEvent(radnja, callback) {
     //(summary, description, _start, calendarId, _location, timezone) {
     var summary = radnja.VrstaRadnjeName + " (" + CurrentCase.Naziv + ")";
     var description = radnja.Biljeske;
-    var _start = new Date(radnja.DatumRadnje);
-    var calendarId = "4k976meo8f0ps85kpqe04m2thc@group.calendar.google.com";
 
-    var _end = _start;
-    _end.setHours(new Date(_end).getHours() + 1);
+    var _start = new Date(radnja.DatumRadnje);
+    var _end = new Date(radnja.DatumRadnje);
+    _end.setHours(new Date(radnja.DatumRadnje).getHours() + 1);
 
     var resource = {
         "summary": summary,
@@ -88,15 +84,15 @@ function CreateGoogleCalendarEvent(radnja, callback) {
         "location": "",
         "start": {
             "dateTime": _start.toISOString(),
-            "timezone": "Europe/Sarajevo"
+            "timeZone": "Europe/Sarajevo"
         },
         "end": {
             "dateTime": _end.toISOString(),
-            "timezone": "Europe/Sarajevo"
+            "timeZone": "Europe/Sarajevo"
         }
     };
     var request = gapi.client.calendar.events.insert({
-        'calendarId': calendarId,
+        'calendarId': GoogleCalendarId,
         'resource': resource
     });
     request.execute(function (resp) {
@@ -105,6 +101,50 @@ function CreateGoogleCalendarEvent(radnja, callback) {
     });
 }
 
-function DeleteGoogleCalendarEvent() {
+function DeleteGoogleCalendarEvent(eventId) {
+    var request = gapi.client.calendar.events.delete({
+        "calendarId": GoogleCalendarId,
+        "eventId": eventId
+    });
 
+    request.execute();
+}
+
+function DownloadFileFromGoogleDrive(fileId, fileName) {
+    //$.ajax({
+    //    type: "GET",
+    //    headers: {
+    //        "Authorization": "Bearer " + CurrentUser.AccessToken
+    //    },
+    //    url: "https://www.googleapis.com/drive/v3/files/" + fileId + "?alt=media",
+    //    processData: false,
+    //    dataType: "binary",
+    //    success: function (msg) {
+
+    //    },
+    //    failure: function (msg) {
+    //        alert("failed");
+    //    }
+    //});
+
+
+    var oReq = new XMLHttpRequest();
+    oReq.open("GET", "https://www.googleapis.com/drive/v3/files/" + fileId + "?alt=media", true);
+    oReq.setRequestHeader("Authorization", "Bearer " + CurrentUser.AccessToken);
+    oReq.responseType = "arraybuffer";
+
+    oReq.onload = function (oEvent) {
+        var arrayBuffer = oReq.response;
+        var a = document.createElement("a");
+        document.body.appendChild(a);
+        a.style = "display: none";
+        var blob = new Blob([arrayBuffer], { type: "octet/stream" });
+        url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    };
+
+    oReq.send();
 }

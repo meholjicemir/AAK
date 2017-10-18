@@ -28,8 +28,8 @@ namespace AAK.Models
         public string CaseFullName { get; set; }
         public int? CaseNasBroj { get; set; }
 
-        public string DocumentLink { get; set; }
-        public string AbsoluteDocumentLink { get; set; }
+        public string GoogleDriveDocId { get; set; }
+        public string DocumentName { get; set; }
 
         public string GoogleEventId { get; set; }
 
@@ -61,8 +61,8 @@ namespace AAK.Models
             this.CaseFullName = string.Empty;
             this.CaseNasBroj = null;
 
-            this.DocumentLink = string.Empty;
-            this.AbsoluteDocumentLink = string.Empty;
+            this.GoogleDriveDocId = string.Empty;
+            this.DocumentName = string.Empty;
 
             this.GoogleEventId = string.Empty;
 
