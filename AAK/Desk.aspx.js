@@ -3,6 +3,7 @@
 
 var AppPath = window.location.href.split('?')[0].toLowerCase().replace("/desk.aspx", "").replace(/#/g, '') + "/";
 var CurrentModule = "home";
+var CurrentGoogleDocSelection = null;
 var CurrentUser = null;
 var CurrentCodeTable = null;
 var Sudovi = null;
@@ -1694,14 +1695,21 @@ function EditCase(id) {
     $("#txtCase_Radnja_DatumRadnje").val("");
     //$("#ddlCase_Radnja_Troskovi").val("");
     $("#txtCase_Radnja_Biljeske").val("");
-    $("#txtCase_Radnja_DocumentLink").val("");
+    $("#aCase_Radnja_DocumentLink").html("");
+    $("#aCase_Radnja_DocumentLink").removeAttr("href");
+    $("#aCase_Radnja_DocumentLink").removeAttr("google_drive_doc_id");
+    $("#btnCase_Radnja_RemoveGoogleDoc").hide();
     $("#btnAppendRadnjaToCase").attr("disabled", "disabled");
 
     // Documents
     $("#ddlCase_Document_TipDokumenta").val(-1);
     $("#txtCase_Document_PredatoUz").val("");
     $("#txtCase_Document_Note").val("");
-    $("#txtCase_Document_DocumentLink").val("");
+    $("#aCase_Document_DocumentLink").html("");
+    $("#aCase_Document_DocumentLink").removeAttr("href");
+    $("#aCase_Document_DocumentLink").removeAttr("google_drive_doc_id");
+    $("#btnCase_Document_RemoveGoogleDoc").hide();
+
     $("#btnAppendDocumentToCase").attr("disabled", "disabled");
 
     // Connections
@@ -2442,14 +2450,15 @@ function ClearModalCase() {
     $("#txtCase_Radnja_DatumRadnje").val("");
     //$("#ddlCase_Radnja_Troskovi").val("");
     $("#txtCase_Radnja_Biljeske").val("");
-    $("#txtCase_Radnja_DocumentLink").val("");
+    $("#aCase_Radnja_DocumentLink").val("");
+    $("#aCase_Radnja_DocumentLink").removeAttr("href");
+    $("#aCase_Radnja_DocumentLink").removeAttr("google_drive_doc_id");
     $("#btnAppendRadnjaToCase").attr("disabled", "disabled");
 
     // Documents
     $("#ddlCase_Document_TipDokumenta").val(-1);
     $("#txtCase_Document_PredatoUz").val("");
     $("#txtCase_Document_Note").val("");
-    $("#txtCase_Document_DocumentLink").val("");
     $("#btnAppendDocumentToCase").attr("disabled", "disabled");
 
     // Connections
@@ -2926,7 +2935,7 @@ function DeleteCaseConnection(index) {
 }
 
 function AppendDocumentToCase() {
-    if ($("#ddlCase_Document_TipDokumenta").val() != -1 && $("#txtCase_Document_DocumentLink").val() != "") {
+    if ($("#ddlCase_Document_TipDokumenta").val() != -1 && $("#aCase_Document_DocumentLink").html() != "") {
 
         if (CurrentCase.Documents == undefined)
             CurrentCase.Documents = [];
@@ -2937,7 +2946,8 @@ function AppendDocumentToCase() {
             //PredatoUzDokumentId: $("#ddlCase_Document_TipDokumenta").val(),
             PredatoUzDokumentName: $("#txtCase_Document_PredatoUz").val(),
             Note: $("#txtCase_Document_Note").val(),
-            //DocumentLink: $("#txtCase_Document_DocumentLink").val().replace(CurrentUser.GoogleDriveLocalFolderPath, ""),
+            DocumentName: $("#aCase_Document_DocumentLink").html(),
+            GoogleDriveDocId: $("#aCase_Document_DocumentLink").attr("google_drive_doc_id"),
             CaseId: CurrentCase.Id
         });
 
@@ -3025,7 +3035,8 @@ function AppendRadnjaToCase() {
             DatumRadnje: ConvertBSDateToUSDateString($("#txtCase_Radnja_DatumRadnje").val()),
             Troskovi: '', //$("#ddlCase_Radnja_Troskovi").val(),
             Biljeske: $("#txtCase_Radnja_Biljeske").val(),
-            //DocumentLink: $("#txtCase_Radnja_DocumentLink").val().replace(CurrentUser.GoogleDriveLocalFolderPath, ""),
+            DocumentName: $("#aCase_Radnja_DocumentLink").html(),
+            GoogleDriveDocId: $("#aCase_Radnja_DocumentLink").attr("google_drive_doc_id"),
             PredmetId: CurrentCase.Id,
             CaseFullName: CurrentCase.Naziv,
             UserId: CurrentUser.Id
@@ -3247,14 +3258,7 @@ $("#dateTimePicker_Radnja_DatumRadnje").on('dp.change', function () {
 });
 
 $("#ddlCase_Document_TipDokumenta").change(function () {
-    if ($("#ddlCase_Document_TipDokumenta").val() != -1 && $("#txtCase_Document_DocumentLink").val() != "")
-        $("#btnAppendDocumentToCase").removeAttr("disabled");
-    else
-        $("#btnAppendDocumentToCase").attr("disabled", "disabled");
-});
-
-$("#txtCase_Document_DocumentLink").change(function () {
-    if ($("#ddlCase_Document_TipDokumenta").val() != -1 && $("#txtCase_Document_DocumentLink").val() != "")
+    if ($("#ddlCase_Document_TipDokumenta").val() != -1 && $("#aCase_Document_DocumentLink").html() != "")
         $("#btnAppendDocumentToCase").removeAttr("disabled");
     else
         $("#btnAppendDocumentToCase").attr("disabled", "disabled");
@@ -3379,23 +3383,6 @@ function SetUpCaseConnectionAutocomplete() {
     });
 }
 
-//$("#txtCase_Radnja_DocumentLink").change(function () {
-//    if ($("#txtCase_Radnja_DocumentLink").val() != "" && $("#txtCase_Radnja_DocumentLink").val().indexOf(CurrentUser.GoogleDriveLocalFolderPath) != 0) {
-//        $("#txtCase_Radnja_DocumentLink").val("");
-//        ShowAlert("danger", "Odabrani dokument mora biti u Vašem Google Drive folderu: " + (CurrentUser.GoogleDriveLocalFolderPath == null ? "" : CurrentUser.GoogleDriveLocalFolderPath),
-//            undefined, undefined, $("#divRadnjeAlert"));
-//    }
-//});
-
-
-//$("#txtCase_Document_DocumentLink").change(function () {
-//    if ($("#txtCase_Document_DocumentLink").val() != "" && $("#txtCase_Document_DocumentLink").val().indexOf(CurrentUser.GoogleDriveLocalFolderPath) != 0) {
-//        $("#txtCase_Document_DocumentLink").val("");
-//        ShowAlert("danger", "Odabrani dokument mora biti u Vašem Google Drive folderu: " + (CurrentUser.GoogleDriveLocalFolderPath == null ? "" : CurrentUser.GoogleDriveLocalFolderPath),
-//            undefined, undefined, $("#divDocumentsAlert"));
-//    }
-//});
-
 $("#txtLabel_BackgroundColor").change(function () {
     $("#txtLabel_Name").css("background-color", $("#txtLabel_BackgroundColor").val());
 });
@@ -3442,6 +3429,7 @@ function LogOut() {
     CurrentModule = "home";
     CurrentUser = null;
     CurrentCodeTable = null;
+    CurrentGoogleDocSelection = null;
     Sudovi = null;
     Labels = null;
     Lica = null;
@@ -3664,5 +3652,27 @@ $("#cbCase_Search_BezBrojaPredmeta").click(function () {
         $("#txtCase_Search_BrojPredmeta").removeAttr("disabled");
 });
 
+function ChooseGoogleDoc(tip) {
+    CurrentGoogleDocSelection = { Tip: tip };
+    OpenPicker();
+}
 
+function RemoveGoogleDoc(tip) {
+    CurrentGoogleDocSelection = null;
 
+    switch (tip) {
+        case "radnja":
+            $("#aCase_Radnja_DocumentLink").html("");
+            $("#aCase_Radnja_DocumentLink").removeAttr("href");
+            $("#aCase_Radnja_DocumentLink").removeAttr("google_drive_doc_id");
+            $("#btnCase_Radnja_RemoveGoogleDoc").hide();
+            break;
+        case "dokument":
+            $("#aCase_Document_DocumentLink").html("");
+            $("#aCase_Document_DocumentLink").removeAttr("href");
+            $("#aCase_Document_DocumentLink").removeAttr("google_drive_doc_id");
+            $("#btnCase_Document_RemoveGoogleDoc").hide();
+            $("#btnAppendDocumentToCase").attr("disabled", "disabled");
+            break;
+    }
+}

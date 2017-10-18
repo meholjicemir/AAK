@@ -52,6 +52,7 @@ namespace AAK.DataProviders
             collection.AddParameter<decimal?>("vrijednostRadnje", radnja.VrijednostRadnje);
             collection.AddParameter<int?>("radnjuObavioId", radnja.RadnjuObavioId);
             collection.AddParameter<int?>("nacinObavljanjaId", radnja.NacinObavljanjaId);
+            collection.AddParameter<string>("documentName", radnja.DocumentName);
             collection.AddParameter<string>("googleDriveDocId", radnja.GoogleDriveDocId);
             collection.AddParameter<string>("googleEventId", radnja.GoogleEventId);
             return DBUtility.Utility.ExecuteStoredProcedure<int>("Radnja_Insert", ref collection);
@@ -77,6 +78,7 @@ namespace AAK.DataProviders
             collection.AddParameter<decimal?>("vrijednostRadnje", radnja.VrijednostRadnje);
             collection.AddParameter<int?>("radnjuObavioId", radnja.RadnjuObavioId);
             collection.AddParameter<int?>("nacinObavljanjaId", radnja.NacinObavljanjaId);
+            collection.AddParameter<string>("documentName", radnja.DocumentName);
             collection.AddParameter<string>("googleDriveDocId", radnja.GoogleDriveDocId);
             collection.AddParameter<int>("id", radnja.Id);
             DBUtility.Utility.ExecuteStoredProcedureVoid("Radnja_Update", ref collection);

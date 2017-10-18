@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multiselect.css" />
     <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" />
     <link rel="stylesheet" href="Libraries/jQuery/jquery-ui.min.css" />
-    <link rel="stylesheet" href="Styles/NewStyle.css?v=9" />
+    <link rel="stylesheet" href="Styles/NewStyle.css?v=23" />
 </head>
 <body>
     <script src="Libraries/jQuery/jquery-1.12.0.min.js"></script>
@@ -32,9 +32,10 @@
         var Google_ClientId = "<%=ConfigurationManager.AppSettings["Google_ClientId"].ToString()%>";
         var Google_ClientSecret = "<%=ConfigurationManager.AppSettings["Google_ClientSecret"].ToString()%>";
         var GoogleCalendarId = "<%=ConfigurationManager.AppSettings["GoogleCalendarId"].ToString()%>";
+        var GoogleDriveRootFolderId = "<%=ConfigurationManager.AppSettings["GoogleDriveRootFolderId"].ToString()%>";
     </script>
 
-    <script src="Desk.aspx.js?v=21" defer="defer"></script>
+    <script src="Desk.aspx.js?v=23" defer="defer"></script>
 
     <iframe id="iframeDownload" style="position: absolute; left: -1000px;"></iframe>
 
@@ -47,7 +48,7 @@
         <button id="authorize-button" style="display: none;">Authorize</button>
         <button id="signout-button" style="display: none;">Sign Out</button>
 
-        <script src="Scripts/google.js?v=21"></script>
+        <script src="Scripts/google.js?v=23"></script>
         <script async defer src="https://apis.google.com/js/api.js"
             onload="this.onload=function(){};handleClientLoad()"
             onreadystatechange="if (this.readyState === 'complete') this.onload()">
@@ -621,7 +622,9 @@
                                     <label for="txtCase_Radnja_Biljeske">Bilješke:</label>
                                     <input type="text" class="form-control fixed-width-field" id="txtCase_Radnja_Biljeske" />
                                     <label for="txtCase_Radnja_DocumentLink">Dokument:</label>
-                                    <input type="file" class="form-control" id="txtCase_Radnja_DocumentLink" />
+                                    <button class="btn btn-sm btn-default" onclick="ChooseGoogleDoc('radnja'); return false;">Odaberi dokument</button>
+                                    <button id="btnCase_Radnja_RemoveGoogleDoc" class="btn btn-sm btn-default" style="display: none; color: red;" onclick="RemoveGoogleDoc('radnja'); return false;">X</button>
+                                    <a id="aCase_Radnja_DocumentLink" target="_blank"></a>
                                     <button id="btnAppendRadnjaToCase" type="button" class="btn btn-success" disabled="disabled" onclick="AppendRadnjaToCase(); return false;">Dodaj</button>
                                 </form>
                                 <br />
@@ -670,7 +673,10 @@
                                     <label for="txtCase_Document_Note">Bilješke:</label>
                                     <input type="text" class="form-control fixed-width-field" id="txtCase_Document_Note" />
                                     <label for="txtCase_Document_DocumentLink">Dokument:</label>
-                                    <input type="file" class="form-control" id="txtCase_Document_DocumentLink" />
+                                    <button class="btn btn-sm btn-default" onclick="ChooseGoogleDoc('dokument'); return false;">Odaberi dokument</button>
+                                    <button id="btnCase_Document_RemoveGoogleDoc" class="btn btn-sm btn-default" style="display: none; color: red;" onclick="RemoveGoogleDoc('dokument'); return false;">X</button>
+                                    <a id="aCase_Document_DocumentLink" target="_blank"></a>
+                                    <%--<input type="file" class="form-control" id="txtCase_Document_DocumentLink" />--%>
                                     <button id="btnAppendDocumentToCase" type="button" class="btn btn-success" disabled="disabled" onclick="AppendDocumentToCase(); return false;">Dodaj</button>
                                 </form>
                                 <br />

@@ -467,3 +467,11 @@ tr:hover td {
     .g-signin2 > div {
         margin: 0 auto;
     }
+
+.picker-dialog-bg {
+    z-index: 20000 !important;
+}
+
+.picker-dialog {
+    z-index: 20001 !important;
+}

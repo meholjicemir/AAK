@@ -33,6 +33,7 @@ namespace AAK.DataProviders
             collection.AddParameter<string>("note", document.Note);
             collection.AddParameter<int?>("tipDokumentaId", document.TipDokumentaId);
             collection.AddParameter<string>("predatoUzDokumentName", document.PredatoUzDokumentName);
+            collection.AddParameter<string>("documentName", document.DocumentName);
             collection.AddParameter<string>("googleDriveDocId", document.GoogleDriveDocId);
             return DBUtility.Utility.ExecuteStoredProcedure<int>("Document_Insert", ref collection);
         }
@@ -46,6 +47,7 @@ namespace AAK.DataProviders
             collection.AddParameter<string>("note", document.Note);
             collection.AddParameter<int?>("tipDokumentaId", document.TipDokumentaId);
             collection.AddParameter<string>("predatoUzDokumentName", document.PredatoUzDokumentName);
+            collection.AddParameter<string>("documentName", document.DocumentName);
             collection.AddParameter<string>("googleDriveDocId", document.GoogleDriveDocId);
             collection.AddParameter<int>("id", document.Id);
             DBUtility.Utility.ExecuteStoredProcedureVoid("Document_Update", ref collection);

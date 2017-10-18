@@ -5,7 +5,7 @@ var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-var SCOPES = "profile email https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/drive";
+var SCOPES = "profile email https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/drive.readonly";
 
 var authorizeButton = document.getElementById('authorize-button');
 var signoutButton = document.getElementById('signout-button');
@@ -111,40 +111,91 @@ function DeleteGoogleCalendarEvent(eventId) {
 }
 
 function DownloadFileFromGoogleDrive(fileId, fileName) {
-    //$.ajax({
-    //    type: "GET",
-    //    headers: {
-    //        "Authorization": "Bearer " + CurrentUser.AccessToken
-    //    },
-    //    url: "https://www.googleapis.com/drive/v3/files/" + fileId + "?alt=media",
-    //    processData: false,
-    //    dataType: "binary",
-    //    success: function (msg) {
-
-    //    },
-    //    failure: function (msg) {
-    //        alert("failed");
-    //    }
-    //});
-
-
     var oReq = new XMLHttpRequest();
     oReq.open("GET", "https://www.googleapis.com/drive/v3/files/" + fileId + "?alt=media", true);
     oReq.setRequestHeader("Authorization", "Bearer " + CurrentUser.AccessToken);
     oReq.responseType = "arraybuffer";
 
     oReq.onload = function (oEvent) {
-        var arrayBuffer = oReq.response;
-        var a = document.createElement("a");
-        document.body.appendChild(a);
-        a.style = "display: none";
-        var blob = new Blob([arrayBuffer], { type: "octet/stream" });
-        url = window.URL.createObjectURL(blob);
-        a.href = url;
-        a.download = fileName;
-        a.click();
-        window.URL.revokeObjectURL(url);
+
+        if (oReq.status == 403) { // It's a folder
+            window.open("https://drive.google.com/drive/u/0/folders/" + fileId, "_blank");
+        }
+        else { // It's a file
+            var arrayBuffer = oReq.response;
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+            var blob = new Blob([arrayBuffer], { type: "octet/stream" });
+            url = window.URL.createObjectURL(blob);
+            a.href = url;
+            a.download = fileName;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
     };
 
     oReq.send();
+}
+
+
+// Picker
+
+function OpenPicker() {
+    gapi.load('picker', { 'callback': onPickerApiLoad });
+}
+
+// Create and render a Picker object for picking user Photos.
+function createPicker() {
+    var view = new google.picker.DocsView();
+    view.setParent(GoogleDriveRootFolderId);
+    view.setIncludeFolders(true);
+    view.setSelectFolderEnabled(true);
+
+    if (pickerApiLoaded && CurrentUser.AccessToken) {
+        var picker = new google.picker.PickerBuilder().
+        //addView(google.picker.ViewId.DOCS).
+        addView(view).
+        //addView(new google.picker.DocsUploadView()). //for upload
+        setOAuthToken(CurrentUser.AccessToken).
+        //setDeveloperKey(developerKey).
+        setCallback(pickerCallback).
+        build();
+        picker.setVisible(true);
+    }
+}
+
+function pickerCallback(data) {
+    var url = 'nothing';
+    if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
+        var doc = data[google.picker.Response.DOCUMENTS][0];
+        url = doc[google.picker.Document.URL];
+    }
+    var message = 'You picked: ' + url;
+    if (url != "nothing") {
+        CurrentGoogleDocSelection.DocName = doc.name;
+        CurrentGoogleDocSelection.DocId = doc.id;
+
+        switch (CurrentGoogleDocSelection.Tip) {
+            case "radnja":
+                $("#aCase_Radnja_DocumentLink").html(doc.name);
+                $("#aCase_Radnja_DocumentLink").attr("href", url);
+                $("#aCase_Radnja_DocumentLink").attr("google_drive_doc_id", doc.id);
+                $("#btnCase_Radnja_RemoveGoogleDoc").show();
+                break;
+            case "dokument":
+                $("#aCase_Document_DocumentLink").html(doc.name);
+                $("#aCase_Document_DocumentLink").attr("href", url);
+                $("#aCase_Document_DocumentLink").attr("google_drive_doc_id", doc.id);
+                $("#btnCase_Document_RemoveGoogleDoc").show();
+                if ($("#ddlCase_Document_TipDokumenta").val() != -1 && $("#aCase_Document_DocumentLink").html() != "")
+                    $("#btnAppendDocumentToCase").removeAttr("disabled");
+                break;
+        }
+    }
+}
+
+function onPickerApiLoad() {
+    pickerApiLoaded = true;
+    createPicker();
 }
