@@ -147,6 +147,7 @@
   <ItemGroup>
     <Content Include="Desk.aspx" />
     <Content Include="Desk.aspx.js" />
+    <Content Include="Desk.aspx.min.js" />
     <Content Include="favicon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -224,9 +225,9 @@
     <Content Include="Libraries\jQuery\jquery-ui.min.css" />
     <Content Include="Libraries\jQuery\jquery-ui.min.js" />
     <Content Include="Libraries\Moment\moment.js" />
-    <Content Include="LogIn.aspx" />
-    <Content Include="LogIn.aspx.js" />
+    <Content Include="Scripts\google.min.js" />
     <Content Include="Scripts\google.js" />
+    <Content Include="Scripts\Utilities.min.js" />
     <Content Include="Scripts\Utilities.js" />
     <Content Include="Styles\NewStyle.css" />
     <Content Include="Temp\nothing.txt" />
@@ -281,13 +282,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Google\Validator.cs" />
-    <Compile Include="LogIn.aspx.cs">
-      <DependentUpon>LogIn.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="LogIn.aspx.designer.cs">
-      <DependentUpon>LogIn.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Models\AdvancedSearchParameters.cs" />
     <Compile Include="Models\CaseActivity.cs" />
     <Compile Include="Models\CodeTableData.cs" />

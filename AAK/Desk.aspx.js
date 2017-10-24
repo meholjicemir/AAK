@@ -15,6 +15,7 @@ var CaseActivities = null;
 var Radnje = null;
 var CurrentCase = null;
 var SelectedCases = [];
+var CaseDocumentClipboard = null;
 
 var _columnsCases = [
     { field: 'Id' },
@@ -60,11 +61,11 @@ window.onBrowserHistoryButtonClicked = function () {
 };
 
 
-$(document).ready(function () {
+//$(document).ready(function () {
     //$(".g-signin2").click();
     //ValidateUser("meholjic.emir@gmail.com");
     //ValidateUser("emir.meholjic@toptal.com");
-});
+//});
 
 //function onSignIn(googleUser) {
 //    var profile = googleUser.getBasicProfile();
@@ -3005,7 +3006,15 @@ function AfterBindCaseDocuments() {
         }
         else if (CurrentCase.Documents.length > 0) {
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
-                var buttonsHTML = "<td style='width: 50px;'><div class='btn-group pull-right'>";
+                var buttonsHTML = "<td style='width: 125px;'><div class='btn-group pull-right'>";
+                buttonsHTML +=
+                            "<button class='btn btn-default btn-sm' data-toggle='tooltip' title='Kopiraj dokument (moguće ga je zalijepiti u drugi predmet)' onclick='CopyCaseDocument(" + (index - 1) + "); return false;'>"
+                            + "<span class='glyphicon glyphicon-copy'></span>"
+                            + "</button>";
+                buttonsHTML +=
+                            "<button class='btn btn-default btn-sm' data-toggle='tooltip' title='Iskoristi ponovo' onclick='ReuseCaseDocument(" + (index - 1) + "); return false;'>"
+                            + "<span class='glyphicon glyphicon-repeat'></span>"
+                            + "</button>";
                 buttonsHTML +=
                             "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši dokument' onclick='DeleteCaseDocument(" + (index - 1) + "); return false;'>"
                             + "<span class='glyphicon glyphicon-remove'></span>"
@@ -3021,6 +3030,32 @@ function AfterBindCaseDocuments() {
 function DeleteCaseDocument(index) {
     CurrentCase.Documents.splice(index, 1);
     BindCaseDocuments(CurrentCase.Documents);
+}
+
+function ReuseCaseDocument(index) {
+    var tempCaseDocument = CurrentCase.Documents[index];
+    BindInputDateForCaseDocument(tempCaseDocument);
+}
+
+function CopyCaseDocument(index) {
+    CaseDocumentClipboard = $.extend(true, [], CurrentCase.Documents[index]);
+    $("#btnPasteCaseDocument").show();
+}
+
+function PasteCaseDocument(index) {
+    if (CaseDocumentClipboard != null)
+        BindInputDateForCaseDocument(CaseDocumentClipboard);
+}
+
+function BindInputDateForCaseDocument(tempCaseDocument) {
+    $("#ddlCase_Document_TipDokumenta").val(tempCaseDocument.TipDokumentaId);
+    $("#txtCase_Document_PredatoUz").val(tempCaseDocument.PredatoUzDokumentName);
+    $("#txtCase_Document_Note").val(tempCaseDocument.Note);
+    $("#aCase_Document_DocumentLink").html(tempCaseDocument.DocumentName);
+    $("#aCase_Document_DocumentLink").attr("google_drive_doc_id", tempCaseDocument.GoogleDriveDocId);
+
+    $("#btnCase_Document_RemoveGoogleDoc").show();
+    $("#btnAppendDocumentToCase").removeAttr("disabled");
 }
 
 function AppendRadnjaToCase() {
@@ -3439,6 +3474,7 @@ function LogOut() {
     Radnje = null;
     CurrentCase = null;
     SelectedCases = [];
+    CaseDocumentClipboard = null;
     menuCases_DataLoaded = false
 
     DeactivateAllMenuItems();

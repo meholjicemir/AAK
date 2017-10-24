@@ -26,7 +26,7 @@
     <script src="Libraries/Bootstrap/bootstrap-table/dist/locale/bootstrap-table-hr-HR.min.js"></script>
     <script src="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multiselect.js"></script>
     <script src="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
-    <script src="Scripts/Utilities.js"></script>
+    <script src="Scripts/Utilities.min.js"></script>
 
     <script>
         var Google_ClientId = "<%=ConfigurationManager.AppSettings["Google_ClientId"].ToString()%>";
@@ -35,7 +35,7 @@
         var GoogleDriveRootFolderId = "<%=ConfigurationManager.AppSettings["GoogleDriveRootFolderId"].ToString()%>";
     </script>
 
-    <script src="Desk.aspx.js?v=23" defer="defer"></script>
+    <script src="Desk.aspx.min.js" defer="defer"></script>
 
     <iframe id="iframeDownload" style="position: absolute; left: -1000px;"></iframe>
 
@@ -45,10 +45,12 @@
         <%--<div class="g-signin2" data-onsuccess="onSignIn"></div>--%>
 
         <!--Add buttons to initiate auth sequence and sign out-->
-        <button id="authorize-button" style="display: none;">Authorize</button>
-        <button id="signout-button" style="display: none;">Sign Out</button>
+        <center>
+        <button id="authorize-button"class="btn btn-default" style="display: none;">Prijavi se (Google)</button>
+        <button id="signout-button" class="btn btn-default" style="display: none;">Odjavi se</button>
+        </center>
 
-        <script src="Scripts/google.js?v=23"></script>
+        <script src="Scripts/google.min.js"></script>
         <script async defer src="https://apis.google.com/js/api.js"
             onload="this.onload=function(){};handleClientLoad()"
             onreadystatechange="if (this.readyState === 'complete') this.onload()">
@@ -678,6 +680,9 @@
                                     <a id="aCase_Document_DocumentLink" target="_blank"></a>
                                     <%--<input type="file" class="form-control" id="txtCase_Document_DocumentLink" />--%>
                                     <button id="btnAppendDocumentToCase" type="button" class="btn btn-success" disabled="disabled" onclick="AppendDocumentToCase(); return false;">Dodaj</button>
+                                    <button id="btnPasteCaseDocument" type="button" class="btn btn-default pull-right" style="display: none;" onclick="PasteCaseDocument(); return false;" data-toggle="tooltip" title="Zalijepi kopirani dokument">
+                                        <span class='glyphicon glyphicon-paste'></span>
+                                    </button>
                                 </form>
                                 <br />
                                 <table id="tblCaseDocuments" class="table table-condensed" style="word-break: break-word;"></table>
