@@ -60,23 +60,6 @@ window.onBrowserHistoryButtonClicked = function () {
     }
 };
 
-
-//$(document).ready(function () {
-    //$(".g-signin2").click();
-    //ValidateUser("meholjic.emir@gmail.com");
-    //ValidateUser("emir.meholjic@toptal.com");
-//});
-
-//function onSignIn(googleUser) {
-//    var profile = googleUser.getBasicProfile();
-//    var email = profile.getEmail();
-
-//    var token = googleUser.getAuthResponse().id_token;
-//    console.log("ID Token: " + token);
-
-//    ValidateUser(email, token);
-//}
-
 function ValidateUser(email, token, access_token) {
     ShowLoaderCenter();
 
@@ -87,12 +70,6 @@ function ValidateUser(email, token, access_token) {
     .done(function (data) {
         if (data.Id > 0) {
             SetupHistoryHandling();
-
-            //document.cookie = 'AccessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-
-            //var expiry = new Date();
-            //expiry.setTime(expiry.getTime() + (10 * 60 * 1000 * 1008));
-            //document.cookie = 'AccessToken=' + data.AccessToken + ';expires=' + expiry.toGMTString() + ';path=/';
 
             CurrentUser = {
                 Id: data.Id,
@@ -538,9 +515,9 @@ function MenuCases_LoadDataOnly() {
         LoadCodeTableData("VrsteTroskova", $("#ddlCase_ExpenseVrstaTroska"));
         LoadCodeTableData("VrsteRadnji", $("#ddlCase_Radnja_VrstaRadnje"));
         LoadCodeTableData("TipoviDokumenata", $("#ddlCase_Document_TipDokumenta"));
-        LoadCodeTableData("StanjaPredmeta", $("#ddlCase_Search_StanjaPredmeta"));
+        //LoadCodeTableData("StanjaPredmeta", $("#ddlCase_Search_StanjaPredmeta"));
 
-        //SetUpStanjeAutocomplete();
+        SetUpStanjeAutocomplete();
         SetUpPredatoUzAutocomplete();
         SetUpCaseConnectionAutocomplete();
 
@@ -862,8 +839,13 @@ function MenuReports() {
 }
 
 function MenuParties() {
+    var queryStringPartyId = GetQueryStringParameterByName("party_id");
+
     CurrentModule = "parties";
     var location = document.location.href.split('?')[0] + "?module=" + CurrentModule;
+    if (queryStringPartyId != undefined && queryStringPartyId != null)
+        location += "&party_id=" + queryStringPartyId;
+
     history.pushState({ foo: "bar" }, "Stranke", location);
 
     DeactivateAllMenuItems();
@@ -874,10 +856,10 @@ function MenuParties() {
     // Load code table data
     LoadCodeTableData("Drzave", $("#ddlParty_Drzava"));
 
-    LoadParties();
+    LoadParties(queryStringPartyId);
 }
 
-function LoadParties() {
+function LoadParties(queryStringPartyId) {
     ShowLoaderCenter();
 
     var _columns = [
@@ -909,6 +891,7 @@ function LoadParties() {
         UserId: CurrentUser.Id,
         Filter: $("#txtPartiesFilter").val(),
         RowCount: $("#ddlPartiesRowCount").val(),
+        PartyId: ((queryStringPartyId != undefined && queryStringPartyId != null) ? queryStringPartyId : null),
         Token: CurrentUser.Token,
         Email: CurrentUser.Email
     })
@@ -931,7 +914,7 @@ function LoadParties() {
                         showColumns: true,
                         columns: _columns,
                         onPostBody: function () {
-                            AfterBindParties();
+                            AfterBindParties(queryStringPartyId);
                             return false;
                         }
                     });
@@ -958,7 +941,7 @@ function LoadParties() {
     });
 }
 
-function AfterBindParties() {
+function AfterBindParties(queryStringPartyId) {
     $("#tblParties").find("tr").each(function (index, element) {
         if (index == 0) {
             $(element).find("th:first-child").hide();
@@ -989,6 +972,9 @@ function AfterBindParties() {
             $(element).dblclick(function () {
                 EditParty(tempId);
             });
+
+            if (queryStringPartyId == tempId)
+                $(element).dblclick();
         }
     });
 }
@@ -1551,10 +1537,10 @@ function SaveCase() {
     ShowLoaderCenter();
 
     var _stanjePredmetaName = "";
-    if ($("#ddlCase_Search_StanjaPredmeta").val() != -1)
-        _stanjePredmetaName = $("#ddlCase_Search_StanjaPredmeta option:selected").text();
-    else
-        _stanjePredmetaName = $("#txtCase_StanjePredmeta").val();
+    //if ($("#ddlCase_Search_StanjaPredmeta").val() != -1)
+    //    _stanjePredmetaName = $("#ddlCase_Search_StanjaPredmeta option:selected").text();
+    //else
+    _stanjePredmetaName = $("#txtCase_StanjePredmeta").val();
 
     var reqObj = {
         CreatedBy: CurrentUser.Id,
@@ -1565,7 +1551,7 @@ function SaveCase() {
         BrojPredmeta: $("#txtCase_BrojPredmeta").val(),
         SudId: $("#ddlCase_Sud").val(),
         SudijaId: $("#ddlCase_Sudija").val(),
-        VrijednostSpora: $("#txtCase_VrijednostSpora").val(),
+        VrijednostSpora: $("#txtCase_VrijednostSpora").attr("number_value"),
         VrstaPredmetaId: $("#ddlCase_VrstaPredmeta").val(),
         DatumStanjaPredmeta: ConvertBSDateToUSDateString($("#txtCase_DatumStanjaPredmeta").val()),
         //StanjePredmetaId: $("#ddlCase_StanjePredmeta").val(),
@@ -1636,7 +1622,8 @@ function UpdateRadnje_GoogleEvents() {
         CurrentCase.Radnje = data;
 
         $(CurrentCase.Radnje).each(function (index, _radnja) {
-            if (_radnja.GoogleEventId == undefined || _radnja.GoogleEventId == null || _radnja.GoogleEventId == "")
+            if (_radnja.CreateCalendarEvent
+                && (_radnja.GoogleEventId == undefined || _radnja.GoogleEventId == null || _radnja.GoogleEventId == ""))
                 CreateGoogleCalendarEvent(_radnja, UpdateRadnja_GoogleEventId);
         });
 
@@ -1687,6 +1674,7 @@ function EditCase(id) {
     // Expenses
     $("#ddlCase_ExpenseVrstaTroska").val(-1);
     $("#txtCase_ExpenseAmount").val("");
+    $("#txtCase_ExpenseAmount").removeAttr("number_value");
     $("#txtCase_ExpenseDate").val("");
     $("#ddlCase_ExpensePaidBy").val("");
     $("#btnAppendExpenseToCase").attr("disabled", "disabled");
@@ -1747,11 +1735,12 @@ function EditCase(id) {
                 $("#txtCase_BrojPredmeta").val(CurrentCase.BrojPredmeta);
                 $("#ddlCase_Sud").val(CurrentCase.SudId);
                 $("#ddlCase_Sudija").val(CurrentCase.SudijaId);
-                $("#txtCase_VrijednostSpora").val(CurrentCase.VrijednostSpora);
+                $("#txtCase_VrijednostSpora").attr("number_value", CurrentCase.VrijednostSpora);
+                $("#txtCase_VrijednostSpora").val(GetMoneyFormat(CurrentCase.VrijednostSpora));
                 $("#ddlCase_VrstaPredmeta").val(CurrentCase.VrstaPredmetaId);
                 $("#txtCase_DatumStanjaPredmeta").val(CurrentCase.DatumStanjaPredmeta);
-                $("#ddlCase_Search_StanjaPredmeta").val(CurrentCase.StanjePredmetaId);
-                //$("#txtCase_StanjePredmeta").val(CurrentCase.StanjePredmetaName);
+                //$("#ddlCase_Search_StanjaPredmeta").val(CurrentCase.StanjePredmetaId);
+                $("#txtCase_StanjePredmeta").val(CurrentCase.StanjePredmetaName);
 
                 $("#ddlCase_NacinOkoncanja").val(CurrentCase.NacinOkoncanjaId);
                 $("#ddlCase_Uspjeh").val(CurrentCase.Uspjeh);
@@ -2187,7 +2176,15 @@ function LoadCodeTableData(tableName, dropDown, columnName, callback) {
     .done(function (data) {
         if (data) {
             $(data).each(function (index, obj) {
-                dropDown.append($("<option></option>").attr("value", obj.Id).text(obj.Name));
+                if (tableName == "VrsteRadnji")
+                    dropDown.append($("<option></option>")
+                        .attr("value", obj.Id)
+                        .attr("has_star", (obj.Name.indexOf('*') > -1))
+                        .text(obj.Name.replace('*', '')));
+                else
+                    dropDown.append($("<option></option>")
+                        .attr("value", obj.Id)
+                        .text(obj.Name));
                 if (index == data.length - 1) {
                     if (callback != undefined && typeof (callback) == "function")
                         callback();
@@ -2415,6 +2412,7 @@ function ClearModalCase() {
     $("#ddlCase_Sud").val(-1);
     $("#ddlCase_Sudija").val(-1);
     $("#txtCase_VrijednostSpora").val("");
+    $("#txtCase_VrijednostSpora").removeAttr("number_value");
     $("#ddlCase_VrstaPredmeta").val(-1);
     $("#txtCase_DatumStanjaPredmeta").val("");
     //$("#ddlCase_StanjePredmeta").val(-1);
@@ -2442,6 +2440,7 @@ function ClearModalCase() {
     // Expenses
     $("#ddlCase_ExpenseVrstaTroska").val(-1);
     $("#txtCase_ExpenseAmount").val("");
+    $("#txtCase_ExpenseAmount").removeAttr("number_value");
     $("#txtCase_ExpenseDate").val("");
     $("#ddlCase_ExpensePaidBy").val("");
     $("#btnAppendExpenseToCase").attr("disabled", "disabled");
@@ -2757,18 +2756,27 @@ function AfterBindCaseParties() {
                     $(element).append("<th id='casePartiesEmptyHeader'></th>");
         }
         else if (CurrentCase.Parties.length > 0) {
+            var buttonsHTML = "<td style='width: 100px;'><div class='btn-group pull-right'>";
+            buttonsHTML +=
+                            "<button class='btn btn-default btn-sm' data-toggle='tooltip' title='Otvori stranku' onclick='OpenCasePartyInNewTab(" + (index - 1) + "); return false;'>"
+                            + "<span class='glyphicon glyphicon-eye-open'></span>"
+                            + "</button>";
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
-                var buttonsHTML = "<td style='width: 50px;'><div class='btn-group pull-right'>";
                 buttonsHTML +=
                             "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši stranku' onclick='DeleteCaseParty(" + (index - 1) + "); return false;'>"
                             + "<span class='glyphicon glyphicon-remove'></span>"
                             + "</button>";
-                buttonsHTML += "</div></td>";
 
-                $(element).append(buttonsHTML);
             }
+            buttonsHTML += "</div></td>";
+            $(element).append(buttonsHTML);
         }
     });
+}
+
+function OpenCasePartyInNewTab(index) {
+    var partyId = CurrentCase.Parties[index].LiceId;
+    window.open(document.location.href.split('?')[0].toLowerCase() + "?module=parties&party_id=" + partyId.toString());
 }
 
 function DeleteCaseParty(index) {
@@ -2937,20 +2945,35 @@ function DeleteCaseConnection(index) {
 
 function AppendDocumentToCase() {
     if ($("#ddlCase_Document_TipDokumenta").val() != -1 && $("#aCase_Document_DocumentLink").html() != "") {
+        var editIndex = $("#btnAppendDocumentToCase").attr("edit_index");
+        if (editIndex != undefined && editIndex != null && editIndex != false) {
+            CurrentCase.Documents[editIndex] = {
+                TipDokumentaId: $("#ddlCase_Document_TipDokumenta").val(),
+                TipDokumentaName: $("#ddlCase_Document_TipDokumenta option:selected").text(),
+                PredatoUzDokumentName: $("#txtCase_Document_PredatoUz").val(),
+                Note: $("#txtCase_Document_Note").val(),
+                DocumentName: $("#aCase_Document_DocumentLink").html(),
+                GoogleDriveDocId: $("#aCase_Document_DocumentLink").attr("google_drive_doc_id"),
+                CaseId: CurrentCase.Id
+            };
 
-        if (CurrentCase.Documents == undefined)
-            CurrentCase.Documents = [];
+            $("#btnAppendDocumentToCase").removeAttr("edit_index");
+            $("#btnAppendDocumentToCase").html("Dodaj");
+        }
+        else {
+            if (CurrentCase.Documents == undefined)
+                CurrentCase.Documents = [];
 
-        CurrentCase.Documents.push({
-            TipDokumentaId: $("#ddlCase_Document_TipDokumenta").val(),
-            TipDokumentaName: $("#ddlCase_Document_TipDokumenta option:selected").text(),
-            //PredatoUzDokumentId: $("#ddlCase_Document_TipDokumenta").val(),
-            PredatoUzDokumentName: $("#txtCase_Document_PredatoUz").val(),
-            Note: $("#txtCase_Document_Note").val(),
-            DocumentName: $("#aCase_Document_DocumentLink").html(),
-            GoogleDriveDocId: $("#aCase_Document_DocumentLink").attr("google_drive_doc_id"),
-            CaseId: CurrentCase.Id
-        });
+            CurrentCase.Documents.push({
+                TipDokumentaId: $("#ddlCase_Document_TipDokumenta").val(),
+                TipDokumentaName: $("#ddlCase_Document_TipDokumenta option:selected").text(),
+                PredatoUzDokumentName: $("#txtCase_Document_PredatoUz").val(),
+                Note: $("#txtCase_Document_Note").val(),
+                DocumentName: $("#aCase_Document_DocumentLink").html(),
+                GoogleDriveDocId: $("#aCase_Document_DocumentLink").attr("google_drive_doc_id"),
+                CaseId: CurrentCase.Id
+            });
+        }
 
         BindCaseDocuments(CurrentCase.Documents);
     }
@@ -3006,7 +3029,7 @@ function AfterBindCaseDocuments() {
         }
         else if (CurrentCase.Documents.length > 0) {
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
-                var buttonsHTML = "<td style='width: 125px;'><div class='btn-group pull-right'>";
+                var buttonsHTML = "<td style='width: 160px;'><div class='btn-group pull-right'>";
                 buttonsHTML +=
                             "<button class='btn btn-default btn-sm' data-toggle='tooltip' title='Kopiraj dokument (moguće ga je zalijepiti u drugi predmet)' onclick='CopyCaseDocument(" + (index - 1) + "); return false;'>"
                             + "<span class='glyphicon glyphicon-copy'></span>"
@@ -3014,6 +3037,10 @@ function AfterBindCaseDocuments() {
                 buttonsHTML +=
                             "<button class='btn btn-default btn-sm' data-toggle='tooltip' title='Iskoristi ponovo' onclick='ReuseCaseDocument(" + (index - 1) + "); return false;'>"
                             + "<span class='glyphicon glyphicon-repeat'></span>"
+                            + "</button>";
+                buttonsHTML +=
+                            "<button class='btn btn-warning btn-sm' data-toggle='tooltip' title='Izmijeni dokument' onclick='EditCaseDocument(" + (index - 1) + "); return false;'>"
+                            + "<span class='glyphicon glyphicon-pencil'></span>"
                             + "</button>";
                 buttonsHTML +=
                             "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši dokument' onclick='DeleteCaseDocument(" + (index - 1) + "); return false;'>"
@@ -3027,6 +3054,14 @@ function AfterBindCaseDocuments() {
     });
 }
 
+function EditCaseDocument(index) {
+    var tempCaseDocument = CurrentCase.Documents[index];
+    BindInputDataForCaseDocument(tempCaseDocument);
+
+    $("#btnAppendDocumentToCase").attr("edit_index", index);
+    $("#btnAppendDocumentToCase").html("Spasi");
+}
+
 function DeleteCaseDocument(index) {
     CurrentCase.Documents.splice(index, 1);
     BindCaseDocuments(CurrentCase.Documents);
@@ -3034,7 +3069,7 @@ function DeleteCaseDocument(index) {
 
 function ReuseCaseDocument(index) {
     var tempCaseDocument = CurrentCase.Documents[index];
-    BindInputDateForCaseDocument(tempCaseDocument);
+    BindInputDataForCaseDocument(tempCaseDocument);
 }
 
 function CopyCaseDocument(index) {
@@ -3044,10 +3079,10 @@ function CopyCaseDocument(index) {
 
 function PasteCaseDocument(index) {
     if (CaseDocumentClipboard != null)
-        BindInputDateForCaseDocument(CaseDocumentClipboard);
+        BindInputDataForCaseDocument(CaseDocumentClipboard);
 }
 
-function BindInputDateForCaseDocument(tempCaseDocument) {
+function BindInputDataForCaseDocument(tempCaseDocument) {
     $("#ddlCase_Document_TipDokumenta").val(tempCaseDocument.TipDokumentaId);
     $("#txtCase_Document_PredatoUz").val(tempCaseDocument.PredatoUzDokumentName);
     $("#txtCase_Document_Note").val(tempCaseDocument.Note);
@@ -3060,22 +3095,43 @@ function BindInputDateForCaseDocument(tempCaseDocument) {
 
 function AppendRadnjaToCase() {
     if ($("#ddlCase_Radnja_VrstaRadnje").val() != -1 && $("#txtCase_Radnja_DatumRadnje").val() != "") {
+        var editIndex = $("#btnAppendRadnjaToCase").attr("edit_index");
+        if (editIndex != undefined && editIndex != null && editIndex != false) {
+            CurrentCase.Radnje[editIndex] = {
+                VrstaRadnjeId: $("#ddlCase_Radnja_VrstaRadnje").val(),
+                VrstaRadnjeName: $("#ddlCase_Radnja_VrstaRadnje option:selected").text(),
+                DatumRadnje: ConvertBSDateToUSDateString($("#txtCase_Radnja_DatumRadnje").val()),
+                Troskovi: '', //$("#ddlCase_Radnja_Troskovi").val(),
+                Biljeske: $("#txtCase_Radnja_Biljeske").val(),
+                DocumentName: $("#aCase_Radnja_DocumentLink").html(),
+                GoogleDriveDocId: $("#aCase_Radnja_DocumentLink").attr("google_drive_doc_id"),
+                PredmetId: CurrentCase.Id,
+                CaseFullName: CurrentCase.Naziv,
+                UserId: CurrentUser.Id,
+                CreateCalendarEvent: $("#ddlCase_Radnja_VrstaRadnje").find(":selected").attr("has_star") == "true"
+            };
 
-        if (CurrentCase.Radnje == undefined)
-            CurrentCase.Radnje = [];
+            $("#btnAppendRadnjaToCase").removeAttr("edit_index");
+            $("#btnAppendRadnjaToCase").html("Dodaj");
+        }
+        else {
+            if (CurrentCase.Radnje == undefined)
+                CurrentCase.Radnje = [];
 
-        CurrentCase.Radnje.push({
-            VrstaRadnjeId: $("#ddlCase_Radnja_VrstaRadnje").val(),
-            VrstaRadnjeName: $("#ddlCase_Radnja_VrstaRadnje option:selected").text(),
-            DatumRadnje: ConvertBSDateToUSDateString($("#txtCase_Radnja_DatumRadnje").val()),
-            Troskovi: '', //$("#ddlCase_Radnja_Troskovi").val(),
-            Biljeske: $("#txtCase_Radnja_Biljeske").val(),
-            DocumentName: $("#aCase_Radnja_DocumentLink").html(),
-            GoogleDriveDocId: $("#aCase_Radnja_DocumentLink").attr("google_drive_doc_id"),
-            PredmetId: CurrentCase.Id,
-            CaseFullName: CurrentCase.Naziv,
-            UserId: CurrentUser.Id
-        });
+            CurrentCase.Radnje.push({
+                VrstaRadnjeId: $("#ddlCase_Radnja_VrstaRadnje").val(),
+                VrstaRadnjeName: $("#ddlCase_Radnja_VrstaRadnje option:selected").text(),
+                DatumRadnje: ConvertBSDateToUSDateString($("#txtCase_Radnja_DatumRadnje").val()),
+                Troskovi: '', //$("#ddlCase_Radnja_Troskovi").val(),
+                Biljeske: $("#txtCase_Radnja_Biljeske").val(),
+                DocumentName: $("#aCase_Radnja_DocumentLink").html(),
+                GoogleDriveDocId: $("#aCase_Radnja_DocumentLink").attr("google_drive_doc_id"),
+                PredmetId: CurrentCase.Id,
+                CaseFullName: CurrentCase.Naziv,
+                UserId: CurrentUser.Id,
+                CreateCalendarEvent: $("#ddlCase_Radnja_VrstaRadnje").find(":selected").attr("has_star") == "true"
+            });
+        }
 
         BindCaseRadnje(CurrentCase.Radnje);
     }
@@ -3083,8 +3139,8 @@ function AppendRadnjaToCase() {
 
 function BindCaseRadnje(_data) {
     var _columns = [
-        { field: 'VrstaRadnjeName', title: 'Vrsta radnje', titleTooltip: 'Vrsta radnje', sortable: true },
-        { field: 'DatumRadnje', title: 'Datum', titleTooltip: 'Datum', sortable: true, sorter: DateSorterFunction },
+        { field: 'VrstaRadnjeNameString', title: 'Vrsta radnje', titleTooltip: 'Vrsta radnje', sortable: true },
+        { field: 'DatumRadnjeString', title: 'Datum', titleTooltip: 'Datum', sortable: true, sorter: DateSorterFunction },
         //{ field: 'Troskovi', title: 'Troškovi', titleTooltip: 'Troškovi', sortable: true, align: "right" },
         { field: 'Biljeske', title: 'Bilješke', titleTooltip: 'Bilješke', sortable: true },
         { field: 'GoogleDriveDocIdHTML', title: 'Dokument', titleTooltip: 'Dokument', sortable: true }
@@ -3095,12 +3151,14 @@ function BindCaseRadnje(_data) {
     if (_data && _data.length > 0) {
         $(_data).each(function (index, _radnja) {
             if (Date.parse(_radnja.DatumRadnje))
-                _radnja.DatumRadnje = moment(_radnja.DatumRadnje).format("DD.MM.YYYY HH:mm");
+                _radnja.DatumRadnjeString = moment(_radnja.DatumRadnje).format("DD.MM.YYYY HH:mm");
 
             if (_radnja.GoogleDriveDocId != undefined && _radnja.GoogleDriveDocId != null && _radnja.GoogleDriveDocId.length > 1)
                 _radnja.GoogleDriveDocIdHTML = "<label style='color:blue;cursor:pointer;' onclick='DownloadFileFromGoogleDrive(\"" + _radnja.GoogleDriveDocId + "\", \"" + _radnja.DocumentName + "\"); '>" + _radnja.DocumentName + "</label>";
             else
                 _radnja.GoogleDriveDocIdHTML = _radnja.DocumentName;
+
+            _radnja.VrstaRadnjeNameString = _radnja.VrstaRadnjeName.replace('*', '');
 
             if (index == _data.length - 1) {
                 $("#tblCaseRadnje").bootstrapTable({
@@ -3114,10 +3172,10 @@ function BindCaseRadnje(_data) {
                     }
                 });
 
-                $(CurrentCase.Radnje).each(function (indexR, objR) {
-                    if (objR.DatumRadnje != null)
-                        objR.DatumRadnje = ConvertBSDateToUSDateString(objR.DatumRadnje);
-                });
+                //$(CurrentCase.Radnje).each(function (indexR, objR) {
+                //    if (objR.DatumRadnje != null)
+                //        objR.DatumRadnje = ConvertBSDateToUSDateString(objR.DatumRadnje);
+                //});
             }
         });
     }
@@ -3139,7 +3197,11 @@ function AfterBindCaseRadnje() {
         }
         else if (CurrentCase.Radnje.length > 0) {
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
-                var buttonsHTML = "<td style='width: 50px;'><div class='btn-group pull-right'>";
+                var buttonsHTML = "<td style='width: 100px;'><div class='btn-group pull-right'>";
+                buttonsHTML +=
+                            "<button class='btn btn-warning btn-sm' data-toggle='tooltip' title='Izmijeni radnju' onclick='EditCaseRadnja(" + (index - 1) + "); return false;'>"
+                            + "<span class='glyphicon glyphicon-pencil'></span>"
+                            + "</button>";
                 buttonsHTML +=
                             "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši radnju' onclick='DeleteCaseRadnja(" + (index - 1) + "); return false;'>"
                             + "<span class='glyphicon glyphicon-remove'></span>"
@@ -3152,6 +3214,14 @@ function AfterBindCaseRadnje() {
     });
 }
 
+function EditCaseRadnja(index) {
+    var tempCaseRadnja = CurrentCase.Radnje[index];
+    BindInputDataForCaseRadnja(tempCaseRadnja);
+
+    $("#btnAppendRadnjaToCase").attr("edit_index", index);
+    $("#btnAppendRadnjaToCase").html("Spasi");
+}
+
 function DeleteCaseRadnja(index) {
     // Save deleted ones for deleting from Google
     if (CurrentCase.Radnje == undefined)
@@ -3160,6 +3230,20 @@ function DeleteCaseRadnja(index) {
 
     CurrentCase.Radnje.splice(index, 1);
     BindCaseRadnje(CurrentCase.Radnje);
+}
+
+function BindInputDataForCaseRadnja(tempCaseRadnja) {
+    $("#ddlCase_Radnja_VrstaRadnje").val(tempCaseRadnja.VrstaRadnjeId);
+    $("#ddlCase_Radnja_VrstaRadnje option:selected").text(tempCaseRadnja.VrstaRadnjeName);
+    $("#txtCase_Radnja_DatumRadnje").val(moment(tempCaseRadnja.DatumRadnje).format("DD.MM.YYYY HH:mm"));
+    $("#txtCase_Radnja_Biljeske").val(tempCaseRadnja.Biljeske);
+    $("#aCase_Radnja_DocumentLink").html(tempCaseRadnja.DocumentName);
+    $("#aCase_Radnja_DocumentLink").attr("google_drive_doc_id", tempCaseRadnja.GoogleDriveDocId);
+
+    if (tempCaseRadnja.GoogleDriveDocId != undefined && tempCaseRadnja.GoogleDriveDocId != null && tempCaseRadnja.GoogleDriveDocId != "")
+        $("#btnCase_Radnja_RemoveGoogleDoc").show();
+
+    $("#btnAppendRadnjaToCase").removeAttr("disabled");
 }
 
 function AppendExpenseToCase() {
@@ -3171,7 +3255,7 @@ function AppendExpenseToCase() {
         CurrentCase.Expenses.push({
             VrstaTroskaId: $("#ddlCase_ExpenseVrstaTroska").val(),
             VrstaTroskaName: $("#ddlCase_ExpenseVrstaTroska option:selected").text(),
-            Amount: $("#txtCase_ExpenseAmount").val(),
+            Amount: $("#txtCase_ExpenseAmount").attr("number_value"),
             ExpenseDate: $("#txtCase_ExpenseDate").val(),
             PaidBy: $("#ddlCase_ExpensePaidBy").val(),
             CaseId: CurrentCase.Id
@@ -3184,7 +3268,7 @@ function AppendExpenseToCase() {
 function BindCaseExpenses(_data) {
     var _columns = [
         { field: 'VrstaTroskaName', title: 'Vrsta troška', titleTooltip: 'Vrsta troška', sortable: true },
-        { field: 'Amount', title: 'Iznos (BAM)', titleTooltip: 'Iznos (BAM)', sortable: true, align: "right" },
+        { field: 'AmountString', title: 'Iznos (BAM)', titleTooltip: 'Iznos (BAM)', sortable: true, align: "right" },
         { field: 'ExpenseDate', title: 'Datum plaćanja', titleTooltip: 'Datum plaćanja', sortable: true, sorter: DateSorterFunction },
         { field: 'PaidBy', title: 'Plaćeno od', titleTooltip: 'Plaćeno od', sortable: true }
     ];
@@ -3195,6 +3279,8 @@ function BindCaseExpenses(_data) {
         $(_data).each(function (index, _expense) {
             if (Date.parse(_expense.ExpenseDate))
                 _expense.ExpenseDate = moment(_expense.ExpenseDate).format("DD.MM.YYYY");
+
+            _expense.AmountString = GetMoneyFormat(_expense.Amount);
 
             if (index == _data.length - 1) {
                 $("#tblCaseExpenses").bootstrapTable({
@@ -3307,39 +3393,39 @@ function OpenOtherTab(element, divId) {
 }
 
 
-//function SetUpStanjeAutocomplete() {
-//    $("#txtCase_StanjePredmeta").autocomplete({
-//        source: function (request, response) {
-//            $("#spinner_txtCase_StanjePredmeta").show();
+function SetUpStanjeAutocomplete() {
+    $("#txtCase_StanjePredmeta").autocomplete({
+        source: function (request, response) {
+            $("#spinner_txtCase_StanjePredmeta").show();
 
-//            $.get(AppPath + "api/codetable", {
-//                Name: "StanjaPredmeta",
-//                ColumnName: "Name",
-//                Filter: $("#txtCase_StanjePredmeta").val(),
-//                Token: CurrentUser.Token,
-//                Email: CurrentUser.Email
-//            })
-//            .done(function (data) {
-//                response($.map(data, function (item) {
-//                    return {
-//                        label: item.Name,
-//                        value: item.Name
-//                    };
-//                }));
-//                $("#spinner_txtSearch_CaseName").hide();
-//            })
-//            .fail(function (jqXHR, textStatus, errorThrown) {
-//                if (jqXHR.status == 403)
-//                    AlertUserSessionError();
-//                else
-//                    ShowAlert("danger", "Greška prilikom učitavanja stanja predmeta za odabir. Probajte ponovo ili kontaktirajte administratora.");
-//                HideLoaderCenter();
-//            });
-//        },
-//        delay: 500,
-//        appendTo: ".case-column-for-stanje"
-//    });
-//}
+            $.get(AppPath + "api/codetable", {
+                Name: "StanjaPredmeta",
+                ColumnName: "Name",
+                Filter: $("#txtCase_StanjePredmeta").val(),
+                Token: CurrentUser.Token,
+                Email: CurrentUser.Email
+            })
+            .done(function (data) {
+                response($.map(data, function (item) {
+                    return {
+                        label: item.Name,
+                        value: item.Name
+                    };
+                }));
+                $("#spinner_txtSearch_CaseName").hide();
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                if (jqXHR.status == 403)
+                    AlertUserSessionError();
+                else
+                    ShowAlert("danger", "Greška prilikom učitavanja stanja predmeta za odabir. Probajte ponovo ili kontaktirajte administratora.");
+                HideLoaderCenter();
+            });
+        },
+        delay: 500,
+        appendTo: ".case-column-for-stanje"
+    });
+}
 
 function SetUpPredatoUzAutocomplete() {
     $("#txtCase_Document_PredatoUz").autocomplete({
@@ -3515,6 +3601,11 @@ function LogOut() {
 
     $("#divAll").hide();
     $("#divGoogleSignIn").show();
+
+    $("#btnAppendDocumentToCase").removeAttr("edit_index");
+    $("#btnAppendDocumentToCase").html("Dodaj");
+    $("#btnAppendRadnjaToCase").removeAttr("edit_index");
+    $("#btnAppendRadnjaToCase").html("Dodaj");
 }
 
 function AlertUserSessionError() {
@@ -3552,8 +3643,8 @@ function ExecuteAdvancedSearch(exportToExcel) {
         BezBrojaPredmeta: $("#cbCase_Search_BezBrojaPredmeta").prop("checked"),
         Sudovi: GetDataFromMultiselect("ddlCase_Search_Sud"),
         Sudije: GetDataFromMultiselect("ddlCase_Search_Sudija"),
-        VrijednostSporaFrom: $("#txtCase_Search_VrijednostSporaFrom").val(),
-        VrijednostSporaTo: $("#txtCase_Search_VrijednostSporaTo").val(),
+        VrijednostSporaFrom: $("#txtCase_Search_VrijednostSporaFrom").attr("number_value"),
+        VrijednostSporaTo: $("#txtCase_Search_VrijednostSporaTo").attr("number_value"),
         VrstePredmeta: GetDataFromMultiselect("ddlCase_Search_VrstaPredmeta"),
         DatumStanjaPredmeta: $("#txtCase_Search_DatumStanjaPredmeta").val() == "" ? null : ConvertBSDateToUSDateString($("#txtCase_Search_DatumStanjaPredmeta").val()),
         StanjePredmeta: $("#txtCase_Search_StanjePredmeta").val(),
@@ -3712,3 +3803,12 @@ function RemoveGoogleDoc(tip) {
             break;
     }
 }
+
+$("#txtCase_VrijednostSpora,#txtCase_Search_VrijednostSporaFrom,#txtCase_Search_VrijednostSporaTo,#txtCase_ExpenseAmount")
+    .blur(function () {
+        $(this).attr("number_value", $(this).val());
+        $(this).val(GetMoneyFormat($(this).val()));
+    })
+    .focus(function () {
+        $(this).val($(this).attr("number_value"));
+    });

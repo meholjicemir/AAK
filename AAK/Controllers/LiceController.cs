@@ -19,7 +19,7 @@ namespace AAK.Controllers
             {
                 if (Google.Validator.ValidateToken(data.Token, data.Email))
                 {
-                    List<Lice> result = Lica.Lica_GetAll(data.UserId, data.Filter, data.RowCount);
+                    List<Lice> result = Lica.Lica_GetAll(data.UserId, data.Filter, data.RowCount, data.PartyId);
                     return Request.CreateResponse<List<Lice>>(System.Net.HttpStatusCode.OK, result);
                 }
                 return Request.CreateResponse(HttpStatusCode.Forbidden);

@@ -209,7 +209,7 @@ namespace AAK.DataProviders
 
                     temp = (from Expense tempExpense in existingExpenses
                             where tempExpense.CaseId == expense.CaseId && tempExpense.ExpenseDate == expense.ExpenseDate && tempExpense.VrstaTroskaId == expense.VrstaTroskaId
-                                && tempExpense.PaidBy.ToLowerInvariant().Trim().Equals((expense.PaidBy ?? "").ToLowerInvariant().Trim())
+                                && (tempExpense.PaidBy ?? "").ToLowerInvariant().Trim().Equals((expense.PaidBy ?? "").ToLowerInvariant().Trim())
                             select tempExpense).FirstOrDefault();
 
                     if (temp == null)

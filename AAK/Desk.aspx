@@ -26,7 +26,7 @@
     <script src="Libraries/Bootstrap/bootstrap-table/dist/locale/bootstrap-table-hr-HR.min.js"></script>
     <script src="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multiselect.js"></script>
     <script src="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
-    <script src="Scripts/Utilities.min.js"></script>
+    <script src="Scripts/Utilities.js"></script>
 
     <script>
         var Google_ClientId = "<%=ConfigurationManager.AppSettings["Google_ClientId"].ToString()%>";
@@ -35,7 +35,7 @@
         var GoogleDriveRootFolderId = "<%=ConfigurationManager.AppSettings["GoogleDriveRootFolderId"].ToString()%>";
     </script>
 
-    <script src="Desk.aspx.min.js" defer="defer"></script>
+    <script src="Desk.aspx.js" defer="defer"></script>
 
     <iframe id="iframeDownload" style="position: absolute; left: -1000px;"></iframe>
 
@@ -150,7 +150,7 @@
                                 <span class="glyphicon glyphicon-refresh"></span>&nbsp;Osvježi
                             </button>
                         </form>
-                        <table id="tblCaseActivities" class="table table-no-bordered" style="word-break: break-word;"></table>
+                        <table id="tblCaseActivities" class="table table-no-bordered"></table>
                     </div>
                     <div class="col-lg-5">
                         <div>
@@ -178,7 +178,7 @@
                                 <span class="glyphicon glyphicon-refresh"></span>&nbsp;Osvježi
                             </button>
                         </form>
-                        <table id="tblRadnje" class="table table-no-bordered" style="word-break: break-word;"></table>
+                        <table id="tblRadnje" class="table table-no-bordered"></table>
                     </div>
                 </div>
             </div>
@@ -315,7 +315,7 @@
                             <textarea class="form-control dynamic-width-field" rows="3" cols="60" id="txtCase_Search_PravniOsnov"></textarea>
                         </form>
                     </div>
-                    <div class="col-lg-6 case-column-for-stanje">
+                    <div class="col-lg-6">
                         <form class="form-inline pull-left" role="form">
                             <label for="ddlCase_Search_PristupPredmetu" class="fixed-width-label">Pristup putem Interneta:</label>
                             <select class="form-control" id="ddlCase_Search_PristupPredmetu">
@@ -354,7 +354,6 @@
                                 </span>
                             </span>
                             <span class="form-group has-feedback">
-                                <%--<label for="txtCase_StanjePredmeta" class="fixed-width-label">Stanje:</label>--%>
                                 <input type="text" class="form-control fixed-width-field" id="txtCase_Search_StanjePredmeta" />
                                 <i id="spinner_txtCase_Search_StanjePredmeta" class="glyphicon glyphicon-refresh spinning form-control-feedback" style="display: none;"></i>
                             </span>
@@ -508,15 +507,15 @@
                                     </span>
                                 </span>
                                 <br />
-                                <select class="form-control fixed-width-field" id="ddlCase_Search_StanjaPredmeta">
+<%--                                <select class="form-control fixed-width-field" id="ddlCase_Search_StanjaPredmeta">
                                     <option value="-1">-----</option>
                                 </select>
                                 <label>ili</label>
-                                <input type="text" class="form-control fixed-width-field" id="txtCase_StanjePredmeta" />
-                                <%--<span class="form-group has-feedback">
+                                <input type="text" class="form-control fixed-width-field" id="txtCase_StanjePredmeta" />--%>
+                                <span class="form-group has-feedback">
                                     <input type="text" class="form-control fixed-width-field" id="txtCase_StanjePredmeta" />
                                     <i id="spinner_txtCase_StanjePredmeta" class="glyphicon glyphicon-refresh spinning form-control-feedback" style="display: none;"></i>
-                                </span>--%>
+                                </span>
                                 <%--<select class="form-control fixed-width-field" id="ddlCase_StanjePredmeta">
                                     <option value="-1">-----</option>
                                 </select>--%>
@@ -639,7 +638,7 @@
                                         <option value="-1">-----</option>
                                     </select>
                                     <label for="txtCase_ExpenseAmount">Iznos:</label>
-                                    <input type="number" class="form-control" id="txtCase_ExpenseAmount" />
+                                    <input type="text" class="form-control" id="txtCase_ExpenseAmount" />
                                     <label for="dateTimePicker_ExpenseDate">Datum:</label>
                                     <div class="input-group date" id="dateTimePicker_ExpenseDate">
                                         <input type="text" class="form-control" id="txtCase_ExpenseDate" />

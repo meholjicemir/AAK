@@ -9,9 +9,15 @@ namespace AAK.DataProviders
 {
     public class Lica
     {
-        public static List<Lice> Lica_GetAll(int userId, string filter, int rowCount)
+        public static List<Lice> Lica_GetAll(int userId, string filter, int rowCount, int? partyId = null)
         {
-            DataTable dt = DBUtility.Utility.ExecuteStoredProcedure<int, string, int>("Lica_GetAll", "userId", userId, "filter", filter ?? "", "rowCount", rowCount);
+            DBUtility.ParameterCollection collection = new DBUtility.ParameterCollection();
+            collection.AddParameter<int>("userId", userId);
+            collection.AddParameter<string>("filter", filter ?? "");
+            collection.AddParameter<int>("rowCount", rowCount);
+            collection.AddParameter<int?>("partyId", partyId);
+
+            DataTable dt = DBUtility.Utility.ExecuteStoredProcedure("Lica_GetAll", ref collection);
             return DBUtility.Utility.ParseDataTable<Lice>(dt);
         }
 
