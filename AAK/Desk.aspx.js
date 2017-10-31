@@ -30,7 +30,7 @@ var _columnsCases = [
     { field: 'DatumStanjaPredmeta', title: 'Datum stanja', titleTooltip: 'Datum stanja', sortable: true, sorter: DateSorterFunction, visible: false },
     { field: 'KategorijaPredmetaName', title: 'Kategorija', titleTooltip: 'Kategorija', sortable: true },
 
-    { field: 'Labels', title: 'Oznake', titleTooltip: 'Oznake', sortable: false },
+    { field: 'Labels', title: 'Oznake', titleTooltip: 'Oznake', sortable: false, visible: false },
 
     { field: 'SudijaName', title: 'Sudija', titleTooltip: 'Sudija', sortable: true, visible: false },
     { field: 'Iniciran', title: 'Iniciran', titleTooltip: 'Iniciran', sortable: true, sorter: DateSorterFunction, visible: false },
@@ -227,6 +227,7 @@ function MenuHome() {
 
     LoadCaseActivities();
     LoadRadnje();
+    LoadLabels(true, false);
 }
 
 function LoadRadnje() {
@@ -545,14 +546,17 @@ function MenuCases() {
     LoadCases();
 }
 
-function ApplyLabel(_contentType) {
+function ApplyLabel(_contentType, isCaseEdit) {
     ShowLoaderCenter();
 
     var contentIds = "";
     switch (_contentType) {
         case "case":
-            for (var i = 0; i < SelectedCases.length; i++)
-                contentIds += SelectedCases[i].Id.toString() + ",";
+            if (isCaseEdit === true)
+                contentIds = $("#modalCase").attr("edit_id");
+            else
+                for (var i = 0; i < SelectedCases.length; i++)
+                    contentIds += SelectedCases[i].Id.toString() + ",";
             break;
         default:
             ShowAlert("danger", "Problem pri dodavanju oznake.");
@@ -560,7 +564,7 @@ function ApplyLabel(_contentType) {
     }
 
     var reqObj = {
-        LabelId: $("#ddlLabels").val(),
+        LabelId: (isCaseEdit === true ? $("#ddlCase_Labels").val() : $("#ddlLabels").val()),
         ContentType: _contentType,
         ContentIds: contentIds,
         Token: CurrentUser.Token,
@@ -586,7 +590,9 @@ function ApplyLabel(_contentType) {
                                 }
                                 else
                                     Predmeti[i].LabelIds = _labelConnection.LabelId.toString();
-                                $("#spanContentLabels_" + _contentType + "_" + _labelConnection.ContentId.toString()).html(BuildLabelsHTML(Predmeti[i].LabelIds, _contentType, _labelConnection.ContentId));
+                                $("span[name='spanContentLabels_" + _contentType + "_" + _labelConnection.ContentId.toString() + "']").html(
+                                    BuildLabelsHTML(Predmeti[i].LabelIds, _contentType, _labelConnection.ContentId, isCaseEdit)
+                                    );
                                 break;
                             }
                         }
@@ -620,7 +626,6 @@ function ApplyLabel(_contentType) {
 }
 
 function DeleteLabelConnection(element, labelId, contentType, contentId) {
-
     ShowLoaderCenter()
     $.ajax({
         url: AppPath + "api/labelConnection?LabelId="
@@ -628,6 +633,15 @@ function DeleteLabelConnection(element, labelId, contentType, contentId) {
             + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
         type: "DELETE",
         success: function () {
+            for (var i = 0; i < Predmeti.length; i++)
+                if (Predmeti[i].Id == contentId) {
+                    var tempLabelIds = Predmeti[i].LabelIds.split(',');
+                    tempLabelIds.splice(tempLabelIds.indexOf(labelId.toString()), 1);
+                    tempLabelIds.sort();
+                    Predmeti[i].LabelIds = tempLabelIds.join();
+                    break;
+                }
+
             $(element).parent().next().remove();
             $(element).parent().remove();
             HideLoaderCenter();
@@ -1178,8 +1192,10 @@ function LoadLabels(inCasesModule, inAdvancedSearchModule) {
 
             if (inCasesModule) {
                 $("#ddlLabels").html('<option value="" selected="selected">----</option>');
+                $("#ddlCase_Labels").html("");
                 $(Labels).each(function (index, _label) {
                     $("#ddlLabels").append($("<option></option>").attr("value", _label.Id).text(_label.Name));
+                    $("#ddlCase_Labels").append($("<option></option>").attr("value", _label.Id).text(_label.Name));
                 });
                 HideLoaderCenter();
             }
@@ -1196,8 +1212,9 @@ function LoadLabels(inCasesModule, inAdvancedSearchModule) {
                 HideLoaderCenter();
             }
             else {
+                $("#ddlCase_Labels").html("");
                 $(Labels).each(function (index, _label) {
-
+                    $("#ddlCase_Labels").append($("<option></option>").attr("value", _label.Id).text(_label.Name));
                     _label.Colors = "<div style='padding:3px; display:inline-block; background-color:" + _label.BackgroundColor + "; color:" + _label.FontColor + "'>" + _label.Name + "</div>";
 
                     if (index == Labels.length - 1) {
@@ -1659,6 +1676,8 @@ function UpdateRadnja_GoogleEventId(radnja) {
 function EditCase(id) {
     $("#modalCase").attr("edit_id", id);
 
+    OpenOtherTab($("#aRadnjeOtherTab"), "divRadnje");
+
     // LicePredmet
     $("#ddlCase_Lice").val(-1);
     $("#ddlCase_UlogaLica").val(-1);
@@ -1751,6 +1770,12 @@ function EditCase(id) {
                 $("#txtCase_PravniOsnov").val(CurrentCase.PravniOsnov);
 
                 $("#modalCase").find(".modal-title").html("Izmijeni predmet: <span style='font-style: italic; color: gray;'>" + CurrentCase.Naziv + "</span>");
+
+                CurrentCase.Labels = BuildLabelsHTML(CurrentCase.LabelIds, "case", CurrentCase.Id, true);
+                $("#divCase_Labels").html(CurrentCase.Labels);
+                setTimeout(function () {
+                    $("#divCase_Labels").css("max-width", ($("#divCase_Labels").parent().parent().width() / 2).toString() + "px");
+                }, 1000);
 
                 ShowLoaderCenter();
                 $.get(AppPath + "api/licepredmet", {
@@ -2423,6 +2448,7 @@ function ClearModalCase() {
     $("#txtCase_DatumArhiviranja").val("");
     $("#txtCase_BrojArhive").val("");
     $("#txtCase_BrojArhiveRegistrator").val("");
+    $("#divCase_Labels").html("");
 
     $("#txtCase_PravniOsnov").val("");
 
@@ -3513,8 +3539,8 @@ $("#txtLabel_FontColor").change(function () {
 });
 
 
-function BuildLabelsHTML(labelIds, contentType, contentId) {
-    var resultHTML = "<span id='spanContentLabels_" + contentType + "_" + contentId.toString() + "'>";
+function BuildLabelsHTML(labelIds, contentType, contentId, skipBreakLines) {
+    var resultHTML = "<span name='spanContentLabels_" + contentType + "_" + contentId.toString() + "'>";
     if (labelIds != undefined && labelIds != null && labelIds.length > 0) {
         var labelIdsArray = labelIds.split(',');
         for (var i = 0; i < labelIdsArray.length; i++) {
@@ -3525,7 +3551,7 @@ function BuildLabelsHTML(labelIds, contentType, contentId) {
                             + "&nbsp;&nbsp;<span data-toggle='tooltip' title='Izbriši oznaku' onclick='(function(e, element) { e.preventDefault(); e.stopPropagation(); DeleteLabelConnection(element," + labelIdsArray[i].toString() + ",\"case\"," + contentId.toString() + "); return false; })(event, this)' style='cursor:pointer; border-left:2px solid " + Labels[indexLabels].FontColor + "; font-weight:bold;'>"
                                 + "&nbsp;&nbsp;X"
                             + "</span>"
-                    + "</span><br>";
+                    + "</span>" + (skipBreakLines === true ? "<span></span>" : "<br>");
                     break;
                 }
             }

@@ -507,7 +507,7 @@
                                     </span>
                                 </span>
                                 <br />
-<%--                                <select class="form-control fixed-width-field" id="ddlCase_Search_StanjaPredmeta">
+                                <%--                                <select class="form-control fixed-width-field" id="ddlCase_Search_StanjaPredmeta">
                                     <option value="-1">-----</option>
                                 </select>
                                 <label>ili</label>
@@ -590,7 +590,7 @@
                     <div class="row white-background" style="padding-bottom: 15px;">
                         <div class="col-lg-12">
                             <ul id="ulOtherTabs" class="nav nav-tabs">
-                                <li class="active"><a href="#" class="a-case-tab" onclick="OpenOtherTab(this, 'divRadnje'); return false;">Radnje</a></li>
+                                <li class="active"><a href="#" id="aRadnjeOtherTab" class="a-case-tab" onclick="OpenOtherTab(this, 'divRadnje'); return false;">Radnje</a></li>
                                 <li><a href="#" class="a-case-tab" onclick="OpenOtherTab(this, 'divTroskovi'); return false;">Troškovi</a></li>
                                 <li><a href="#" class="a-case-tab" onclick="OpenOtherTab(this, 'divDokumenti'); return false;">Dokumenti</a></li>
                                 <li><a href="#" class="a-case-tab" onclick="OpenOtherTab(this, 'divPravniOsnov'); return false;">Pravni osnov</a></li>
@@ -686,9 +686,23 @@
                                 <br />
                                 <table id="tblCaseDocuments" class="table table-condensed" style="word-break: break-word;"></table>
                             </div>
-                            <div class="other-tab" style="display: none;" id="divPravniOsnov">
-                                <label for="txtCase_PravniOsnov">Pravni osnov:</label>
-                                <textarea class="form-control" rows="5" id="txtCase_PravniOsnov"></textarea>
+                            <div class="other-tab row" style="display: none;" id="divPravniOsnov">
+                                <div class="col-md-6">
+                                    <label for="txtCase_PravniOsnov">Pravni osnov:</label>
+                                    <textarea class="form-control" rows="5" id="txtCase_PravniOsnov"></textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Oznake:</label>
+                                    <br />
+                                    <span>(Za dodavanje i brisanje oznaka nije potrebno spašavati predmet. Promjene se odmah primjenjuju.)</span>
+                                    <div id="divCase_Labels" style="margin-top: 10px;"></div>
+                                    <form class="form-inline only-office-admin" role="form">
+                                        <select id="ddlCase_Labels" style="margin-top: 10px;" class="form-control fixed-width-field"></select>
+                                        <button id="btnApplyLabelInCase" class="btn btn-success" onclick="ApplyLabel('case', true); return false;">
+                                            <span class="glyphicon glyphicon-ok"></span>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                             <div class="other-tab" style="display: none;" id="divBiljeske">
                                 <form class="form-inline only-office-admin" role="form">

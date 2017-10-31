@@ -32,6 +32,7 @@ namespace AAK.Models
         public string DocumentName { get; set; }
 
         public string GoogleEventId { get; set; }
+        public bool CreateCalendarEvent { get; set; }
 
         public int UserId { get; set; }
 
@@ -65,6 +66,7 @@ namespace AAK.Models
             this.DocumentName = string.Empty;
 
             this.GoogleEventId = string.Empty;
+            this.CreateCalendarEvent = false;
 
             this.UserId = -1;
         }
