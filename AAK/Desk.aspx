@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multiselect.css" />
     <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" />
     <link rel="stylesheet" href="Libraries/jQuery/jquery-ui.min.css" />
-    <link rel="stylesheet" href="Styles/NewStyle.css?v=23" />
+    <link rel="stylesheet" href="Styles/NewStyle.min.css" />
 </head>
 <body>
     <script src="Libraries/jQuery/jquery-1.12.0.min.js"></script>
@@ -26,7 +26,7 @@
     <script src="Libraries/Bootstrap/bootstrap-table/dist/locale/bootstrap-table-hr-HR.min.js"></script>
     <script src="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multiselect.js"></script>
     <script src="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
-    <script src="Scripts/Utilities.js"></script>
+    <script src="Scripts/Utilities.min.js"></script>
 
     <script>
         var Google_ClientId = "<%=ConfigurationManager.AppSettings["Google_ClientId"].ToString()%>";
@@ -35,7 +35,7 @@
         var GoogleDriveRootFolderId = "<%=ConfigurationManager.AppSettings["GoogleDriveRootFolderId"].ToString()%>";
     </script>
 
-    <script src="Desk.aspx.js" defer="defer"></script>
+    <script src="Desk.aspx.min.js" defer="defer"></script>
 
     <iframe id="iframeDownload" style="position: absolute; left: -1000px;"></iframe>
 
@@ -506,7 +506,6 @@
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
                                 </span>
-                                <br />
                                 <%--                                <select class="form-control fixed-width-field" id="ddlCase_Search_StanjaPredmeta">
                                     <option value="-1">-----</option>
                                 </select>
@@ -697,7 +696,7 @@
                                     <span>(Za dodavanje i brisanje oznaka nije potrebno spašavati predmet. Promjene se odmah primjenjuju.)</span>
                                     <div id="divCase_Labels" style="margin-top: 10px;"></div>
                                     <form class="form-inline only-office-admin" role="form">
-                                        <select id="ddlCase_Labels" style="margin-top: 10px;" class="form-control fixed-width-field"></select>
+                                        <select id="ddlCase_Labels" class="form-control fixed-width-field"></select>
                                         <button id="btnApplyLabelInCase" class="btn btn-success" onclick="ApplyLabel('case', true); return false;">
                                             <span class="glyphicon glyphicon-ok"></span>
                                         </button>
@@ -1066,7 +1065,7 @@
         <img id="imgUserPicture" height="50" width="50" alt="Slika korisnika" src="" data-toggle="tooltip" title="Slika korisnika" />
     </div>
     <div class="pull-right" style="position: fixed; bottom: 0; right: 0; margin: 2px; font-size: xx-small; z-index: 1000;">
-        <span class="pull-right">v1.0 DEV</span>
+        <span class="pull-right">v1.2 BETA</span>
     </div>
 </body>
 </html>

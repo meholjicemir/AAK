@@ -71,7 +71,8 @@ function handleSignoutClick(event) {
 
 function CreateGoogleCalendarEvent(radnja, callback) {
     //(summary, description, _start, calendarId, _location, timezone) {
-    var summary = radnja.VrstaRadnjeName + " (" + CurrentCase.Naziv + ")";
+
+    var summary = radnja.VrstaRadnjeName.substring(0, radnja.VrstaRadnjeName.length - 1) + " (" + CurrentCase.Naziv + ")";
     var description = radnja.Biljeske;
 
     var _start = new Date(radnja.DatumRadnje);

@@ -230,6 +230,7 @@
     <Content Include="Scripts\Utilities.min.js" />
     <Content Include="Scripts\Utilities.js" />
     <Content Include="Styles\NewStyle.css" />
+    <Content Include="Styles\NewStyle.min.css" />
     <Content Include="Temp\nothing.txt" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

@@ -20,7 +20,7 @@ var CaseDocumentClipboard = null;
 var _columnsCases = [
     { field: 'Id' },
     { checkbox: true },
-    { field: 'NasBrojName', title: 'Naš broj', titleTooltip: 'Naš broj', sortable: true },
+    { field: 'NasBrojName', title: 'Naš broj', titleTooltip: 'Naš broj', sortable: true, sorter: NasBrojSorterFunction },
     { field: 'StrankaNasa', title: 'Naša stranka', titleTooltip: 'Naša stranka', sortable: true },
     { field: 'StrankaProtivna', title: 'Protivna stranka', titleTooltip: 'Protivna stranka', sortable: true },
     { field: 'VrstaPredmetaName', title: 'Vrsta predmeta', titleTooltip: 'Vrsta predmeta', sortable: true },
@@ -3438,7 +3438,7 @@ function SetUpStanjeAutocomplete() {
                         value: item.Name
                     };
                 }));
-                $("#spinner_txtSearch_CaseName").hide();
+                $("#spinner_txtCase_StanjePredmeta").hide();
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == 403)
@@ -3838,3 +3838,20 @@ $("#txtCase_VrijednostSpora,#txtCase_Search_VrijednostSporaFrom,#txtCase_Search_
     .focus(function () {
         $(this).val($(this).attr("number_value"));
     });
+
+function NasBrojSorterFunction(a, b) {
+    if (a == undefined || a == null)
+        a = 0;
+    if (b == undefined || b == null)
+        b = 0;
+
+    a = parseFloat(a.replace("<strong>", "").replace("</strong>", ""));
+    b = parseFloat(b.replace("<strong>", "").replace("</strong>", ""));
+
+    if (a == b)
+        return 0;
+    else if (a > b)
+        return 1;
+    else
+        return -1;
+}
