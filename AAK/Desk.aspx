@@ -254,8 +254,8 @@
                 <table id="tblParties" class="table table-condensed" style="word-break: break-word;"></table>
             </div>
         </div>
-
-        <div id="divReports" class="panel panel-default menu-div">
+        
+        <div id="divReports" class="panel panel-default menu-div" style="display: none;">
             <div class="panel-heading">
                 <div class="row" style="padding-bottom: 15px;">
                     <div class="col-lg-6">
