@@ -17,7 +17,7 @@ namespace GoogleDriveIntegration
     public static class Utility
     {
         private static DriveService Service = null;
-        private static string[] Scopes = { DriveService.Scope.Drive };
+        private static string[] Scopes = { DriveService.Scope.DriveReadonly };
 
         private static DriveService GetService()
         {
@@ -88,12 +88,12 @@ namespace GoogleDriveIntegration
                 if (rootFolderId != null)
                     listRequest.Q += " and '" + rootFolderId + "' in parents";
                 if (name != null)
-                    listRequest.Q += " and name='" + name + "'";
+                    listRequest.Q += " and name contains '" + name + "'";
 
                 listRequest.Fields = "nextPageToken, files(id, name)";
                 listRequest.PageToken = pageToken;
 
-                // List files.
+                // List folders.
                 FileList fl = listRequest.Execute();
                 folders.AddRange(fl.Files);
 

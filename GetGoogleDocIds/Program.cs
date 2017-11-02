@@ -62,7 +62,7 @@ namespace GetGoogleDocIds
                     string tempFolderId = rootFolderId;
                     foreach (string fileFolderName in fileFolderNames)
                     {
-                        if (fileFolderName.Trim() != "")
+                        if (fileFolderName.Trim() != "" && fileFolderName.Trim() != "..")
                         {
                             folders = new List<Google.Apis.Drive.v3.Data.File>();
                             GoogleDriveIntegration.Utility.GetFolders(ref folders, tempFolderId, fileFolderName.Trim());
@@ -71,6 +71,15 @@ namespace GetGoogleDocIds
                             {
                                 fileFolderIds.Add(folders[0].Id);
                                 tempFolderId = folders[0].Id;
+                            }
+                            else if (folders.Count > 1)
+                            {
+                                Google.Apis.Drive.v3.Data.File temp = (from Google.Apis.Drive.v3.Data.File folder in folders
+                                                                       where folder.Name.Equals(fileFolderName)
+                                                                       select folder).First();
+
+                                fileFolderIds.Add(temp.Id);
+                                tempFolderId = temp.Id;
                             }
                         }
                     }
@@ -92,6 +101,9 @@ namespace GetGoogleDocIds
                             LoggerUtility.Logger.LogMessage("doc_not_found_in_google_drive", doc.Id.ToString() + " - " + doc.UNC);
                         else if (entity == 'R')
                             LoggerUtility.Logger.LogMessage("radnja_doc_not_found_in_google_drive", doc.Id.ToString() + " - " + doc.UNC);
+
+                        if (files.Count > 1) // This means it has not been updated to "none".
+                            UpdateGoogleDocDriveId(doc.Id, "none", entity);
                     }
                 }
             }
@@ -100,10 +112,15 @@ namespace GetGoogleDocIds
         private static void UpdateGoogleDocDriveId(int docId, string fileId, char entity)
         {
             if (entity == 'D')
+            {
                 DBUtility.Utility.ExecuteStoredProcedureVoid<int, string>(
                             "Dokument_UpdateGoogleDocDriveId",
                             "id", docId,
                             "googleDriveDocId", fileId);
+
+                LoggerUtility.Logger.LogMessage("QUERY_update_google_drive_doc_id_dokumenti",
+                    "UPDATE Dokumenti SET google_drive_doc_id = '" + fileId + "' WHERE id = " + docId.ToString() + ";");
+            }
             else if (entity == 'R')
             {
                 DBUtility.Utility.ExecuteStoredProcedureVoid<int, string>(
