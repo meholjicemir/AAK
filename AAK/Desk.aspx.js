@@ -36,8 +36,8 @@ var _columnsCases = [
     { field: 'Iniciran', title: 'Iniciran', titleTooltip: 'Iniciran', sortable: true, sorter: DateSorterFunction, visible: false },
     { field: 'VrijednostSporaString', title: 'Vrijednost spora', titleTooltip: 'Vrijednost spora', sortable: true, align: "right", visible: false },
     { field: 'UlogaName', title: 'Uloga', titleTooltip: 'Uloga', sortable: true, visible: false },
-    { field: 'PrivremeniZastupnici', title: 'Pr. zast.', titleTooltip: 'Privremeni zastupnici', sortable: true, visible: false },
-    { field: 'PristupPredmetu', title: 'Pristup putem Interneta', titleTooltip: 'Pristup predmetu putem interneta', sortable: true, visible: false },
+    { field: 'PrivremeniZastupniciString', title: 'Pr. zast.', titleTooltip: 'Privremeni zastupnici', sortable: true, visible: false },
+    { field: 'PristupPredmetuString', title: 'Pristup putem Interneta', titleTooltip: 'Pristup predmetu putem interneta', sortable: true, visible: false },
     { field: 'PravniOsnov', title: 'Pravni osnov', titleTooltip: 'Pravni osnov', sortable: true, visible: false },
 
     { field: 'NacinOkoncanjaName', title: 'Način okončanja', titleTooltip: 'Način okončanja', sortable: true, visible: false },
@@ -694,8 +694,8 @@ function LoadCases(caseId, callback, filter) {
                 if (_case.VrijednostSpora != null)
                     _case.VrijednostSporaString = GetMoneyFormat(_case.VrijednostSpora);
 
-                _case.PrivremeniZastupnici = _case.PrivremeniZastupnici ? "Da" : "Ne";
-                _case.PristupPredmetu = _case.PristupPredmetu ? "Da" : "Ne";
+                _case.PrivremeniZastupniciString = _case.PrivremeniZastupnici ? "Da" : "Ne";
+                _case.PristupPredmetuString = _case.PristupPredmetu ? "Da" : "Ne";
 
                 _case.NasBrojName = "<strong>" + _case.NasBroj + "</strong>";
 
@@ -2148,6 +2148,7 @@ function LoadUserGroups() {
     })
     .done(function (data) {
         if (data) {
+            $("#ddlUser_UserGroups").html("");
             $(data).each(function (index, obj) {
                 $("#ddlUser_UserGroups").append($("<option></option>").attr("value", obj.Code).text(obj.Name));
                 if (index == data.length - 1) {
@@ -3713,8 +3714,8 @@ function ExecuteAdvancedSearch(exportToExcel) {
                     if (_case.VrijednostSpora != null)
                         _case.VrijednostSporaString = GetMoneyFormat(_case.VrijednostSpora);
 
-                    _case.PrivremeniZastupnici = _case.PrivremeniZastupnici ? "Da" : "Ne";
-                    _case.PristupPredmetu = _case.PristupPredmetu ? "Da" : "Ne";
+                    _case.PrivremeniZastupniciString = _case.PrivremeniZastupnici ? "Da" : "Ne";
+                    _case.PristupPredmetuString = _case.PristupPredmetu ? "Da" : "Ne";
 
                     _case.NasBrojName = "<strong>" + _case.NasBroj + "</strong>";
 

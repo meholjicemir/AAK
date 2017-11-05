@@ -254,7 +254,7 @@
                 <table id="tblParties" class="table table-condensed" style="word-break: break-word;"></table>
             </div>
         </div>
-        
+
         <div id="divReports" class="panel panel-default menu-div" style="display: none;">
             <div class="panel-heading">
                 <div class="row" style="padding-bottom: 15px;">
@@ -521,16 +521,16 @@
                             </form>
                         </div>
                     </div>
-                    <div class="row only-office-admin gray-background">
+                    <div class="row gray-background">
                         <div class="col-lg-12">
                             <div class="modal-in-title">
                                 <h4><strong>Stranke u postupku</strong></h4>
                             </div>
                         </div>
                     </div>
-                    <div class="row only-office-admin gray-background" style="padding-bottom: 15px;">
+                    <div class="row gray-background" style="padding-bottom: 15px;">
                         <div class="col-lg-12">
-                            <form class="form-inline" role="form">
+                            <form class="form-inline only-office-admin" role="form">
                                 <label for="ddlCase_Lice">Stranka:</label>
                                 <select class="form-control" id="ddlCase_Lice" style="max-width: 400px;">
                                     <option value="-1">-----</option>
@@ -598,7 +598,7 @@
                             </ul>
                             <div class="other-tab" id="divRadnje">
                                 <div id="divRadnjeAlert"></div>
-                                <form class="form-inline" role="form">
+                                <form class="form-inline only-office-admin" role="form">
                                     <label for="ddlCase_Radnja_VrstaRadnje">Vrsta Radnje:</label>
                                     <select id="ddlCase_Radnja_VrstaRadnje" class="form-control">
                                         <option value="-1">-----</option>
@@ -659,7 +659,7 @@
                             </div>
                             <div class="other-tab" style="display: none;" id="divDokumenti">
                                 <div id="divDocumentsAlert"></div>
-                                <form class="form-inline" role="form">
+                                <form class="form-inline only-office-admin" role="form">
                                     <label for="ddlCase_Document_TipDokumenta">Tip dokumenta:</label>
                                     <select id="ddlCase_Document_TipDokumenta" class="form-control">
                                         <option value="-1">-----</option>
@@ -720,7 +720,7 @@
                                 <table id="tblCaseNotes" class="table table-condensed" style="word-break: break-word;"></table>
                             </div>
                             <div class="other-tab" style="display: none;" id="divVeze">
-                                <form class="form-inline" role="form">
+                                <form class="form-inline only-office-admin" role="form">
                                     <span class="form-group has-feedback">
                                         <label for="txtCase_Connection_ConnectionCase">Veza prema predmetu:</label>
                                         <input type="text" class="form-control fixed-width-field" id="txtCase_Connection_ConnectionCase" />
@@ -754,8 +754,8 @@
                                 </span>
                                 <label for="txtCase_CaseActivity_Note">Bilješka:</label>
                                 <input type="text" id="txtCase_CaseActivity_Note" class="form-control fixed-width-field" />
-                                <label for="cbCase_CaseActivity_ForAllUsers">Prikaži svim korisnicima</label>
-                                <input id="cbCase_CaseActivity_ForAllUsers" type="checkbox" checked="checked" disabled="disabled" />
+                                <label for="cbCase_CaseActivity_ForAllUsers" class="only-office-admin">Prikaži svim korisnicima</label>
+                                <input id="cbCase_CaseActivity_ForAllUsers" class="only-office-admin" type="checkbox" checked="checked" disabled="disabled" />
                             </form>
                         </div>
                     </div>
