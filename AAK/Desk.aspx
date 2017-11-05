@@ -988,7 +988,7 @@
                         <label for="txtUser_LastName" class="fixed-width-label">Prezime:</label>
                         <input type="text" class="form-control fixed-width-field" id="txtUser_LastName" />
                         <br />
-                        <label for="txtUser_Phone" class="fixed-width-label">Phone:</label>
+                        <label for="txtUser_Phone" class="fixed-width-label">Telefon:</label>
                         <input type="text" class="form-control fixed-width-field" id="txtUser_Phone" />
                         <br />
                         <%--<label for="txtUser_GoogleDriveLocalFolderPath" class="fixed-width-label">Google Drive direktorij (lokalna putanja):</label>
