@@ -26,7 +26,7 @@
     <script src="Libraries/Bootstrap/bootstrap-table/dist/locale/bootstrap-table-hr-HR.min.js"></script>
     <script src="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multiselect.js"></script>
     <script src="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
-    <script src="Scripts/Utilities.min.js"></script>
+    <script src="Scripts/Utilities.min.js?v=13"></script>
 
     <script>
         var Google_ClientId = "<%=ConfigurationManager.AppSettings["Google_ClientId"].ToString()%>";
@@ -35,7 +35,7 @@
         var GoogleDriveRootFolderId = "<%=ConfigurationManager.AppSettings["GoogleDriveRootFolderId"].ToString()%>";
     </script>
 
-    <script src="Desk.aspx.min.js" defer="defer"></script>
+    <script src="Desk.aspx.min.js?v=13" defer="defer"></script>
 
     <iframe id="iframeDownload" style="position: absolute; left: -1000px;"></iframe>
 
@@ -537,8 +537,8 @@
                                 </select>
                                 <label for="ddlCase_UlogaLica">Uloga:</label>
                                 <select class="form-control" id="ddlCase_UlogaOrdinalNo">
-                                    <option value=""></option>
-                                    <option value="1" selected="selected">1.</option>
+                                    <option value="" selected="selected"></option>
+                                    <option value="1">1.</option>
                                     <option value="2">2.</option>
                                     <option value="3">3.</option>
                                     <option value="4">4.</option>
@@ -1065,7 +1065,7 @@
         <img id="imgUserPicture" height="50" width="50" alt="Slika korisnika" src="" data-toggle="tooltip" title="Slika korisnika" />
     </div>
     <div class="pull-right" style="position: fixed; bottom: 0; right: 0; margin: 2px; font-size: xx-small; z-index: 1000;">
-        <span class="pull-right">v1.2 BETA</span>
+        <span class="pull-right">v1.3 BETA</span>
     </div>
 </body>
 </html>
