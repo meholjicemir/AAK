@@ -26,7 +26,7 @@
     <script src="Libraries/Bootstrap/bootstrap-table/dist/locale/bootstrap-table-hr-HR.min.js"></script>
     <script src="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multiselect.js"></script>
     <script src="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
-    <script src="Scripts/Utilities.min.js?v=13"></script>
+    <script src="Scripts/Utilities.min.js?v=14"></script>
 
     <script>
         var Google_ClientId = "<%=ConfigurationManager.AppSettings["Google_ClientId"].ToString()%>";
@@ -35,7 +35,7 @@
         var GoogleDriveRootFolderId = "<%=ConfigurationManager.AppSettings["GoogleDriveRootFolderId"].ToString()%>";
     </script>
 
-    <script src="Desk.aspx.min.js?v=13" defer="defer"></script>
+    <script src="Desk.aspx.min.js?v=15" defer="defer"></script>
 
     <iframe id="iframeDownload" style="position: absolute; left: -1000px;"></iframe>
 
@@ -648,9 +648,9 @@
                                     <label for="ddlCase_ExpensePaidBy">Plaćeno od:</label>
                                     <select id="ddlCase_ExpensePaidBy" class="form-control">
                                         <option value="">-----</option>
-                                        <option value="Stranka">Stranka</option>
-                                        <option value="Advokat">Advokat</option>
-                                        <option value="Oslobođen">Oslobođen</option>
+                                        <option value="STRAKA">STRANKA</option>
+                                        <option value="ADVOKAT">ADVOKAT</option>
+                                        <option value="OSLOBOĐEN">OSLOBOĐEN</option>
                                     </select>
                                     <button id="btnAppendExpenseToCase" type="button" class="btn btn-success" disabled="disabled" onclick="AppendExpenseToCase(); return false;">Dodaj</button>
                                 </form>
@@ -745,17 +745,21 @@
                     <div class="row yellowish-background" style="padding-bottom: 15px;">
                         <div class="col-lg-12">
                             <form class="form-inline" role="form">
-                                <label for="dateTimePicker_CaseActivity_ActivityDate">Datum pozivanja predmeta:</label>
+                                <label for="dateTimePicker_CaseActivity_ActivityDate" class="fixed-width-label-narrow">Od:</label>
                                 <span class="input-group date" id="dateTimePicker_CaseActivity_ActivityDate">
                                     <input type="text" class="form-control" id="txtCase_CaseActivity_ActivityDate" />
                                     <span class="input-group-addon btn">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
                                 </span>
-                                <label for="txtCase_CaseActivity_Note">Bilješka:</label>
-                                <input type="text" id="txtCase_CaseActivity_Note" class="form-control fixed-width-field" />
-                                <label for="cbCase_CaseActivity_ForAllUsers" class="only-office-admin">Prikaži svim korisnicima</label>
-                                <input id="cbCase_CaseActivity_ForAllUsers" class="only-office-admin" type="checkbox" checked="checked" disabled="disabled" />
+                                <label>za</label>
+                                <input type="number" class="form-control" style="width: 100px; margin-top: 3px;" id="txtCase_CaseActivity_ActivityDaysOffset" value="0" />
+                                <label>dana.</label>
+                                <br />
+                                <label for="txtCase_CaseActivity_Note" class="dynamic-width-field fixed-width-label-narrow">Bilješka:</label>
+                                <input type="text" id="txtCase_CaseActivity_Note" class="form-control dynamic-width-field" style="min-width: 500px;" />
+                                <label for="cbCase_CaseActivity_ForAllUsers" class="dynamic-width-field">Prikaži svim korisnicima</label>
+                                <input id="cbCase_CaseActivity_ForAllUsers" class="dynamic-width-field" type="checkbox" checked="checked" disabled="disabled" />
                             </form>
                         </div>
                     </div>
@@ -776,7 +780,7 @@
                                 <label for="ddlCase_Uspjeh">Uspjeh:</label>
                                 <select class="form-control dynamic-width-field" id="ddlCase_Uspjeh">
                                 </select>
-                                <label for="dateTimePicker_DatumArhiviranja" class="fixed-width-label">Datum arhiviranja:</label>
+                                <label for="dateTimePicker_DatumArhiviranja">Datum arhiviranja:</label>
                                 <span class="input-group date" id="dateTimePicker_DatumArhiviranja">
                                     <input type="text" class="form-control" id="txtCase_DatumArhiviranja" />
                                     <span class="input-group-addon btn">
@@ -1065,7 +1069,7 @@
         <img id="imgUserPicture" height="50" width="50" alt="Slika korisnika" src="" data-toggle="tooltip" title="Slika korisnika" />
     </div>
     <div class="pull-right" style="position: fixed; bottom: 0; right: 0; margin: 2px; font-size: xx-small; z-index: 1000;">
-        <span class="pull-right">v1.3 BETA</span>
+        <span class="pull-right">v1.4 BETA</span>
     </div>
 </body>
 </html>

@@ -26,6 +26,7 @@ namespace AAK.Models
         public int? SkontroDan { get; set; }
         public DateTime? SkontroDatum { get; set; }
         public string SkontroBiljeska { get; set; }
+        public bool Skontro_ForAllUsers { get; set; }
 
         public string StrankaNasa { get; set; }
         public string StrankaProtivna { get; set; }
@@ -98,6 +99,7 @@ namespace AAK.Models
             this.SkontroDan = null;
             this.SkontroDatum = null;
             this.SkontroBiljeska = string.Empty;
+            this.Skontro_ForAllUsers = true;
 
             this.StrankaNasa = string.Empty;
             this.StrankaProtivna = string.Empty;

@@ -11,6 +11,7 @@ namespace AAK.Models
         public int CaseId { get; set; }
         public string Note { get; set; }
         public DateTime? ActivityDate { get; set; }
+        public int ActivityDaysOffset { get; set; }
         public bool ForAllUsers { get; set; }
 
         public int? CreatedBy { get; set; }
@@ -30,6 +31,7 @@ namespace AAK.Models
             this.CaseId = -1;
             this.Note = string.Empty;
             this.ActivityDate = null;
+            this.ActivityDaysOffset = 0;
             this.ForAllUsers = true;
 
             this.CreatedBy = null;

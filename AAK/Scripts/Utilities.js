@@ -160,6 +160,8 @@ function GetMoneyFormat(input) {
     if (input == undefined || input == null || input == "")
         return "";
 
+    input = parseFloat(input.toString().replace(/,/g, '.'));
+
     var moneyFormat = AddThousandsSeparator(parseFloat(Math.round(input * 100) / 100).toFixed(2)) + " KM";
     moneyFormat = moneyFormat.replace(/,/g, '#').replace(/\./g, ',').replace(/#/g, '.');
     return moneyFormat;

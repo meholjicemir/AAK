@@ -26,6 +26,18 @@ namespace AAK.DataProviders
             return DBUtility.Utility.ExecuteStoredProcedure<int>("Expense_Insert", ref collection);
         }
 
+        public static void Expense_Update(Expense expense)
+        {
+            DBUtility.ParameterCollection collection = new DBUtility.ParameterCollection();
+            collection.AddParameter<int>("caseId", expense.CaseId);
+            collection.AddParameter<decimal>("amount", expense.Amount);
+            collection.AddParameter<DateTime?>("expenseDate", expense.ExpenseDate);
+            collection.AddParameter<string>("paidBy", expense.PaidBy);
+            collection.AddParameter<int?>("vrstaTroskaId", expense.VrstaTroskaId);
+            collection.AddParameter<int>("id", expense.Id);
+            DBUtility.Utility.ExecuteStoredProcedureVoid("Expense_Update", ref collection);
+        }
+
         public static void Expense_Delete(int id)
         {
             DBUtility.Utility.ExecuteStoredProcedureVoid<int>("Expense_Delete", "id", id);

@@ -164,11 +164,13 @@ function RenderApp(user) {
         ShowAlert("danger", "Korisnik postoji ali nema dodijeljena potrebna prava za korištenje aplikacije.");
 
     $('#dateTimePicker_DatumStanjaPredmeta,#dateTimePicker_DatumArhiviranja,#dateTimePicker_NoteDate,#dateTimePicker_ExpenseDate,#dateTimePicker_CaseActivity_ActivityDate,#dateTimePicker_Search_DatumStanjaPredmeta,#dateTimePicker_Search_IniciranFrom,#dateTimePicker_Search_IniciranTo,#dateTimePicker_Search_ArhiviranFrom,#dateTimePicker_Search_ArhiviranTo').datetimepicker({
-        format: 'DD.MM.YYYY'
+        format: 'DD.MM.YYYY',
+        showTodayButton: true
     });
 
     $("#dateTimePicker_Radnja_DatumRadnje").datetimepicker({
-        format: 'DD.MM.YYYY HH:mm'
+        format: 'DD.MM.YYYY HH:mm',
+        showTodayButton: true
     });
 
     if (window.innerWidth > 1240)
@@ -690,6 +692,9 @@ function LoadCases(caseId, callback, filter) {
 
                 if (Date.parse(_case.DatumStanjaPredmeta))
                     _case.DatumStanjaPredmeta = moment(_case.DatumStanjaPredmeta).format("DD.MM.YYYY");
+
+                if (Date.parse(_case.SkontroDatum))
+                    _case.SkontroDatum = moment(_case.SkontroDatum).format("DD.MM.YYYY");
 
                 if (Date.parse(_case.DatumArhiviranja))
                     _case.DatumArhiviranja = moment(_case.DatumArhiviranja).format("DD.MM.YYYY");
@@ -1528,6 +1533,7 @@ function SaveCaseActivity() {
             CaseId: CurrentCase.Id,
             Note: $("#txtCase_CaseActivity_Note").val(),
             ActivityDate: ConvertBSDateToUSDateString($("#txtCase_CaseActivity_ActivityDate").val()),
+            ActivityDaysOffset: $("#txtCase_CaseActivity_ActivityDaysOffset").val(),
             ForAllUsers: $("#cbCase_CaseActivity_ForAllUsers").prop("checked"),
             CreatedBy: CurrentUser.Id,
             Token: CurrentUser.Token,
@@ -1730,11 +1736,19 @@ function EditCase(id) {
     $("#btnAppendConnectionToCase").attr("disabled", "disabled");
 
     $("#txtCase_CaseActivity_ActivityDate").val("");
+    $("#txtCase_CaseActivity_ActivityDaysOffset").val(0);
     $("#txtCase_CaseActivity_Note").val("");
     $("#cbCase_CaseActivity_ForAllUsers").prop("checked", "checked");
     $("#txtCase_CaseActivity_ActivityDate").removeAttr("disabled");
+    $("#txtCase_CaseActivity_ActivityDaysOffset").removeAttr("disabled");
     $("#txtCase_CaseActivity_Note").removeAttr("disabled");
     $("#cbCase_CaseActivity_ForAllUsers").removeAttr("disabled");
+
+    // Skontro
+    $("#txtCase_CaseActivity_ActivityDaysOffset").val(0);
+    $("#txtCase_CaseActivity_ActivityDate").val("");
+    $("#txtCase_CaseActivity_Note").val("");
+    $("#cbCase_CaseActivity_ForAllUsers").prop("checked", true);
 
     if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0)
         $("#btnSaveCase").show();
@@ -1771,6 +1785,12 @@ function EditCase(id) {
                 $("#txtCase_BrojArhiveRegistrator").val(CurrentCase.BrojArhiveRegistrator);
 
                 $("#txtCase_PravniOsnov").val(CurrentCase.PravniOsnov);
+
+                //Skontro
+                $("#txtCase_CaseActivity_ActivityDaysOffset").val(CurrentCase.SkontroDan);
+                $("#txtCase_CaseActivity_ActivityDate").val(CurrentCase.SkontroDatum);
+                $("#txtCase_CaseActivity_Note").val(CurrentCase.SkontroBiljeska);
+                $("#cbCase_CaseActivity_ForAllUsers").prop("checked", CurrentCase.Skontro_ForAllUsers);
 
                 $("#modalCase").find(".modal-title").html("Izmijeni predmet: <span style='font-style: italic; color: gray;'>" + CurrentCase.Naziv + "</span>");
 
@@ -2502,9 +2522,11 @@ function ClearModalCase() {
 
     // Pozivanje predmeta
     $("#txtCase_CaseActivity_ActivityDate").val("");
+    $("#txtCase_CaseActivity_ActivityDaysOffset").val(0);
     $("#txtCase_CaseActivity_Note").val("");
     $("#cbCase_CaseActivity_ForAllUsers").prop("checked", "checked");
     $("#txtCase_CaseActivity_ActivityDate").attr("disabled", "disabled");
+    $("#txtCase_CaseActivity_ActivityDaysOffset").attr("disabled", "disabled");
     $("#txtCase_CaseActivity_Note").attr("disabled", "disabled");
     $("#cbCase_CaseActivity_ForAllUsers").attr("disabled", "disabled");
 
@@ -3064,7 +3086,7 @@ function BindCaseDocuments(_data) {
     if (_data && _data.length > 0) {
         $(_data).each(function (index, _document) {
 
-            if (_document.GoogleDriveDocId != undefined && _document.GoogleDriveDocId != null && _document.GoogleDriveDocId != "none")
+            if (_document.GoogleDriveDocId != undefined && _document.GoogleDriveDocId != null && _document.GoogleDriveDocId != "none" && _document.GoogleDriveDocId != "")
                 _document.GoogleDriveDocIdHTML = DownloadButtonMarkUp.replace("##TOOLTIP##", _document.DocumentName).replace("##ON_CLICK##", "DownloadFileFromGoogleDrive(\"" + _document.GoogleDriveDocId + "\", \"" + _document.DocumentName + "\");");
             else
                 _document.GoogleDriveDocIdHTML = _document.DocumentName;
@@ -3227,7 +3249,7 @@ function BindCaseRadnje(_data) {
                 _radnja.DatumRadnjeString = _radnja.DatumRadnjeString.replace(" 00:00", "");
             }
 
-            if (_radnja.GoogleDriveDocId != undefined && _radnja.GoogleDriveDocId != null && _radnja.GoogleDriveDocId != "none")
+            if (_radnja.GoogleDriveDocId != undefined && _radnja.GoogleDriveDocId != null && _radnja.GoogleDriveDocId != "none" && _radnja.GoogleDriveDocId != "")
                 _radnja.GoogleDriveDocIdHTML = DownloadButtonMarkUp.replace("##TOOLTIP##", _radnja.DocumentName).replace("##ON_CLICK##", "DownloadFileFromGoogleDrive(\"" + _radnja.GoogleDriveDocId + "\", \"" + _radnja.DocumentName + "\");");
             else
                 _radnja.GoogleDriveDocIdHTML = _radnja.DocumentName;
@@ -3314,7 +3336,7 @@ function BindInputDataForCaseRadnja(tempCaseRadnja) {
     $("#aCase_Radnja_DocumentLink").html(tempCaseRadnja.DocumentName);
     $("#aCase_Radnja_DocumentLink").attr("google_drive_doc_id", tempCaseRadnja.GoogleDriveDocId);
 
-    if (tempCaseRadnja.GoogleDriveDocId != undefined && tempCaseRadnja.GoogleDriveDocId != null && tempCaseRadnja.GoogleDriveDocId != "")
+    if (tempCaseRadnja.GoogleDriveDocId != undefined && tempCaseRadnja.GoogleDriveDocId != null && tempCaseRadnja.GoogleDriveDocId != "none" && tempCaseRadnja.GoogleDriveDocId != "")
         $("#btnCase_Radnja_RemoveGoogleDoc").show();
 
     $("#btnAppendRadnjaToCase").removeAttr("disabled");
@@ -3322,19 +3344,34 @@ function BindInputDataForCaseRadnja(tempCaseRadnja) {
 
 function AppendExpenseToCase() {
     if ($("#ddlCase_ExpenseVrstaTroska").val() != -1 && $("#txtCase_ExpenseAmount").val() != "") {
+        var editIndex = $("#btnAppendExpenseToCase").attr("edit_index");
+        if (editIndex != undefined && editIndex != null) {
+            CurrentCase.Expenses[editIndex] = {
+                VrstaTroskaId: $("#ddlCase_ExpenseVrstaTroska").val(),
+                VrstaTroskaName: $("#ddlCase_ExpenseVrstaTroska option:selected").text(),
+                Amount: $("#txtCase_ExpenseAmount").attr("number_value"),
+                ExpenseDate: ConvertBSDateToUSDateString($("#txtCase_ExpenseDate").val()),
+                PaidBy: $("#ddlCase_ExpensePaidBy").val(),
+                CaseId: CurrentCase.Id,
+                Id: CurrentCase.Expenses[editIndex].Id
+            };
 
-        if (CurrentCase.Expenses == undefined)
-            CurrentCase.Expenses = [];
+            $("#btnAppendExpenseToCase").removeAttr("edit_index");
+            $("#btnAppendExpenseToCase").html("Dodaj");
+        }
+        else {
+            if (CurrentCase.Expenses == undefined)
+                CurrentCase.Expenses = [];
 
-        CurrentCase.Expenses.push({
-            VrstaTroskaId: $("#ddlCase_ExpenseVrstaTroska").val(),
-            VrstaTroskaName: $("#ddlCase_ExpenseVrstaTroska option:selected").text(),
-            Amount: $("#txtCase_ExpenseAmount").attr("number_value"),
-            ExpenseDate: $("#txtCase_ExpenseDate").val(),
-            PaidBy: $("#ddlCase_ExpensePaidBy").val(),
-            CaseId: CurrentCase.Id
-        });
-
+            CurrentCase.Expenses.push({
+                VrstaTroskaId: $("#ddlCase_ExpenseVrstaTroska").val(),
+                VrstaTroskaName: $("#ddlCase_ExpenseVrstaTroska option:selected").text(),
+                Amount: $("#txtCase_ExpenseAmount").attr("number_value"),
+                ExpenseDate: ConvertBSDateToUSDateString($("#txtCase_ExpenseDate").val()),
+                PaidBy: $("#ddlCase_ExpensePaidBy").val(),
+                CaseId: CurrentCase.Id
+            });
+        }
         BindCaseExpenses(CurrentCase.Expenses);
     }
 }
@@ -3392,7 +3429,11 @@ function AfterBindCaseExpenses() {
         }
         else if (CurrentCase.Expenses.length > 0) {
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
-                var buttonsHTML = "<td style='width: 50px;'><div class='btn-group pull-right'>";
+                var buttonsHTML = "<td style='width: 90px;'><div class='btn-group pull-right'>";
+                buttonsHTML +=
+                            "<button class='btn btn-warning btn-sm' data-toggle='tooltip' title='Izmijeni trošak' onclick='EditCaseExpense(" + (index - 1) + "); return false;'>"
+                            + "<span class='glyphicon glyphicon-pencil'></span>"
+                            + "</button>";
                 buttonsHTML +=
                             "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši trošak' onclick='DeleteCaseExpense(" + (index - 1) + "); return false;'>"
                             + "<span class='glyphicon glyphicon-remove'></span>"
@@ -3403,6 +3444,24 @@ function AfterBindCaseExpenses() {
             }
         }
     });
+}
+
+function EditCaseExpense(index) {
+    var tempCaseExpense = CurrentCase.Expenses[index];
+    BindInputDataForCaseExpense(tempCaseExpense);
+
+    $("#btnAppendExpenseToCase").attr("edit_index", index);
+    $("#btnAppendExpenseToCase").html("Spasi");
+}
+
+
+function BindInputDataForCaseExpense(tempCaseExpense) {
+    $("#ddlCase_ExpenseVrstaTroska").val(tempCaseExpense.VrstaTroskaId);
+    $("#txtCase_ExpenseAmount").attr("number_value", tempCaseExpense.Amount).val(GetMoneyFormat(tempCaseExpense.Amount));
+    $("#txtCase_ExpenseDate").val(moment(tempCaseExpense.ExpenseDate).format("DD.MM.YYYY"));
+    $("#ddlCase_ExpensePaidBy").val(tempCaseExpense.PaidBy);
+
+    $("#btnAppendExpenseToCase").removeAttr("disabled");
 }
 
 function DeleteCaseExpense(index) {

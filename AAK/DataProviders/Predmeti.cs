@@ -207,13 +207,15 @@ namespace AAK.DataProviders
                 {
                     expense.CaseId = predmet.Id;
 
-                    temp = (from Expense tempExpense in existingExpenses
-                            where tempExpense.CaseId == expense.CaseId && tempExpense.ExpenseDate == expense.ExpenseDate && tempExpense.VrstaTroskaId == expense.VrstaTroskaId
-                                && (tempExpense.PaidBy ?? "").ToLowerInvariant().Trim().Equals((expense.PaidBy ?? "").ToLowerInvariant().Trim())
-                            select tempExpense).FirstOrDefault();
+                    //temp = (from Expense tempExpense in existingExpenses
+                    //        where tempExpense.CaseId == expense.CaseId && tempExpense.ExpenseDate == expense.ExpenseDate && tempExpense.VrstaTroskaId == expense.VrstaTroskaId
+                    //            && (tempExpense.PaidBy ?? "").ToLowerInvariant().Trim().Equals((expense.PaidBy ?? "").ToLowerInvariant().Trim())
+                    //        select tempExpense).FirstOrDefault();
 
-                    if (temp == null)
+                    if (expense.Id == -1)
                         Expenses.Expense_Insert(expense);
+                    else
+                        Expenses.Expense_Update(expense);
                 }
             }
             #endregion
