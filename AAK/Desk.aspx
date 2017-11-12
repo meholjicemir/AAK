@@ -35,7 +35,7 @@
         var GoogleDriveRootFolderId = "<%=ConfigurationManager.AppSettings["GoogleDriveRootFolderId"].ToString()%>";
     </script>
 
-    <script src="Desk.aspx.min.js?v=15" defer="defer"></script>
+    <script src="Desk.aspx.min.js?v=18" defer="defer"></script>
 
     <iframe id="iframeDownload" style="position: absolute; left: -1000px;"></iframe>
 
@@ -477,6 +477,14 @@
                         </div>
                         <div class="col-lg-7 case-column-for-stanje">
                             <form class="form-inline pull-left" role="form">
+                                <label for="txtCase_BrojPredmeta" class="fixed-width-label">Iniciran:</label>
+                                <span class="input-group date" id="dateTimePicker_Iniciran">
+                                    <input type="text" class="form-control" id="txtCase_Iniciran" />
+                                    <span class="input-group-addon btn">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </span>
+                                <br />
                                 <label for="txtCase_BrojPredmeta" class="fixed-width-label">Broj predmeta:</label>
                                 <input type="text" class="form-control fixed-width-field" id="txtCase_BrojPredmeta" />
                                 <br />
@@ -569,7 +577,7 @@
                                 </select>
                                 <label for="ddlCase_GlavnaStranka">Vrsta:</label>
                                 <select class="form-control" id="ddlCase_GlavnaStranka">
-                                    <option value="" selected="selected">Ostalo</option>
+                                    <option value="" selected="selected"></option>
                                     <option value="ns">Naša stranka</option>
                                     <option value="ps">Protivna stranka</option>
                                 </select>
@@ -745,6 +753,9 @@
                     <div class="row yellowish-background" style="padding-bottom: 15px;">
                         <div class="col-lg-12">
                             <form class="form-inline" role="form">
+                                <label for="cbCase_CaseActivity_SaveNew" class="dynamic-width-field">Snimi novo pozivanje predmeta</label>
+                                <input id="cbCase_CaseActivity_SaveNew" class="dynamic-width-field" type="checkbox" disabled="disabled" />
+                                <hr />
                                 <label for="dateTimePicker_CaseActivity_ActivityDate" class="fixed-width-label-narrow">Od:</label>
                                 <span class="input-group date" id="dateTimePicker_CaseActivity_ActivityDate">
                                     <input type="text" class="form-control" id="txtCase_CaseActivity_ActivityDate" />
@@ -1069,7 +1080,7 @@
         <img id="imgUserPicture" height="50" width="50" alt="Slika korisnika" src="" data-toggle="tooltip" title="Slika korisnika" />
     </div>
     <div class="pull-right" style="position: fixed; bottom: 0; right: 0; margin: 2px; font-size: xx-small; z-index: 1000;">
-        <span class="pull-right">v1.4 BETA</span>
+        <span class="pull-right">v1.6 BETA</span>
     </div>
 </body>
 </html>

@@ -34,6 +34,7 @@ namespace AAK.DataProviders
             collection.AddParameter<int>("ulogaId", predmet.UlogaId);
             collection.AddParameter<bool>("privremeniZastupnici", predmet.PrivremeniZastupnici);
             collection.AddParameter<bool>("pristupPredmetu", predmet.PristupPredmetu);
+            collection.AddParameter<DateTime?>("iniciran", predmet.Iniciran);
             collection.AddParameter<string>("brojPredmeta", predmet.BrojPredmeta);
             collection.AddParameter<int?>("sudId", predmet.SudId);
             collection.AddParameter<int>("sudijaId", predmet.SudijaId);
@@ -104,6 +105,7 @@ namespace AAK.DataProviders
             collection.AddParameter<int>("ulogaId", predmet.UlogaId);
             collection.AddParameter<bool>("privremeniZastupnici", predmet.PrivremeniZastupnici);
             collection.AddParameter<bool>("pristupPredmetu", predmet.PristupPredmetu);
+            collection.AddParameter<DateTime?>("iniciran", predmet.Iniciran);
             collection.AddParameter<string>("brojPredmeta", predmet.BrojPredmeta);
             collection.AddParameter<int?>("sudId", predmet.SudId);
             collection.AddParameter<int>("sudijaId", predmet.SudijaId);

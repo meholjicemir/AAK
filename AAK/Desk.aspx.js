@@ -163,7 +163,7 @@ function RenderApp(user) {
     else
         ShowAlert("danger", "Korisnik postoji ali nema dodijeljena potrebna prava za korištenje aplikacije.");
 
-    $('#dateTimePicker_DatumStanjaPredmeta,#dateTimePicker_DatumArhiviranja,#dateTimePicker_NoteDate,#dateTimePicker_ExpenseDate,#dateTimePicker_CaseActivity_ActivityDate,#dateTimePicker_Search_DatumStanjaPredmeta,#dateTimePicker_Search_IniciranFrom,#dateTimePicker_Search_IniciranTo,#dateTimePicker_Search_ArhiviranFrom,#dateTimePicker_Search_ArhiviranTo').datetimepicker({
+    $('#dateTimePicker_Iniciran,#dateTimePicker_DatumStanjaPredmeta,#dateTimePicker_DatumArhiviranja,#dateTimePicker_NoteDate,#dateTimePicker_ExpenseDate,#dateTimePicker_CaseActivity_ActivityDate,#dateTimePicker_Search_DatumStanjaPredmeta,#dateTimePicker_Search_IniciranFrom,#dateTimePicker_Search_IniciranTo,#dateTimePicker_Search_ArhiviranFrom,#dateTimePicker_Search_ArhiviranTo').datetimepicker({
         format: 'DD.MM.YYYY',
         showTodayButton: true
     });
@@ -509,19 +509,20 @@ var menuCases_DataLoaded = false;
 function MenuCases_LoadDataOnly() {
     if (menuCases_DataLoaded === false) {
         // Load code table data
+        LoadCodeTableData("vLica_Id_Naziv", $("#ddlCase_Lice"), "Naziv");
+
+        $("#ddlCase_Kategorija").html("<option>-----</option>");
         LoadCodeTableData("KategorijePredmeta", $("#ddlCase_Kategorija"));
+
         LoadCodeTableData("Sudovi", $("#ddlCase_Sud"), "Sud");
         LoadCodeTableData("Sudije", $("#ddlCase_Sudija"));
         LoadCodeTableData("Uloge", $("#ddlCase_Uloga"));
         LoadCodeTableData("Uloge", $("#ddlCase_UlogaLica"));
         LoadCodeTableData("VrstePredmeta", $("#ddlCase_VrstaPredmeta"));
-        //LoadCodeTableData("StanjaPredmeta", $("#ddlCase_StanjePredmeta"));
-        LoadCodeTableData("vLica", $("#ddlCase_Lice"), "Naziv");
         LoadCodeTableData("NaciniOkoncanja", $("#ddlCase_NacinOkoncanja"));
         LoadCodeTableData("VrsteTroskova", $("#ddlCase_ExpenseVrstaTroska"));
         LoadCodeTableData("VrsteRadnji", $("#ddlCase_Radnja_VrstaRadnje"));
         LoadCodeTableData("TipoviDokumenata", $("#ddlCase_Document_TipDokumenta"));
-        //LoadCodeTableData("StanjaPredmeta", $("#ddlCase_Search_StanjaPredmeta"));
 
         SetUpStanjeAutocomplete();
         SetUpPredatoUzAutocomplete();
@@ -1574,6 +1575,7 @@ function SaveCase() {
         UlogaId: $("#ddlCase_Uloga").val(),
         PrivremeniZastupnici: $("#cbCase_PrivremeniZastupnici").prop("checked"),
         PristupPredmetu: $("#cbCase_PristupPredmetu").prop("checked"),
+        Iniciran: ConvertBSDateToUSDateString($("#txtCase_Iniciran").val()),
         BrojPredmeta: $("#txtCase_BrojPredmeta").val(),
         SudId: $("#ddlCase_Sud").val(),
         SudijaId: $("#ddlCase_Sudija").val(),
@@ -1616,7 +1618,9 @@ function SaveCase() {
 
             UpdateRadnje_GoogleEvents();
 
-            SaveCaseActivity();
+            if ($("#cbCase_CaseActivity_SaveNew").prop("checked"))
+                SaveCaseActivity();
+
             HideLoaderCenter();
             if (CurrentModule == "home") // Case activities loaded in SaveCaseActivity()
                 LoadRadnje();
@@ -1682,43 +1686,19 @@ function UpdateRadnja_GoogleEventId(radnja) {
     });
 }
 
-function EditCase(id) {
-    $("#modalCase").attr("edit_id", id);
 
-    OpenOtherTab($("#aRadnjeOtherTab"), "divRadnje");
-
-    // LicePredmet
-    $("#ddlCase_Lice").val(-1);
-    $("#ddlCase_UlogaLica").val("");
-    $("#ddlCase_GlavnaStranka").val("");
-    $("#ddlCase_UlogaOrdinalNo").val("1");
-    $("#btnAppendPartyToCase").attr("disabled", "disabled");
-
-    // Notes
-    $("#txtCase_NoteDate").val("");
-    $("#txtCase_NoteText").val("");
-    $("#btnAppendNoteToCase").attr("disabled", "disabled");
-
-    // Expenses
-    $("#ddlCase_ExpenseVrstaTroska").val(-1);
-    $("#txtCase_ExpenseAmount").val("");
-    $("#txtCase_ExpenseAmount").removeAttr("number_value");
-    $("#txtCase_ExpenseDate").val("");
-    $("#ddlCase_ExpensePaidBy").val("");
-    $("#btnAppendExpenseToCase").attr("disabled", "disabled");
-
-    // Radnje
+function ClearInputSectionRadnje() {
     $("#ddlCase_Radnja_VrstaRadnje").val(-1);
     $("#txtCase_Radnja_DatumRadnje").val("");
-    //$("#ddlCase_Radnja_Troskovi").val("");
     $("#txtCase_Radnja_Biljeske").val("");
     $("#aCase_Radnja_DocumentLink").html("");
     $("#aCase_Radnja_DocumentLink").removeAttr("href");
     $("#aCase_Radnja_DocumentLink").removeAttr("google_drive_doc_id");
     $("#btnCase_Radnja_RemoveGoogleDoc").hide();
     $("#btnAppendRadnjaToCase").attr("disabled", "disabled");
+}
 
-    // Documents
+function ClearInputSectionDocuments() {
     $("#ddlCase_Document_TipDokumenta").val(-1);
     $("#txtCase_Document_PredatoUz").val("");
     $("#txtCase_Document_Note").val("");
@@ -1726,29 +1706,70 @@ function EditCase(id) {
     $("#aCase_Document_DocumentLink").removeAttr("href");
     $("#aCase_Document_DocumentLink").removeAttr("google_drive_doc_id");
     $("#btnCase_Document_RemoveGoogleDoc").hide();
-
     $("#btnAppendDocumentToCase").attr("disabled", "disabled");
+}
 
-    // Connections
+function ClearInputSectionConnections() {
     $("#txtCase_Connection_ConnectionCase").val("");
     $("#txtCase_Connection_ConnectionCase").attr("caseId", -1);
     $("#txtCase_Connection_Note").val("");
     $("#btnAppendConnectionToCase").attr("disabled", "disabled");
+}
 
-    $("#txtCase_CaseActivity_ActivityDate").val("");
-    $("#txtCase_CaseActivity_ActivityDaysOffset").val(0);
-    $("#txtCase_CaseActivity_Note").val("");
-    $("#cbCase_CaseActivity_ForAllUsers").prop("checked", "checked");
-    $("#txtCase_CaseActivity_ActivityDate").removeAttr("disabled");
-    $("#txtCase_CaseActivity_ActivityDaysOffset").removeAttr("disabled");
-    $("#txtCase_CaseActivity_Note").removeAttr("disabled");
-    $("#cbCase_CaseActivity_ForAllUsers").removeAttr("disabled");
+function ClearInputSectionExpenses() {
+    $("#ddlCase_ExpenseVrstaTroska").val(-1);
+    $("#txtCase_ExpenseAmount").val("");
+    $("#txtCase_ExpenseAmount").removeAttr("number_value");
+    $("#txtCase_ExpenseDate").val("");
+    $("#ddlCase_ExpensePaidBy").val("");
+    $("#btnAppendExpenseToCase").attr("disabled", "disabled");
+}
+
+function ClearInputSectionNotes() {
+    $("#txtCase_NoteDate").val("");
+    $("#txtCase_NoteText").val("");
+    $("#btnAppendNoteToCase").attr("disabled", "disabled");
+}
+
+function EditCase(id) {
+    $("#modalCase").attr("edit_id", id);
+
+    OpenOtherTab($("#aRadnjeOtherTab"), "divRadnje");
+
+    // LicePredmet
+    $("#ddlCase_Lice").val(-1);
+    $("#ddlCase_UlogaLica").val(-1);
+    $("#ddlCase_GlavnaStranka").val("");
+    $("#ddlCase_UlogaOrdinalNo").val("");
+    $("#btnAppendPartyToCase").attr("disabled", "disabled");
+
+    // Notes
+    ClearInputSectionNotes();
+
+    // Expenses
+    ClearInputSectionExpenses();
+
+    // Radnje
+    ClearInputSectionRadnje();
+
+    // Documents
+    ClearInputSectionDocuments();
+
+    // Connections
+    ClearInputSectionConnections();
 
     // Skontro
+    $("#cbCase_CaseActivity_SaveNew").removeAttr("disabled");
+    $("#cbCase_CaseActivity_SaveNew").prop("checked", false);
+
     $("#txtCase_CaseActivity_ActivityDaysOffset").val(0);
     $("#txtCase_CaseActivity_ActivityDate").val("");
     $("#txtCase_CaseActivity_Note").val("");
     $("#cbCase_CaseActivity_ForAllUsers").prop("checked", true);
+    $("#txtCase_CaseActivity_ActivityDate").attr("disabled", "disabled");
+    $("#txtCase_CaseActivity_ActivityDaysOffset").attr("disabled", "disabled");
+    $("#txtCase_CaseActivity_Note").attr("disabled", "disabled");
+    $("#cbCase_CaseActivity_ForAllUsers").attr("disabled", "disabled");
 
     if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0)
         $("#btnSaveCase").show();
@@ -1768,6 +1789,7 @@ function EditCase(id) {
                 $("#ddlCase_Uloga").val(CurrentCase.UlogaId);
                 $("#cbCase_PrivremeniZastupnici").prop("checked", CurrentCase.PrivremeniZastupnici);
                 $("#cbCase_PristupPredmetu").prop("checked", CurrentCase.PristupPredmetu);
+                $("#txtCase_Iniciran").val(CurrentCase.Iniciran);
                 $("#txtCase_BrojPredmeta").val(CurrentCase.BrojPredmeta);
                 $("#ddlCase_Sud").val(CurrentCase.SudId);
                 $("#ddlCase_Sudija").val(CurrentCase.SudijaId);
@@ -1790,7 +1812,11 @@ function EditCase(id) {
                 $("#txtCase_CaseActivity_ActivityDaysOffset").val(CurrentCase.SkontroDan);
                 $("#txtCase_CaseActivity_ActivityDate").val(CurrentCase.SkontroDatum);
                 $("#txtCase_CaseActivity_Note").val(CurrentCase.SkontroBiljeska);
-                $("#cbCase_CaseActivity_ForAllUsers").prop("checked", CurrentCase.Skontro_ForAllUsers);
+
+                if (CurrentCase.SkontroDan != null)
+                    $("#cbCase_CaseActivity_ForAllUsers").prop("checked", CurrentCase.Skontro_ForAllUsers);
+                else
+                    $("#cbCase_CaseActivity_ForAllUsers").prop("checked", true);
 
                 $("#modalCase").find(".modal-title").html("Izmijeni predmet: <span style='font-style: italic; color: gray;'>" + CurrentCase.Naziv + "</span>");
 
@@ -2457,6 +2483,7 @@ function ClearModalCase() {
     $("#ddlCase_Uloga").val(-1);
     $("#cbCase_PrivremeniZastupnici").prop("checked", false);
     $("#cbCase_PristupPredmetu").prop("checked", false);
+    $("#txtCase_Iniciran").val("");
     $("#txtCase_BrojPredmeta").val("");
     $("#ddlCase_Sud").val(-1);
     $("#ddlCase_Sudija").val(-1);
@@ -2478,7 +2505,8 @@ function ClearModalCase() {
 
     // LicePredmet
     $("#ddlCase_Lice").val(-1);
-    $("#ddlCase_UlogaLica").val("");
+    $("#ddlCase_UlogaLica").val(-1);
+    $("#ddlCase_UlogaOrdinalNo").val("");
     $("#ddlCase_GlavnaStranka").val("");
     $("#btnAppendPartyToCase").attr("disabled", "disabled");
 
@@ -2521,6 +2549,9 @@ function ClearModalCase() {
     $("#tblCaseParties").bootstrapTable("destroy");
 
     // Pozivanje predmeta
+    $("#cbCase_CaseActivity_SaveNew").prop("checked", false);
+    $("#cbCase_CaseActivity_SaveNew").attr("disabled", "disabled");
+
     $("#txtCase_CaseActivity_ActivityDate").val("");
     $("#txtCase_CaseActivity_ActivityDaysOffset").val(0);
     $("#txtCase_CaseActivity_Note").val("");
@@ -2588,6 +2619,8 @@ function SaveParty() {
     .done(function (data) {
         if (data && data > 0) {
             ShowAlert("success", "Uspješno spašena stranka.");
+            $("#ddlCase_Lice").html('<option value="-1">-----</option>');
+            LoadCodeTableData("vLica_Id_Naziv", $("#ddlCase_Lice"), "Naziv");
             HideLoaderCenter();
             LoadParties();
         }
@@ -2713,7 +2746,7 @@ function DeleteParty(id) {
                     ShowLoaderCenter();
                     $.ajax({
                         url: AppPath + "api/lice?Id=" + id.toString()
-                            + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
+                            + "&Token=" + CurrentUser.Token + "&ValidationEmail=" + CurrentUser.Email,
                         type: "DELETE",
                         success: function () {
                             LoadParties();
@@ -2743,7 +2776,7 @@ function StartBuildingNewCase() {
     CurrentCase.Notes = [];
     CurrentCase.Expenses = [];
     CurrentCase.Radnje = [];
-    Currentcase.DeletedRadnje = [];
+    CurrentCase.DeletedRadnje = [];
     CurrentCase.Documents = [];
     CurrentCase.Connections = [];
 
@@ -2758,7 +2791,7 @@ function StartBuildingNewCase() {
 }
 
 function AppendPartyToCase() {
-    if ($("#ddlCase_Lice").val() != -1 && $("#ddlCase_UlogaLica").val() != "") {
+    if ($("#ddlCase_Lice").val() != -1 && $("#ddlCase_UlogaLica").val() != -1) {
         var editIndex = $("#btnAppendPartyToCase").attr("edit_index");
         if (editIndex != undefined && editIndex != null) {
             CurrentCase.Parties[editIndex] = {
@@ -2791,6 +2824,12 @@ function AppendPartyToCase() {
             });
         }
         BindCaseParties(CurrentCase.Parties);
+
+        $("#ddlCase_Lice").val(-1);
+        $("#ddlCase_UlogaLica").val(-1);
+        $("#ddlCase_UlogaOrdinalNo").val("");
+        $("#ddlCase_GlavnaStranka").val("");
+        $("#btnAppendPartyToCase").attr("disabled", "disabled");
     }
 }
 
@@ -2893,6 +2932,8 @@ function AppendNoteToCase() {
         });
 
         BindCaseNotes(CurrentCase.Notes);
+
+        ClearInputSectionNotes();
     }
 }
 
@@ -2978,6 +3019,8 @@ function AppendConnectionToCase() {
         });
 
         BindCaseConnections(CurrentCase.Connections);
+
+        ClearInputSectionConnections();
     }
 }
 
@@ -3070,6 +3113,8 @@ function AppendDocumentToCase() {
         }
 
         BindCaseDocuments(CurrentCase.Documents);
+
+        ClearInputSectionDocuments();
     }
 }
 
@@ -3089,7 +3134,7 @@ function BindCaseDocuments(_data) {
             if (_document.GoogleDriveDocId != undefined && _document.GoogleDriveDocId != null && _document.GoogleDriveDocId != "none" && _document.GoogleDriveDocId != "")
                 _document.GoogleDriveDocIdHTML = DownloadButtonMarkUp.replace("##TOOLTIP##", _document.DocumentName).replace("##ON_CLICK##", "DownloadFileFromGoogleDrive(\"" + _document.GoogleDriveDocId + "\", \"" + _document.DocumentName + "\");");
             else
-                _document.GoogleDriveDocIdHTML = _document.DocumentName;
+                _document.GoogleDriveDocIdHTML = "";
 
             if (index == _data.length - 1) {
                 $("#tblCaseDocuments").bootstrapTable({
@@ -3228,6 +3273,8 @@ function AppendRadnjaToCase() {
         }
 
         BindCaseRadnje(CurrentCase.Radnje);
+
+        ClearInputSectionRadnje();
     }
 }
 
@@ -3252,7 +3299,7 @@ function BindCaseRadnje(_data) {
             if (_radnja.GoogleDriveDocId != undefined && _radnja.GoogleDriveDocId != null && _radnja.GoogleDriveDocId != "none" && _radnja.GoogleDriveDocId != "")
                 _radnja.GoogleDriveDocIdHTML = DownloadButtonMarkUp.replace("##TOOLTIP##", _radnja.DocumentName).replace("##ON_CLICK##", "DownloadFileFromGoogleDrive(\"" + _radnja.GoogleDriveDocId + "\", \"" + _radnja.DocumentName + "\");");
             else
-                _radnja.GoogleDriveDocIdHTML = _radnja.DocumentName;
+                _radnja.GoogleDriveDocIdHTML = "";
 
             _radnja.VrstaRadnjeNameString = _radnja.VrstaRadnjeName.replace('*', '');
 
@@ -3372,7 +3419,10 @@ function AppendExpenseToCase() {
                 CaseId: CurrentCase.Id
             });
         }
+
         BindCaseExpenses(CurrentCase.Expenses);
+
+        ClearInputSectionExpenses();
     }
 }
 
@@ -3470,7 +3520,7 @@ function DeleteCaseExpense(index) {
 }
 
 $("#ddlCase_Lice,#ddlCase_UlogaLica").change(function () {
-    if ($("#ddlCase_Lice").val() != -1 && $("#ddlCase_UlogaLica").val() != "")
+    if ($("#ddlCase_Lice").val() != -1 && $("#ddlCase_UlogaLica").val() != -1)
         $("#btnAppendPartyToCase").removeAttr("disabled");
     else
         $("#btnAppendPartyToCase").attr("disabled", "disabled");
@@ -3962,3 +4012,19 @@ function NasBrojSorterFunction(a, b) {
     else
         return -1;
 }
+
+
+$("#cbCase_CaseActivity_SaveNew").change(function () {
+    if ($(this).prop("checked")) {
+        $("#txtCase_CaseActivity_ActivityDate").removeAttr("disabled");
+        $("#txtCase_CaseActivity_Note").removeAttr("disabled");
+        $("#cbCase_CaseActivity_ForAllUsers").removeAttr("disabled");
+        $("#txtCase_CaseActivity_ActivityDaysOffset").removeAttr("disabled");
+    }
+    else {
+        $("#txtCase_CaseActivity_ActivityDate").attr("disabled", "disabled");
+        $("#txtCase_CaseActivity_Note").attr("disabled", "disabled");
+        $("#cbCase_CaseActivity_ForAllUsers").attr("disabled", "disabled");
+        $("#txtCase_CaseActivity_ActivityDaysOffset").attr("disabled", "disabled");
+    }
+});
