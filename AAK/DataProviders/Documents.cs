@@ -31,7 +31,8 @@ namespace AAK.DataProviders
             DBUtility.ParameterCollection collection = new DBUtility.ParameterCollection();
             collection.AddParameter<int>("caseId", document.CaseId);
             collection.AddParameter<string>("note", document.Note);
-            collection.AddParameter<int?>("tipDokumentaId", document.TipDokumentaId);
+            //collection.AddParameter<int?>("tipDokumentaId", document.TipDokumentaId);
+            collection.AddParameter<string>("tipDokumentaName", document.TipDokumentaName);
             collection.AddParameter<string>("predatoUzDokumentName", document.PredatoUzDokumentName);
             collection.AddParameter<string>("documentName", document.DocumentName);
             collection.AddParameter<string>("googleDriveDocId", document.GoogleDriveDocId);
@@ -45,7 +46,8 @@ namespace AAK.DataProviders
             DBUtility.ParameterCollection collection = new DBUtility.ParameterCollection();
             collection.AddParameter<int>("caseId", document.CaseId);
             collection.AddParameter<string>("note", document.Note);
-            collection.AddParameter<int?>("tipDokumentaId", document.TipDokumentaId);
+            //collection.AddParameter<int?>("tipDokumentaId", document.TipDokumentaId);
+            collection.AddParameter<string>("tipDokumentaName", document.TipDokumentaName);
             collection.AddParameter<string>("predatoUzDokumentName", document.PredatoUzDokumentName);
             collection.AddParameter<string>("documentName", document.DocumentName);
             collection.AddParameter<string>("googleDriveDocId", document.GoogleDriveDocId);

@@ -35,7 +35,7 @@
         var GoogleDriveRootFolderId = "<%=ConfigurationManager.AppSettings["GoogleDriveRootFolderId"].ToString()%>";
     </script>
 
-    <script src="Desk.aspx.min.js?v=18" defer="defer"></script>
+    <script src="Desk.aspx.min.js?v=19" defer="defer"></script>
 
     <iframe id="iframeDownload" style="position: absolute; left: -1000px;"></iframe>
 
@@ -668,10 +668,16 @@
                             <div class="other-tab" style="display: none;" id="divDokumenti">
                                 <div id="divDocumentsAlert"></div>
                                 <form class="form-inline only-office-admin" role="form">
-                                    <label for="ddlCase_Document_TipDokumenta">Tip dokumenta:</label>
-                                    <select id="ddlCase_Document_TipDokumenta" class="form-control">
+
+                                    <span class="form-group has-feedback">
+                                        <label for="txtCase_Document_TipDokumenta">Tip dokumenta:</label>
+                                        <input type="text" class="form-control fixed-width-field" id="txtCase_Document_TipDokumenta" />
+                                        <i id="spinner_txtCase_Document_TipDokumenta" class="glyphicon glyphicon-refresh spinning form-control-feedback" style="display: none;"></i>
+                                    </span>
+                                    <%--<label for="ddlCase_Document_TipDokumenta">Tip dokumenta:</label>--%>
+                                    <%--<select id="ddlCase_Document_TipDokumenta" class="form-control">
                                         <option value="-1">-----</option>
-                                    </select>
+                                    </select>--%>
                                     <span class="form-group has-feedback">
                                         <label for="txtCase_Document_PredatoUz">Predato uz:</label>
                                         <input type="text" class="form-control fixed-width-field" id="txtCase_Document_PredatoUz" />
@@ -1080,7 +1086,7 @@
         <img id="imgUserPicture" height="50" width="50" alt="Slika korisnika" src="" data-toggle="tooltip" title="Slika korisnika" />
     </div>
     <div class="pull-right" style="position: fixed; bottom: 0; right: 0; margin: 2px; font-size: xx-small; z-index: 1000;">
-        <span class="pull-right">v1.6 BETA</span>
+        <span class="pull-right">v1.7 BETA</span>
     </div>
 </body>
 </html>
