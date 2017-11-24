@@ -3567,6 +3567,14 @@ $("#dateTimePicker_Radnja_DatumRadnje").on('dp.change', function () {
         $("#btnAppendRadnjaToCase").attr("disabled", "disabled");
 });
 
+$("#txtCase_Radnja_DatumRadnje").on('change', function () {
+    if ($("#ddlCase_Radnja_VrstaRadnje").val() != -1 && $("#txtCase_Radnja_DatumRadnje").val() != "")
+        $("#btnAppendRadnjaToCase").removeAttr("disabled");
+    else
+        $("#btnAppendRadnjaToCase").attr("disabled", "disabled");
+});
+
+
 //$("#ddlCase_Document_TipDokumenta").change(function () {
 //    //if ($("#ddlCase_Document_TipDokumenta").val() != -1 && $("#aCase_Document_DocumentLink").html() != "")
 //    if ($("#txtCase_Document_TipDokumenta").val() != "")
@@ -4037,7 +4045,7 @@ function RemoveGoogleDoc(tip) {
 
 $("#txtCase_VrijednostSpora,#txtCase_Search_VrijednostSporaFrom,#txtCase_Search_VrijednostSporaTo,#txtCase_ExpenseAmount")
     .blur(function () {
-        $(this).attr("number_value", $(this).val());
+        $(this).attr("number_value", parseFloat($(this).val().toString().replace(/,/g, '.'))); // Only dot allowed as decimal symbol
         $(this).val(GetMoneyFormat($(this).val()));
     })
     .focus(function () {
