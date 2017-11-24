@@ -529,7 +529,7 @@ function MenuCases_LoadDataOnly() {
         SetUpCaseConnectionAutocomplete();
         SetUpTipDokumentaAutocomplete();
 
-        $("#ddlCase_Uspjeh").html("");
+        $("#ddlCase_Uspjeh").html('<option value="" selected="selected"></option>');
         for (var i = 0; i <= 100; i++)
             $("#ddlCase_Uspjeh").append($("<option " + (i == 0 ? "selected='selected'" : "") + "></option>").attr("value", i.toString() + '%').text(i.toString() + '%'));
         menuCases_DataLoaded = true;
@@ -2497,7 +2497,7 @@ function ClearModalCase() {
     $("#txtCase_StanjePredmeta").val("");
 
     $("#ddlCase_NacinOkoncanja").val(-1);
-    $("#ddlCase_Uspjeh").val("0%");
+    $("#ddlCase_Uspjeh").val("");
     $("#txtCase_DatumArhiviranja").val("");
     $("#txtCase_BrojArhive").val("");
     $("#txtCase_BrojArhiveRegistrator").val("");

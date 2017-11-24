@@ -100,206 +100,214 @@ namespace AAK.DataProviders
 
         public static void Predmeti_Update(Predmet predmet)
         {
-            DBUtility.ParameterCollection collection = new DBUtility.ParameterCollection();
-            collection.AddParameter<int>("kategorijaPredmetaId", predmet.KategorijaPredmetaId);
-            collection.AddParameter<int>("ulogaId", predmet.UlogaId);
-            collection.AddParameter<bool>("privremeniZastupnici", predmet.PrivremeniZastupnici);
-            collection.AddParameter<bool>("pristupPredmetu", predmet.PristupPredmetu);
-            collection.AddParameter<DateTime?>("iniciran", predmet.Iniciran);
-            collection.AddParameter<string>("brojPredmeta", predmet.BrojPredmeta);
-            collection.AddParameter<int?>("sudId", predmet.SudId);
-            collection.AddParameter<int>("sudijaId", predmet.SudijaId);
-            collection.AddParameter<decimal?>("vrijednostSpora", predmet.VrijednostSpora);
-            collection.AddParameter<int>("vrstaPredmetaId", predmet.VrstaPredmetaId);
-            collection.AddParameter<DateTime?>("datumStanjaPredmeta", predmet.DatumStanjaPredmeta);
-            //collection.AddParameter<int>("stanjePredmetaId", predmet.StanjePredmetaId);
-            collection.AddParameter<string>("stanjePredmetaName", predmet.StanjePredmetaName);
-
-            collection.AddParameter<int>("nacinOkoncanjaId", predmet.NacinOkoncanjaId);
-            collection.AddParameter<string>("uspjeh", predmet.Uspjeh);
-            collection.AddParameter<DateTime?>("datumArhiviranja", predmet.DatumArhiviranja);
-            collection.AddParameter<string>("brojArhive", predmet.BrojArhive);
-            collection.AddParameter<string>("brojArhiveRegistrator", predmet.BrojArhiveRegistrator);
-
-            collection.AddParameter<string>("pravniOsnov", predmet.PravniOsnov);
-
-            collection.AddParameter<int>("id", predmet.Id);
-            collection.AddParameter<int?>("userId", predmet.ModifiedBy);
-
-            DBUtility.Utility.ExecuteStoredProcedureVoid("Predmeti_Update", ref collection);
-
-            #region Parties
+            try
             {
-                List<LicePredmet> existingLicePredmeti = LicePredmet_GetForPredmet(predmet.Id);
-                LicePredmet temp;
+                DBUtility.ParameterCollection collection = new DBUtility.ParameterCollection();
+                collection.AddParameter<int>("kategorijaPredmetaId", predmet.KategorijaPredmetaId);
+                collection.AddParameter<int>("ulogaId", predmet.UlogaId);
+                collection.AddParameter<bool>("privremeniZastupnici", predmet.PrivremeniZastupnici);
+                collection.AddParameter<bool>("pristupPredmetu", predmet.PristupPredmetu);
+                collection.AddParameter<DateTime?>("iniciran", predmet.Iniciran);
+                collection.AddParameter<string>("brojPredmeta", predmet.BrojPredmeta);
+                collection.AddParameter<int?>("sudId", predmet.SudId);
+                collection.AddParameter<int>("sudijaId", predmet.SudijaId);
+                collection.AddParameter<decimal?>("vrijednostSpora", predmet.VrijednostSpora);
+                collection.AddParameter<int>("vrstaPredmetaId", predmet.VrstaPredmetaId);
+                collection.AddParameter<DateTime?>("datumStanjaPredmeta", predmet.DatumStanjaPredmeta);
+                //collection.AddParameter<int>("stanjePredmetaId", predmet.StanjePredmetaId);
+                collection.AddParameter<string>("stanjePredmetaName", predmet.StanjePredmetaName);
 
-                foreach (LicePredmet lp in existingLicePredmeti)
+                collection.AddParameter<int>("nacinOkoncanjaId", predmet.NacinOkoncanjaId);
+                collection.AddParameter<string>("uspjeh", predmet.Uspjeh);
+                collection.AddParameter<DateTime?>("datumArhiviranja", predmet.DatumArhiviranja);
+                collection.AddParameter<string>("brojArhive", predmet.BrojArhive);
+                collection.AddParameter<string>("brojArhiveRegistrator", predmet.BrojArhiveRegistrator);
+
+                collection.AddParameter<string>("pravniOsnov", predmet.PravniOsnov);
+
+                collection.AddParameter<int>("id", predmet.Id);
+                collection.AddParameter<int?>("userId", predmet.ModifiedBy);
+
+                DBUtility.Utility.ExecuteStoredProcedureVoid("Predmeti_Update", ref collection);
+
+                #region Parties
                 {
-                    temp = (from LicePredmet tempLP in predmet.Parties
-                                //where tempLP.LiceId == lp.LiceId && tempLP.PredmetId == lp.PredmetId && tempLP.UlogaId == lp.UlogaId
-                            where tempLP.Id == lp.Id
-                            select tempLP).FirstOrDefault();
+                    List<LicePredmet> existingLicePredmeti = LicePredmet_GetForPredmet(predmet.Id);
+                    LicePredmet temp;
 
-                    if (temp == null)
-                        LicePredmet_Delete(lp.Id);
+                    foreach (LicePredmet lp in existingLicePredmeti)
+                    {
+                        temp = (from LicePredmet tempLP in predmet.Parties
+                                    //where tempLP.LiceId == lp.LiceId && tempLP.PredmetId == lp.PredmetId && tempLP.UlogaId == lp.UlogaId
+                                where tempLP.Id == lp.Id
+                                select tempLP).FirstOrDefault();
+
+                        if (temp == null)
+                            LicePredmet_Delete(lp.Id);
+                    }
+
+                    foreach (LicePredmet lp in predmet.Parties)
+                    {
+                        lp.PredmetId = predmet.Id;
+
+                        temp = (from LicePredmet tempLP in existingLicePredmeti
+                                where tempLP.LiceId == lp.LiceId && tempLP.PredmetId == lp.PredmetId && tempLP.UlogaId == lp.UlogaId
+                                select tempLP).FirstOrDefault();
+
+                        if (temp == null)
+                            LicePredmet_Insert(lp);
+                    }
                 }
+                #endregion
 
-                foreach (LicePredmet lp in predmet.Parties)
+                #region Notes
                 {
-                    lp.PredmetId = predmet.Id;
+                    List<Note> existingNotes = Notes.Notes_GetForCase(predmet.Id);
+                    Note temp;
 
-                    temp = (from LicePredmet tempLP in existingLicePredmeti
-                            where tempLP.LiceId == lp.LiceId && tempLP.PredmetId == lp.PredmetId && tempLP.UlogaId == lp.UlogaId
-                            select tempLP).FirstOrDefault();
+                    foreach (Note note in existingNotes)
+                    {
+                        temp = (from Note tempNote in predmet.Notes
+                                    //where tempNote.CaseId == note.CaseId && tempNote.NoteDate == note.NoteDate && tempNote.NoteText.Equals(note.NoteText) && tempNote.CreatedBy == note.CreatedBy
+                                where tempNote.Id == note.Id
+                                select tempNote).FirstOrDefault();
 
-                    if (temp == null)
-                        LicePredmet_Insert(lp);
+                        if (temp == null)
+                            Notes.Note_Delete(note.Id);
+                    }
+
+                    foreach (Note note in predmet.Notes)
+                    {
+                        note.CaseId = predmet.Id;
+
+                        temp = (from Note tempNote in existingNotes
+                                where tempNote.CaseId == note.CaseId && tempNote.NoteDate == note.NoteDate && tempNote.NoteText.Equals(note.NoteText) && tempNote.CreatedBy == note.CreatedBy
+                                select tempNote).FirstOrDefault();
+
+                        if (temp == null)
+                            Notes.Note_Insert(note);
+                    }
                 }
+                #endregion
+
+                #region Expenses
+                {
+                    List<Expense> existingExpenses = Expenses.Expenses_GetForCase(predmet.Id);
+                    Expense temp;
+
+                    foreach (Expense expense in existingExpenses)
+                    {
+                        temp = (from Expense tempExpense in predmet.Expenses
+                                    //where tempExpense.CaseId == expense.CaseId && tempExpense.ExpenseDate == expense.ExpenseDate && tempExpense.VrstaTroskaId == expense.VrstaTroskaId
+                                    //    && (tempExpense.PaidBy ?? "").ToLowerInvariant().Equals((expense.PaidBy ?? "").ToLowerInvariant())
+                                where tempExpense.Id == expense.Id
+                                select tempExpense).FirstOrDefault();
+
+                        if (temp == null)
+                            Expenses.Expense_Delete(expense.Id);
+                    }
+
+                    foreach (Expense expense in predmet.Expenses)
+                    {
+                        expense.CaseId = predmet.Id;
+
+                        //temp = (from Expense tempExpense in existingExpenses
+                        //        where tempExpense.CaseId == expense.CaseId && tempExpense.ExpenseDate == expense.ExpenseDate && tempExpense.VrstaTroskaId == expense.VrstaTroskaId
+                        //            && (tempExpense.PaidBy ?? "").ToLowerInvariant().Trim().Equals((expense.PaidBy ?? "").ToLowerInvariant().Trim())
+                        //        select tempExpense).FirstOrDefault();
+
+                        if (expense.Id == -1)
+                            Expenses.Expense_Insert(expense);
+                        else
+                            Expenses.Expense_Update(expense);
+                    }
+                }
+                #endregion
+
+                #region Radnje
+                {
+                    List<Radnja> existingRadnje = Radnje.Radnje_GetForCase(predmet.Id, (int)predmet.ModifiedBy);
+                    Radnja temp;
+
+                    foreach (Radnja radnja in existingRadnje)
+                    {
+                        temp = (from Radnja tempRadnja in predmet.Radnje
+                                where tempRadnja.Id == radnja.Id
+                                select tempRadnja).FirstOrDefault();
+
+                        if (temp == null)
+                            Radnje.Radnja_Delete(radnja);
+                    }
+
+                    foreach (Radnja radnja in predmet.Radnje)
+                    {
+                        radnja.PredmetId = predmet.Id;
+                        if (radnja.Id == -1)
+                            Radnje.Radnja_Insert(radnja);
+                        // They never update (app does not allow this)
+                        //else
+                        //    Radnje.Radnja_Update(radnja);
+                    }
+                }
+                #endregion
+
+                #region Documents
+                {
+                    List<Document> existingDocuments = Documents.Documents_GetForCase(predmet.Id, (int)predmet.ModifiedBy);
+                    Document temp;
+
+                    foreach (Document document in existingDocuments)
+                    {
+                        temp = (from Document tempDocument in predmet.Documents
+                                where tempDocument.Id == document.Id
+                                select tempDocument).FirstOrDefault();
+
+                        if (temp == null)
+                            Documents.Document_Delete(document.Id);
+                    }
+
+                    foreach (Document document in predmet.Documents)
+                    {
+                        document.CaseId = predmet.Id;
+                        if (document.Id == -1)
+                            Documents.Document_Insert(document);
+                        else
+                            Documents.Document_Update(document);
+                    }
+                }
+                #endregion
+
+                #region Connections
+                {
+                    List<Connection> existingConnections = Connections.Connections_GetForCase(predmet.Id);
+                    Connection temp;
+
+                    foreach (Connection document in existingConnections)
+                    {
+                        temp = (from Connection tempConnection in predmet.Connections
+                                where tempConnection.Id == document.Id
+                                select tempConnection).FirstOrDefault();
+
+                        if (temp == null)
+                            Connections.Connection_Delete(document.Id);
+                    }
+
+                    foreach (Connection connection in predmet.Connections)
+                    {
+                        connection.CaseId = predmet.Id;
+                        if (connection.Id == -1)
+                            Connections.Connection_Insert(connection);
+                        else
+                            Connections.Connection_Update(connection);
+                    }
+                }
+                #endregion
             }
-            #endregion
-
-            #region Notes
+            catch (Exception ex)
             {
-                List<Note> existingNotes = Notes.Notes_GetForCase(predmet.Id);
-                Note temp;
-
-                foreach (Note note in existingNotes)
-                {
-                    temp = (from Note tempNote in predmet.Notes
-                                //where tempNote.CaseId == note.CaseId && tempNote.NoteDate == note.NoteDate && tempNote.NoteText.Equals(note.NoteText) && tempNote.CreatedBy == note.CreatedBy
-                            where tempNote.Id == note.Id
-                            select tempNote).FirstOrDefault();
-
-                    if (temp == null)
-                        Notes.Note_Delete(note.Id);
-                }
-
-                foreach (Note note in predmet.Notes)
-                {
-                    note.CaseId = predmet.Id;
-
-                    temp = (from Note tempNote in existingNotes
-                            where tempNote.CaseId == note.CaseId && tempNote.NoteDate == note.NoteDate && tempNote.NoteText.Equals(note.NoteText) && tempNote.CreatedBy == note.CreatedBy
-                            select tempNote).FirstOrDefault();
-
-                    if (temp == null)
-                        Notes.Note_Insert(note);
-                }
+                LoggerUtility.Logger.LogException(ex, "Predmeti.Predmeti_Update");
+                throw ex;
             }
-            #endregion
-
-            #region Expenses
-            {
-                List<Expense> existingExpenses = Expenses.Expenses_GetForCase(predmet.Id);
-                Expense temp;
-
-                foreach (Expense expense in existingExpenses)
-                {
-                    temp = (from Expense tempExpense in predmet.Expenses
-                                //where tempExpense.CaseId == expense.CaseId && tempExpense.ExpenseDate == expense.ExpenseDate && tempExpense.VrstaTroskaId == expense.VrstaTroskaId
-                                //    && (tempExpense.PaidBy ?? "").ToLowerInvariant().Equals((expense.PaidBy ?? "").ToLowerInvariant())
-                            where tempExpense.Id == expense.Id
-                            select tempExpense).FirstOrDefault();
-
-                    if (temp == null)
-                        Expenses.Expense_Delete(expense.Id);
-                }
-
-                foreach (Expense expense in predmet.Expenses)
-                {
-                    expense.CaseId = predmet.Id;
-
-                    //temp = (from Expense tempExpense in existingExpenses
-                    //        where tempExpense.CaseId == expense.CaseId && tempExpense.ExpenseDate == expense.ExpenseDate && tempExpense.VrstaTroskaId == expense.VrstaTroskaId
-                    //            && (tempExpense.PaidBy ?? "").ToLowerInvariant().Trim().Equals((expense.PaidBy ?? "").ToLowerInvariant().Trim())
-                    //        select tempExpense).FirstOrDefault();
-
-                    if (expense.Id == -1)
-                        Expenses.Expense_Insert(expense);
-                    else
-                        Expenses.Expense_Update(expense);
-                }
-            }
-            #endregion
-
-            #region Radnje
-            {
-                List<Radnja> existingRadnje = Radnje.Radnje_GetForCase(predmet.Id, (int)predmet.ModifiedBy);
-                Radnja temp;
-
-                foreach (Radnja radnja in existingRadnje)
-                {
-                    temp = (from Radnja tempRadnja in predmet.Radnje
-                            where tempRadnja.Id == radnja.Id
-                            select tempRadnja).FirstOrDefault();
-
-                    if (temp == null)
-                        Radnje.Radnja_Delete(radnja);
-                }
-
-                foreach (Radnja radnja in predmet.Radnje)
-                {
-                    radnja.PredmetId = predmet.Id;
-                    if (radnja.Id == -1)
-                        Radnje.Radnja_Insert(radnja);
-                    // They never update (app does not allow this)
-                    //else
-                    //    Radnje.Radnja_Update(radnja);
-                }
-            }
-            #endregion
-
-            #region Documents
-            {
-                List<Document> existingDocuments = Documents.Documents_GetForCase(predmet.Id, (int)predmet.ModifiedBy);
-                Document temp;
-
-                foreach (Document document in existingDocuments)
-                {
-                    temp = (from Document tempDocument in predmet.Documents
-                            where tempDocument.Id == document.Id
-                            select tempDocument).FirstOrDefault();
-
-                    if (temp == null)
-                        Documents.Document_Delete(document.Id);
-                }
-
-                foreach (Document document in predmet.Documents)
-                {
-                    document.CaseId = predmet.Id;
-                    if (document.Id == -1)
-                        Documents.Document_Insert(document);
-                    else
-                        Documents.Document_Update(document);
-                }
-            }
-            #endregion
-
-            #region Connections
-            {
-                List<Connection> existingConnections = Connections.Connections_GetForCase(predmet.Id);
-                Connection temp;
-
-                foreach (Connection document in existingConnections)
-                {
-                    temp = (from Connection tempConnection in predmet.Connections
-                            where tempConnection.Id == document.Id
-                            select tempConnection).FirstOrDefault();
-
-                    if (temp == null)
-                        Connections.Connection_Delete(document.Id);
-                }
-
-                foreach (Connection connection in predmet.Connections)
-                {
-                    connection.CaseId = predmet.Id;
-                    if (connection.Id == -1)
-                        Connections.Connection_Insert(connection);
-                    else
-                        Connections.Connection_Update(connection);
-                }
-            }
-            #endregion
         }
 
         public static void Predmeti_Delete(int id)

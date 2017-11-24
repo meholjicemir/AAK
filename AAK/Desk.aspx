@@ -35,7 +35,7 @@
         var GoogleDriveRootFolderId = "<%=ConfigurationManager.AppSettings["GoogleDriveRootFolderId"].ToString()%>";
     </script>
 
-    <script src="Desk.aspx.min.js?v=19" defer="defer"></script>
+    <script src="Desk.aspx.min.js?v=20" defer="defer"></script>
 
     <iframe id="iframeDownload" style="position: absolute; left: -1000px;"></iframe>
 
@@ -796,6 +796,7 @@
                                 </select>
                                 <label for="ddlCase_Uspjeh">Uspjeh:</label>
                                 <select class="form-control dynamic-width-field" id="ddlCase_Uspjeh">
+                                    <option value="" selected="selected"></option>
                                 </select>
                                 <label for="dateTimePicker_DatumArhiviranja">Datum arhiviranja:</label>
                                 <span class="input-group date" id="dateTimePicker_DatumArhiviranja">
@@ -1086,7 +1087,7 @@
         <img id="imgUserPicture" height="50" width="50" alt="Slika korisnika" src="" data-toggle="tooltip" title="Slika korisnika" />
     </div>
     <div class="pull-right" style="position: fixed; bottom: 0; right: 0; margin: 2px; font-size: xx-small; z-index: 1000;">
-        <span class="pull-right">v1.7 BETA</span>
+        <span class="pull-right">v1.8 BETA</span>
     </div>
 </body>
 </html>
