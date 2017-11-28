@@ -16,12 +16,12 @@ var Radnje = null;
 var CurrentCase = null;
 var SelectedCases = [];
 var CaseDocumentClipboard = null;
-var DownloadButtonMarkUp = "<button class='btn btn-default btn-sm pull-right' data-toggle='tooltip' title='##TOOLTIP##' onclick='##ON_CLICK##' style='color:blue;width:120px;'><span class='glyphicon glyphicon-cloud-download'></span></button>";
+var DownloadButtonMarkUp = "<button class='btn btn-default btn-sm' data-toggle='tooltip' title='##TOOLTIP##' onclick='##ON_CLICK##' style='color:blue;'><span class='glyphicon glyphicon-cloud-download'></span></button>";
 
 var _columnsCases = [
     { field: 'Id' },
     { checkbox: true },
-    { field: 'NasBrojName', title: 'Naš broj', titleTooltip: 'Naš broj', sortable: true, sorter: NasBrojSorterFunction },
+    { field: 'NasBrojName', title: 'NB', titleTooltip: 'Naš broj', sortable: true, sorter: NasBrojSorterFunction, width: "50px" },
     { field: 'StrankaNasa', title: 'Naša stranka', titleTooltip: 'Naša stranka', sortable: true },
     { field: 'StrankaProtivna', title: 'Protivna stranka', titleTooltip: 'Protivna stranka', sortable: true },
     { field: 'VrstaPredmetaName', title: 'Vrsta predmeta', titleTooltip: 'Vrsta predmeta', sortable: true },
@@ -239,7 +239,7 @@ function LoadRadnje() {
     var _columns = [
         { field: 'PredmetId' },
         { field: 'Color' },
-        { field: 'VrstaRadnjeName_DatumRadnje', title: 'Vrsta radnje / Datum', titleTooltip: 'Vrsta radnje / Datum' },
+        { field: 'VrstaRadnjeName_DatumRadnje', title: 'Vrsta radnje / Datum', titleTooltip: 'Vrsta radnje / Datum', width: "150px" },
         { field: 'CaseNasBroj_CaseFullName_Biljeska', title: 'Predmet / Bilješka', titleTooltip: 'Predmet / Bilješka' }
     ];
 
@@ -349,8 +349,8 @@ function LoadCaseActivities() {
         { field: 'Id' },
         { field: 'Color' },
         { field: 'CaseId' },
+        { field: 'ActivityDate', title: 'Za datum', titleTooltip: 'Za datum', sortable: false, sorter: DateSorterFunction, width: "100px" },
         { field: 'CaseFullName', title: 'Predmet', titleTooltip: 'Predmet', sortable: false },
-        { field: 'ActivityDate', title: 'Za datum', titleTooltip: 'Za datum', sortable: false, sorter: DateSorterFunction },
         { field: 'BrojPredmeta', title: 'Broj predmeta', titleTooltip: 'Broj predmeta', sortable: false, visible: false },
         { field: 'KategorijaPredmeta', title: 'Kategorija', titleTooltip: 'Kategorija', sortable: false },
         { field: 'Note', title: 'Bilješka', titleTooltip: 'Bilješka', sortable: false },
@@ -550,7 +550,7 @@ function MenuCases() {
     MenuCases_LoadDataOnly();
 
     LoadLabels(true);
-    LoadCases();
+    //LoadCases();
 }
 
 function ApplyLabel(_contentType, isCaseEdit) {
@@ -740,7 +740,9 @@ function LoadCases(caseId, callback, filter) {
                         clickToSelect: false,
                         onPostBody: function () {
                             AfterBindCases();
-                            if (callback != undefined && typeof (callback) == "function")
+                            if ($("#txtCasesFilterNasBroj").val() != null && $("#txtCasesFilterNasBroj").val() != "")
+                                EditCase(data[0].Id);
+                            else if (callback != undefined && typeof (callback) == "function")
                                 callback();
                             return false;
                         },
@@ -807,7 +809,7 @@ function AfterBindCases() {
             $(element).find("td:first-child").hide();
 
 
-            var buttonsHTML = "<td style='width: 100px;'><div class='btn-group pull-right'>";
+            var buttonsHTML = "<td style='width: 90px;'><div class='btn-group pull-right'>";
             buttonsHTML +=
                         "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Pregledaj / izmijeni podatke o predmetu' onclick='EditCase(" + tempId.toString() + "); return false;'>"
                         + "<span class='glyphicon glyphicon-pencil'></span>"
@@ -888,7 +890,7 @@ function LoadParties(queryStringPartyId) {
 
     var _columns = [
         { field: 'Id' },
-        { field: 'Naziv', title: 'Ime / Naziv', titleTooltip: 'Ime / Naziv', sortable: true },
+        { field: 'Naziv', title: 'Ime / Naziv', titleTooltip: 'Ime / Naziv', sortable: true, "class": "bold" },
         { field: 'Ime', title: 'Ime', titleTooltip: 'Ime', sortable: true, visible: false },
         { field: 'Prezime', title: 'Prezime', titleTooltip: 'Prezime', sortable: true, visible: false },
         { field: 'PravnoLice', title: 'Pravno lice', titleTooltip: 'Pravno lice', sortable: true, visible: false },
@@ -1369,7 +1371,7 @@ function LoadSudovi() {
 
     var _columns = [
         { field: 'Id' },
-        { field: 'Naziv', title: 'Naziv', titleTooltip: 'Naziv', sortable: true },
+        { field: 'Naziv', title: 'Naziv', titleTooltip: 'Naziv', sortable: true, "class": "bold" },
         { field: 'Adresa', title: 'Adresa', titleTooltip: 'Adresa', sortable: true },
         { field: 'PostanskiBroj', title: 'Poštanski broj', titleTooltip: 'Poštanski broj', sortable: true, align: "right" },
         { field: 'Grad', title: 'Grad', titleTooltip: 'Grad', sortable: true },
@@ -1464,6 +1466,10 @@ function AfterBindSudovi() {
 
                 $(element).append(buttonsHTML);
             }
+
+            $(element).dblclick(function () {
+                EditSud(tempId);
+            });
         }
     });
 }
@@ -1773,6 +1779,8 @@ function EditCase(id) {
     $("#txtCase_CaseActivity_Note").attr("disabled", "disabled");
     $("#cbCase_CaseActivity_ForAllUsers").attr("disabled", "disabled");
 
+    $("#btnGenerateTemplateForCase").off("click");
+
     if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0)
         $("#btnSaveCase").show();
 
@@ -1944,6 +1952,10 @@ function EditCase(id) {
                     else
                         ShowAlert("danger", "Greška prilikom učitavanja veza. Probajte ponovo ili kontaktirajte administratora.");
                     HideLoaderCenter();
+                });
+
+                $("#btnGenerateTemplateForCase").click(function () {
+                    GenerateTemplateForCase(CurrentCase.Id);
                 });
 
                 $("#btnOpenModalEditCase").click();
@@ -2564,6 +2576,8 @@ function ClearModalCase() {
     $("#txtCase_CaseActivity_Note").attr("disabled", "disabled");
     $("#cbCase_CaseActivity_ForAllUsers").attr("disabled", "disabled");
 
+    $("#btnGenerateTemplateForCase").off("click");
+
     $("#btnSaveCase").hide();
 }
 
@@ -2838,10 +2852,10 @@ function AppendPartyToCase() {
 
 function BindCaseParties(_data) {
     var _columns = [
-        { field: 'Lice', title: 'Stranka', titleTooltip: 'Stranka', sortable: true },
-        { field: 'Broj', title: 'Broj', titleTooltip: 'Broj', sortable: true },
-        { field: 'Uloga', title: 'Uloga', titleTooltip: 'Uloga', sortable: true },
-        { field: 'GlavnaStranka', title: 'Vrsta stranke', titleTooltip: 'Vrsta stranke', sortable: true }
+        { field: 'Lice', title: 'Stranka', titleTooltip: 'Stranka', sortable: true, "class": "bold" },
+        { field: 'Broj', title: 'Broj', titleTooltip: 'Broj', sortable: true, width: "30px", align: "right" },
+        { field: 'Uloga', title: 'Uloga', titleTooltip: 'Uloga', sortable: true, width: "200px" },
+        { field: 'GlavnaStranka', title: 'Vrsta stranke', titleTooltip: 'Vrsta stranke', sortable: true, width: "120px" }
     ];
 
     $("#tblCaseParties").bootstrapTable("destroy");
@@ -2942,9 +2956,9 @@ function AppendNoteToCase() {
 
 function BindCaseNotes(_data) {
     var _columns = [
-        { field: 'NoteDate', title: 'Datum', titleTooltip: 'Datum', sortable: true, sorter: DateSorterFunction },
+        { field: 'NoteDate', title: 'Datum', titleTooltip: 'Datum', sortable: true, sorter: DateSorterFunction, width: "150px" },
         { field: 'NoteText', title: 'Bilješka', titleTooltip: 'Bilješka', sortable: true },
-        { field: 'CreatedByName', title: 'Izrađena od', titleTooltip: 'Izrađena od', sortable: true }
+        { field: 'CreatedByName', title: 'Izrađena od', titleTooltip: 'Izrađena od', sortable: true, width: "150px" }
     ];
 
     $("#tblCaseNotes").bootstrapTable("destroy");
@@ -3127,8 +3141,8 @@ function AppendDocumentToCase() {
 function BindCaseDocuments(_data) {
     var _columns = [
         { field: 'TipDokumentaName', title: 'Tip dokumenta', titleTooltip: 'Tip dokumenta', sortable: true },
-        { field: 'PredatoUzDokumentName', title: 'Predato uz', titleTooltip: 'Predato uz', sortable: true },
         { field: 'Note', title: 'Bilješke', titleTooltip: 'Bilješke', sortable: true },
+        { field: 'PredatoUzDokumentName', title: 'Predato uz', titleTooltip: 'Predato uz', sortable: true },
         { field: 'GoogleDriveDocIdHTML', title: 'Dokument', titleTooltip: 'Dokument', sortable: false, align: "right", width: "150" }
     ];
 
@@ -3171,10 +3185,15 @@ function AfterBindCaseDocuments() {
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0 && CurrentCase.Documents.length > 0)
                 if ($("#caseDocumentsEmptyHeader").length == 0)
                     $(element).append("<th id='caseDocumentsEmptyHeader'></th>");
+            $(element).find("th:nth-child(4)").hide();
         }
         else if (CurrentCase.Documents.length > 0) {
+            var buttonsHTML = "<td style='width: 200px;'><div class='btn-group pull-right'>";
+            var downloadButtonHTML = $(element).find("td:nth-child(4)").html();
+            $(element).find("td:nth-child(4)").hide();
+            buttonsHTML += downloadButtonHTML;
+
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
-                var buttonsHTML = "<td style='width: 160px;'><div class='btn-group pull-right'>";
                 buttonsHTML +=
                             "<button class='btn btn-default btn-sm' data-toggle='tooltip' title='Kopiraj dokument (moguće ga je zalijepiti u drugi predmet)' onclick='CopyCaseDocument(" + (index - 1) + "); return false;'>"
                             + "<span class='glyphicon glyphicon-copy'></span>"
@@ -3191,10 +3210,10 @@ function AfterBindCaseDocuments() {
                             "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši dokument' onclick='DeleteCaseDocument(" + (index - 1) + "); return false;'>"
                             + "<span class='glyphicon glyphicon-remove'></span>"
                             + "</button>";
-                buttonsHTML += "</div></td>";
-
-                $(element).append(buttonsHTML);
             }
+
+            buttonsHTML += "</div></td>";
+            $(element).append(buttonsHTML);
         }
     });
 }
@@ -3286,8 +3305,8 @@ function AppendRadnjaToCase() {
 
 function BindCaseRadnje(_data) {
     var _columns = [
-        { field: 'VrstaRadnjeNameString', title: 'Vrsta radnje', titleTooltip: 'Vrsta radnje', sortable: true },
-        { field: 'DatumRadnjeString', title: 'Datum', titleTooltip: 'Datum', sortable: true, sorter: DateSorterFunction },
+        { field: 'VrstaRadnjeNameString', title: 'Vrsta radnje', titleTooltip: 'Vrsta radnje', sortable: true, width: "600px" },
+        { field: 'DatumRadnjeString', title: 'Datum', titleTooltip: 'Datum', sortable: true, sorter: DateSorterFunction, width: "150px" },
         //{ field: 'Troskovi', title: 'Troškovi', titleTooltip: 'Troškovi', sortable: true, align: "right" },
         { field: 'Biljeske', title: 'Bilješke', titleTooltip: 'Bilješke', sortable: true },
         { field: 'GoogleDriveDocIdHTML', title: 'Dokument', titleTooltip: 'Dokument', sortable: false, align: "right", width: "150" }
@@ -3343,10 +3362,16 @@ function AfterBindCaseRadnje() {
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0 && CurrentCase.Radnje.length > 0)
                 if ($("#caseRadnjeEmptyHeader").length == 0)
                     $(element).append("<th id='caseRadnjeEmptyHeader'></th>");
+            $(element).find("th:nth-child(4)").hide();
         }
         else if (CurrentCase.Radnje.length > 0) {
+            var buttonsHTML = "<td style='width: 130px;'><div class='btn-group pull-right'>";
+            var downloadButtonHTML = $(element).find("td:nth-child(4)").html();
+            $(element).find("td:nth-child(4)").hide();
+            buttonsHTML += downloadButtonHTML;
+
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
-                var buttonsHTML = "<td style='width: 100px;'><div class='btn-group pull-right'>";
+
                 buttonsHTML +=
                             "<button class='btn btn-warning btn-sm' data-toggle='tooltip' title='Izmijeni radnju' onclick='EditCaseRadnja(" + (index - 1) + "); return false;'>"
                             + "<span class='glyphicon glyphicon-pencil'></span>"
@@ -3355,10 +3380,10 @@ function AfterBindCaseRadnje() {
                             "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši radnju' onclick='DeleteCaseRadnja(" + (index - 1) + "); return false;'>"
                             + "<span class='glyphicon glyphicon-remove'></span>"
                             + "</button>";
-                buttonsHTML += "</div></td>";
-
-                $(element).append(buttonsHTML);
             }
+
+            buttonsHTML += "</div></td>";
+            $(element).append(buttonsHTML);
         }
     });
 }
@@ -3435,9 +3460,9 @@ function AppendExpenseToCase() {
 function BindCaseExpenses(_data) {
     var _columns = [
         { field: 'VrstaTroskaName', title: 'Vrsta troška', titleTooltip: 'Vrsta troška', sortable: true },
-        { field: 'AmountString', title: 'Iznos (BAM)', titleTooltip: 'Iznos (BAM)', sortable: true, align: "right" },
-        { field: 'ExpenseDate', title: 'Datum plaćanja', titleTooltip: 'Datum plaćanja', sortable: true, sorter: DateSorterFunction },
-        { field: 'PaidBy', title: 'Plaćeno od', titleTooltip: 'Plaćeno od', sortable: true }
+        { field: 'AmountString', title: 'Iznos (BAM)', titleTooltip: 'Iznos (BAM)', sortable: true, align: "right", width: "150px" },
+        { field: 'ExpenseDate', title: 'Datum plaćanja', titleTooltip: 'Datum plaćanja', sortable: true, sorter: DateSorterFunction, width: "120px" },
+        { field: 'PaidBy', title: 'Plaćeno od', titleTooltip: 'Plaćeno od', sortable: true, width: "100px" }
     ];
 
     $("#tblCaseExpenses").bootstrapTable("destroy");

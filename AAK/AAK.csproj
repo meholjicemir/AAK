@@ -152,6 +152,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Global.asax" />
+    <Content Include="Images\logocms.png" />
     <Content Include="Libraries\Bootstrap\bootstrap-datetimepicker\bootstrap-datetimepicker.min.css" />
     <Content Include="Libraries\Bootstrap\bootstrap-datetimepicker\bootstrap-datetimepicker.min.js" />
     <Content Include="Libraries\Bootstrap\bootstrap-datetimepicker\moment.min.js" />

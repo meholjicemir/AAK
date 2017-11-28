@@ -1,4 +1,6 @@
 ﻿body {
+    font-size: 1.3em;
+    color: #000;
 }
 
 .glyphicon {
@@ -303,7 +305,8 @@ li > a.menu-item {
 }
 
 .menu-div {
-    margin: 10px;
+    max-width: 1150px;
+    margin: 0 auto;
 }
 
 .fixed-width-label {
@@ -337,7 +340,7 @@ select.fixed-width-field {
 }
 
 .input-group {
-    padding-top: 5px;
+    /*padding-top: 5px;*/
 }
 
 .alert {
@@ -401,7 +404,7 @@ select.fixed-width-field {
 
 .modal-admin {
     margin-top: 50px;
-    max-width: 1220px;
+    max-width: 1150px;
 }
 
 .yellowish-background {
@@ -426,7 +429,7 @@ select.fixed-width-field {
 }
 
 .spinning {
-    margin-top: 5px;
+    margin-top: -4px;
 }
 
 .fixed-table-container tbody .selected td {
@@ -474,4 +477,24 @@ tr:hover td {
 
 .picker-dialog {
     z-index: 20001 !important;
+}
+
+
+.form-control {
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 26px !important;
+}
+
+.input-group-addon {
+    font-size: 10px !important;
+}
+
+.btn {
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+}
+
+.bold {
+    font-weight: bold;
 }
