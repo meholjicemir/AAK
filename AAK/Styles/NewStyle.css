@@ -1,6 +1,7 @@
 ﻿body {
     font-size: 1.3em;
     color: #000;
+    font-family: Arial;
 }
 
 .glyphicon {
@@ -92,11 +93,6 @@
 
 tr:hover td {
     background-color: #b0d3dd !important;
-}
-
-body {
-    font-family: Arial;
-    /*font-size: 10px;*/
 }
 
 .navbar-default {
@@ -344,8 +340,8 @@ select.fixed-width-field {
 }
 
 .alert {
-    margin-left: 1%;
-    margin-right: 1%;
+    position: absolute;
+    width: 600px;
 }
 
 .custom-table-button-edit {
@@ -374,33 +370,6 @@ select.fixed-width-field {
     border: 1px solid #ddd;
     margin-top: -1px;
 }
-
-
-.nas-broj-text {
-    max-width: 100px;
-    color: red;
-    font-weight: bold;
-}
-
-    .nas-broj-text::-webkit-input-placeholder { /* Chrome/Opera/Safari */
-        color: #999;
-        font-weight: normal;
-    }
-
-    .nas-broj-text::-moz-placeholder { /* Firefox 19+ */
-        color: #999;
-        font-weight: normal;
-    }
-
-    .nas-broj-text:-ms-input-placeholder { /* IE 10+ */
-        color: #999;
-        font-weight: normal;
-    }
-
-    .nas-broj-text:-moz-placeholder { /* Firefox 18- */
-        color: #999;
-        font-weight: normal;
-    }
 
 .modal-admin {
     margin-top: 50px;
@@ -457,7 +426,7 @@ tr:hover td {
 
 #divGoogleSignIn {
     margin: 10%;
-    border: 3px solid #31b0d5;
+    /*border: 3px solid #31b0d5;*/
     border-radius: 20px;
     vertical-align: middle;
     text-align: center;
@@ -484,6 +453,12 @@ tr:hover td {
     padding-top: 0;
     padding-bottom: 0;
     height: 26px !important;
+    font-size: unset;
+    color: #000000 !important;
+}
+
+textarea.form-control {
+    height: auto !important;
 }
 
 .input-group-addon {
@@ -498,3 +473,29 @@ tr:hover td {
 .bold {
     font-weight: bold;
 }
+
+.nas-broj-text {
+    max-width: 100px;
+    color: red !important;
+    font-weight: bold;
+}
+
+    .nas-broj-text::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+        color: #999;
+        font-weight: normal;
+    }
+
+    .nas-broj-text::-moz-placeholder { /* Firefox 19+ */
+        color: #999;
+        font-weight: normal;
+    }
+
+    .nas-broj-text:-ms-input-placeholder { /* IE 10+ */
+        color: #999;
+        font-weight: normal;
+    }
+
+    .nas-broj-text:-moz-placeholder { /* Firefox 18- */
+        color: #999;
+        font-weight: normal;
+    }

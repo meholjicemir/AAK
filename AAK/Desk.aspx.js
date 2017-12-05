@@ -175,6 +175,8 @@ function RenderApp(user) {
 
     if (window.innerWidth > 1240)
         $(".modal-admin").css("margin-left", ((window.innerWidth - 1240) / 2).toString() + "px");
+
+    SetMenuLocation();
 }
 
 function OpenMenuByModule() {
@@ -349,8 +351,8 @@ function LoadCaseActivities() {
         { field: 'Id' },
         { field: 'Color' },
         { field: 'CaseId' },
-        { field: 'ActivityDate', title: 'Za datum', titleTooltip: 'Za datum', sortable: false, sorter: DateSorterFunction, width: "100px" },
-        { field: 'CaseFullName', title: 'Predmet', titleTooltip: 'Predmet', sortable: false },
+        { field: 'ActivityDate', title: 'Za datum', titleTooltip: 'Za datum', sortable: false, sorter: DateSorterFunction, width: "100px", "class": "bold" },
+        { field: 'CaseFullName', title: 'Predmet', titleTooltip: 'Predmet', sortable: false, "class": "bold" },
         { field: 'BrojPredmeta', title: 'Broj predmeta', titleTooltip: 'Broj predmeta', sortable: false, visible: false },
         { field: 'KategorijaPredmeta', title: 'Kategorija', titleTooltip: 'Kategorija', sortable: false },
         { field: 'Note', title: 'Bilješka', titleTooltip: 'Bilješka', sortable: false },
@@ -448,9 +450,6 @@ function AfterBindCaseActivities() {
                     break;
                 default:
                     $(element).css("background-color", tempColor).css("color", "white");
-                    $(element).find("td:nth-child(3)").css("font-weight", "bold");
-                    $(element).find("td:nth-child(4)").css("font-weight", "bold");
-                    $(element).find("td:nth-child(7)").css("font-weight", "bold");
                     break;
             }
 
@@ -663,7 +662,7 @@ function DeleteLabelConnection(element, labelId, contentType, contentId) {
     });
 }
 
-function LoadCases(caseId, callback, filter) {
+function LoadCases(caseId, callback, filter, isCaseJustSaved) {
     ShowLoaderCenter();
 
     if (filter != undefined && filter != null && filter.length > 0) {
@@ -717,11 +716,11 @@ function LoadCases(caseId, callback, filter) {
                         // OTVOREN
                         _case.KategorijaPredmetaName = "<span style='color: #00b6ee; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
                         break;
-                    case 7:
+                    case 8:
                         // ARHIVIRAN
                         _case.KategorijaPredmetaName = "<span style='color: #ff0000; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
                         break;
-                    case 9:
+                    case 10:
                         //PO ŽALBI/PRIGOVORU
                         _case.KategorijaPredmetaName = "<span style='color: #21b04b; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
                         break;
@@ -740,7 +739,7 @@ function LoadCases(caseId, callback, filter) {
                         clickToSelect: false,
                         onPostBody: function () {
                             AfterBindCases();
-                            if ($("#txtCasesFilterNasBroj").val() != null && $("#txtCasesFilterNasBroj").val() != "")
+                            if (isCaseJustSaved !== true && $("#txtCasesFilterNasBroj").val() != null && $("#txtCasesFilterNasBroj").val() != "")
                                 EditCase(data[0].Id);
                             else if (callback != undefined && typeof (callback) == "function")
                                 callback();
@@ -1632,7 +1631,7 @@ function SaveCase() {
             if (CurrentModule == "home") // Case activities loaded in SaveCaseActivity()
                 LoadRadnje();
             else if (CurrentModule == "cases")
-                LoadCases();
+                LoadCases(undefined, undefined, undefined, true);
         }
         else {
             HideLoaderCenter();
@@ -1781,8 +1780,8 @@ function EditCase(id) {
 
     $("#btnGenerateTemplateForCase").off("click");
 
-    if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0)
-        $("#btnSaveCase").show();
+    $("#btnSaveCase").hide();
+    $("#btnSaveAndCloseCase").hide();
 
     if (Predmeti == null) {
         MenuCases_LoadDataOnly();
@@ -1795,7 +1794,7 @@ function EditCase(id) {
                 caseFound = true;
                 CurrentCase = $.extend(true, {}, obj);
                 $("#txtCase_NasBroj").val(CurrentCase.NasBroj);
-                $("#ddlCase_Kategorija").val(CurrentCase.KategorijaPredmetaId);
+                $("#ddlCase_Kategorija").val(CurrentCase.KategorijaPredmetaId).change();
                 $("#ddlCase_Uloga").val(CurrentCase.UlogaId);
                 $("#cbCase_PrivremeniZastupnici").prop("checked", CurrentCase.PrivremeniZastupnici);
                 $("#cbCase_PristupPredmetu").prop("checked", CurrentCase.PristupPredmetu);
@@ -1836,7 +1835,18 @@ function EditCase(id) {
                     $("#divCase_Labels").css("max-width", ($("#divCase_Labels").parent().parent().width() / 2).toString() + "px");
                 }, 1000);
 
+                var allLoadedFlag = 0;
+
+                function HandleAllLoadedFlag() {
+                    allLoadedFlag--;
+                    if (allLoadedFlag <= 0 && CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
+                        $("#btnSaveCase").show();
+                        $("#btnSaveAndCloseCase").show();
+                    }
+                };
+
                 ShowLoaderCenter();
+                allLoadedFlag++;
                 $.get(AppPath + "api/licepredmet", {
                     Id: CurrentCase.Id,
                     Token: CurrentUser.Token,
@@ -1846,6 +1856,7 @@ function EditCase(id) {
                     CurrentCase.Parties = data;
                     BindCaseParties(CurrentCase.Parties);
                     HideLoaderCenter();
+                    HandleAllLoadedFlag();
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
                     if (jqXHR.status == 403)
@@ -1853,9 +1864,11 @@ function EditCase(id) {
                     else
                         ShowAlert("danger", "Greška prilikom učitavanja stranki. Probajte ponovo ili kontaktirajte administratora.");
                     HideLoaderCenter();
+                    HandleAllLoadedFlag();
                 });
 
                 ShowLoaderCenter();
+                allLoadedFlag++;
                 $.get(AppPath + "api/note", {
                     CaseId: CurrentCase.Id,
                     Token: CurrentUser.Token,
@@ -1865,6 +1878,7 @@ function EditCase(id) {
                     CurrentCase.Notes = data;
                     BindCaseNotes(CurrentCase.Notes);
                     HideLoaderCenter();
+                    HandleAllLoadedFlag();
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
                     if (jqXHR.status == 403)
@@ -1872,9 +1886,11 @@ function EditCase(id) {
                     else
                         ShowAlert("danger", "Greška prilikom učitavanja bilješki. Probajte ponovo ili kontaktirajte administratora.");
                     HideLoaderCenter();
+                    HandleAllLoadedFlag();
                 });
 
                 ShowLoaderCenter();
+                allLoadedFlag++;
                 $.get(AppPath + "api/expense", {
                     CaseId: CurrentCase.Id,
                     Token: CurrentUser.Token,
@@ -1884,6 +1900,7 @@ function EditCase(id) {
                     CurrentCase.Expenses = data;
                     BindCaseExpenses(CurrentCase.Expenses);
                     HideLoaderCenter();
+                    HandleAllLoadedFlag();
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
                     if (jqXHR.status == 403)
@@ -1891,9 +1908,11 @@ function EditCase(id) {
                     else
                         ShowAlert("danger", "Greška prilikom učitavanja troškova. Probajte ponovo ili kontaktirajte administratora.");
                     HideLoaderCenter();
+                    HandleAllLoadedFlag();
                 });
 
                 ShowLoaderCenter();
+                allLoadedFlag++;
                 $.get(AppPath + "api/radnja", {
                     PredmetId: CurrentCase.Id,
                     UserId: CurrentUser.Id,
@@ -1905,6 +1924,7 @@ function EditCase(id) {
                     CurrentCase.DeletedRadnje = [];
                     BindCaseRadnje(CurrentCase.Radnje);
                     HideLoaderCenter();
+                    HandleAllLoadedFlag();
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
                     if (jqXHR.status == 403)
@@ -1912,9 +1932,11 @@ function EditCase(id) {
                     else
                         ShowAlert("danger", "Greška prilikom učitavanja radnji. Probajte ponovo ili kontaktirajte administratora.");
                     HideLoaderCenter();
+                    HandleAllLoadedFlag();
                 });
 
                 ShowLoaderCenter();
+                allLoadedFlag++;
                 $.get(AppPath + "api/document", {
                     CaseId: CurrentCase.Id,
                     UserId: CurrentUser.Id,
@@ -1925,6 +1947,7 @@ function EditCase(id) {
                     CurrentCase.Documents = data;
                     BindCaseDocuments(CurrentCase.Documents);
                     HideLoaderCenter();
+                    HandleAllLoadedFlag();
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
                     if (jqXHR.status == 403)
@@ -1932,9 +1955,11 @@ function EditCase(id) {
                     else
                         ShowAlert("danger", "Greška prilikom učitavanja dokumenata. Probajte ponovo ili kontaktirajte administratora.");
                     HideLoaderCenter();
+                    HandleAllLoadedFlag();
                 });
 
                 ShowLoaderCenter();
+                allLoadedFlag++;
                 $.get(AppPath + "api/connection", {
                     CaseId: CurrentCase.Id,
                     UserId: CurrentUser.Id,
@@ -1945,6 +1970,7 @@ function EditCase(id) {
                     CurrentCase.Connections = data;
                     BindCaseConnections(CurrentCase.Connections);
                     HideLoaderCenter();
+                    HandleAllLoadedFlag();
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
                     if (jqXHR.status == 403)
@@ -1952,6 +1978,7 @@ function EditCase(id) {
                     else
                         ShowAlert("danger", "Greška prilikom učitavanja veza. Probajte ponovo ili kontaktirajte administratora.");
                     HideLoaderCenter();
+                    HandleAllLoadedFlag();
                 });
 
                 $("#btnGenerateTemplateForCase").click(function () {
@@ -2493,7 +2520,7 @@ function ClearModalCase() {
     $("#modalCase").removeAttr("edit_id");
 
     $("#txtCase_NasBroj").val("");
-    $("#ddlCase_Kategorija").val(-1);
+    $("#ddlCase_Kategorija").val(-1).change();
     $("#ddlCase_Uloga").val(-1);
     $("#cbCase_PrivremeniZastupnici").prop("checked", false);
     $("#cbCase_PristupPredmetu").prop("checked", false);
@@ -2579,6 +2606,7 @@ function ClearModalCase() {
     $("#btnGenerateTemplateForCase").off("click");
 
     $("#btnSaveCase").hide();
+    $("#btnSaveAndCloseCase").hide();
 }
 
 function ClearModalParty() {
@@ -4108,4 +4136,56 @@ $("#cbCase_CaseActivity_SaveNew").change(function () {
         $("#cbCase_CaseActivity_ForAllUsers").attr("disabled", "disabled");
         $("#txtCase_CaseActivity_ActivityDaysOffset").attr("disabled", "disabled");
     }
+});
+
+
+$("#ddlCase_Kategorija").change(function () {
+    switch (parseInt($(this).val())) {
+        case 5:
+            // OTVOREN
+            $(this).css("background-color", "#00b6ee");
+            break;
+        case 8:
+            // ARHIVIRAN
+            $(this).css("background-color", "#ff0000");
+            break;
+        case 10:
+            //PO ŽALBI/PRIGOVORU
+            $(this).css("background-color", "#21b04b");
+            break;
+        default:
+            $(this).css("background-color", "#ffffff");
+            break;
+    }
+});
+
+$('#modalTemplate').on('hidden.bs.modal', function () {
+    // If in case edit mode, then keep the case modal open after closing template modal.
+    var tempId = $("#modalCase").attr("edit_id");
+    if (tempId != undefined) {
+        $("#modalCase").css("overflow-y", "scroll");
+        $("body").css("overflow", "hidden");
+    }
+});
+
+$('#modalCase').on('hidden.bs.modal', function () {
+    $("body").css("overflow", "auto");
+});
+
+function SetMenuLocation() {
+    if (window.innerWidth > 1000) {
+        var leftOffset = (window.innerWidth - $("#navBarMenuContainer").width()) / 2;
+        $("#navBarMenuContainer").css("left", leftOffset.toString() + "px");
+        $("#strongNavBarHeader").show();
+    }
+    else if (window.innerWidth >= 768) {
+        $("#navBarMenuContainer").css("left", "0");
+        $("#strongNavBarHeader").hide();
+    }
+    else
+        $("#navBarMenuContainer").css("left", "0");
+}
+
+$(window).resize(function () {
+    SetMenuLocation();
 });

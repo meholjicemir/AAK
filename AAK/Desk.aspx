@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-multiselect/bootstrap-multiselect.css" />
     <link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css" />
     <link rel="stylesheet" href="Libraries/jQuery/jquery-ui.min.css" />
-    <link rel="stylesheet" href="Styles/NewStyle.min.css?v=22" />
+    <link rel="stylesheet" href="Styles/NewStyle.min.css?v=201" />
 </head>
 <body>
     <script src="Libraries/jQuery/jquery-1.12.0.min.js"></script>
@@ -35,16 +35,14 @@
         var GoogleDriveRootFolderId = "<%=ConfigurationManager.AppSettings["GoogleDriveRootFolderId"].ToString()%>";
     </script>
 
-    <script src="Desk.aspx.min.js?v=22" defer="defer"></script>
+    <script src="Desk.aspx.min.js?v=204" defer="defer"></script>
 
     <iframe id="iframeDownload" style="position: absolute; left: -1000px;"></iframe>
 
     <div id="divGoogleSignIn">
         <img src="Images/logocms.png" alt="Logo" />
-        <h1>Baza podataka</h1>
+        <h1>BAZA PODATAKA</h1>
         <hr />
-        <%--<div class="g-signin2" data-onsuccess="onSignIn"></div>--%>
-
         <!--Add buttons to initiate auth sequence and sign out-->
         <center>
         <button id="authorize-button"class="btn btn-default" style="display: none;">Prijavi se (Google)</button>
@@ -77,7 +75,7 @@
                         <strong style="font-size: 1.1em;" id="strongNavBarHeader">Advokatsko društvo Đonko</strong>
                     </a>
                 </div>
-                <ul class="nav navbar-nav collapse navbar-collapse" id="navBarMenuContainer">
+                <ul class="nav navbar-nav collapse navbar-collapse" id="navBarMenuContainer" style="width: 700px; position: fixed; background-color: #f8f8f8;">
                     <li class="menu-item" id="liMenuHome" style="display: none;"><a href="#" onclick="MenuHome(); return false;"><strong>Početna</strong></a></li>
                     <li class="menu-item" id="liMenuCases" style="display: none;"><a href="#" onclick="MenuCases(); return false;"><strong>Predmeti</strong></a></li>
                     <li class="menu-item" id="liMenuParties" style="display: none;"><a href="#" onclick="MenuParties(); return false;"><strong>Stranke</strong></a></li>
@@ -111,7 +109,7 @@
         </div>
 
         <!-- BEGIN: Alerts -->
-        <div id="divAlertGeneral"></div>
+        <div id="divAlertGeneral" style="width: 600px; margin: 0 auto;"></div>
         <!-- END: Alerts -->
 
 
@@ -272,7 +270,7 @@
                             </select>
                             <br />
                             <label for="ddlCase_Search_Uloga" class="fixed-width-label-narrow">Uloga u postupku:</label>
-                            <select class="form-control" id="ddlCase_Search_Uloga" multiple="multiple">
+                            <select class="form-control dynamic-width-field" id="ddlCase_Search_Uloga" multiple="multiple">
                             </select>
                             <%--<br />
                             <label for="cbCase_Search_PrivremeniZastupnici" class="fixed-width-label">Privremeni zastupnici</label>
@@ -358,7 +356,7 @@
                                 </span>
                             </span>
                             <span class="form-group has-feedback">
-                                <input type="text" class="form-control" id="txtCase_Search_StanjePredmeta" style="width: 250px;"/>
+                                <input type="text" class="form-control" id="txtCase_Search_StanjePredmeta" style="width: 250px;" />
                                 <i id="spinner_txtCase_Search_StanjePredmeta" class="glyphicon glyphicon-refresh spinning form-control-feedback" style="display: none;"></i>
                             </span>
                             <br />
@@ -468,7 +466,7 @@
                                 </select>
                                 <br />
                                 <label for="ddlCase_Uloga" class="fixed-width-label-narrow">Uloga u postupku:</label>
-                                <select class="form-control" id="ddlCase_Uloga">
+                                <select class="form-control dynamic-width-field" id="ddlCase_Uloga">
                                     <option value="-1">-----</option>
                                 </select>
                                 <br />
@@ -527,7 +525,7 @@
                                     <i id="spinner_txtCase_StanjePredmeta" class="glyphicon glyphicon-refresh spinning form-control-feedback" style="display: none;"></i>
                                 </span>
                             </form>
-                            <button class='btn btn-default btn-sm custom-table-button-template pull-right' data-toggle='tooltip' title='Generiši dokument iz predloška' id="btnGenerateTemplateForCase" style="display: none;">
+                            <button class='btn btn-default btn-sm custom-table-button-template pull-right' data-toggle='tooltip' title='Generiši dokument iz predloška' id="btnGenerateTemplateForCase">
                                 <span class='glyphicon glyphicon-file'></span>&nbsp; Generiši dokument
                             </button>
                         </div>
@@ -644,13 +642,13 @@
                             <div class="other-tab" style="display: none;" id="divTroskovi">
                                 <form class="form-inline only-office-admin" role="form">
                                     <label for="ddlCase_ExpenseVrstaTroska">Vrsta troška:</label>
-                                    <select id="ddlCase_ExpenseVrstaTroska" class="form-control" style="max-width: 300px;">
+                                    <select id="ddlCase_ExpenseVrstaTroska" class="form-control" style="max-width: 250px;">
                                         <option value="-1">-----</option>
                                     </select>
                                     <label for="txtCase_ExpenseAmount">Iznos:</label>
-                                    <input type="text" class="form-control" id="txtCase_ExpenseAmount" />
+                                    <input type="text" class="form-control" id="txtCase_ExpenseAmount" style="width: 150px;" />
                                     <label for="dateTimePicker_ExpenseDate">Datum:</label>
-                                    <div class="input-group date" id="dateTimePicker_ExpenseDate">
+                                    <div class="input-group date" id="dateTimePicker_ExpenseDate" style="width: 150px;">
                                         <input type="text" class="form-control" id="txtCase_ExpenseDate" />
                                         <span class="input-group-addon btn">
                                             <span class="glyphicon glyphicon-calendar"></span>
@@ -723,14 +721,14 @@
                             <div class="other-tab" style="display: none;" id="divBiljeske">
                                 <form class="form-inline only-office-admin" role="form">
                                     <label for="dateTimePicker_NoteDate">Datum:</label>
-                                    <div class="input-group date" id="dateTimePicker_NoteDate">
+                                    <div class="input-group date" id="dateTimePicker_NoteDate" style="width: 150px;">
                                         <input type="text" class="form-control" id="txtCase_NoteDate" />
                                         <span class="input-group-addon btn">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
                                     </div>
                                     <label for="txtCase_NoteText">Bilješka:</label>
-                                    <input type="text" class="form-control" id="txtCase_NoteText" style="min-width: 700px;" />
+                                    <input type="text" class="form-control" id="txtCase_NoteText" style="min-width: 600px;" />
                                     <button id="btnAppendNoteToCase" type="button" class="btn btn-success" disabled="disabled" onclick="AppendNoteToCase(); return false;">Dodaj</button>
                                 </form>
                                 <br />
@@ -819,7 +817,7 @@
                 </div>
                 <div class="modal-footer">
                     <button id="btnSaveCase" type="button" class="btn btn-primary only-office-admin" onclick="SaveCase(); return false;">Spasi</button>
-                    <button type="button" class="btn btn-primary only-office-admin" data-dismiss="modal" onclick="SaveCase(); return false;">Spasi i zatvori</button>
+                    <button id="btnSaveAndCloseCase" type="button" class="btn btn-primary only-office-admin" data-dismiss="modal" onclick="SaveCase(); return false;">Spasi i zatvori</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Zatvori</button>
                 </div>
             </div>
@@ -1090,7 +1088,7 @@
         <img id="imgUserPicture" height="50" width="50" alt="Slika korisnika" src="" data-toggle="tooltip" title="Slika korisnika" />
     </div>
     <div class="pull-right" style="position: fixed; bottom: 0; right: 0; margin: 2px; font-size: xx-small; z-index: 1000;">
-        <span class="pull-right">v2.0</span>
+        <span class="pull-right">v2.0.4</span>
     </div>
 </body>
 </html>
