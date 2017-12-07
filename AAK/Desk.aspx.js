@@ -2516,7 +2516,7 @@ function SaveCodeTableRecord() {
     });
 }
 
-function ClearModalCase() {
+function ClearModalCase(isNewCase) {
     $("#modalCase").removeAttr("edit_id");
 
     $("#txtCase_NasBroj").val("");
@@ -2605,8 +2605,15 @@ function ClearModalCase() {
 
     $("#btnGenerateTemplateForCase").off("click");
 
-    $("#btnSaveCase").hide();
-    $("#btnSaveAndCloseCase").hide();
+    if (isNewCase === true) {
+        $("#btnSaveCase").show();
+        $("#btnSaveAndCloseCase").show();
+    }
+    else {
+        $("#btnSaveCase").hide();
+        $("#btnSaveAndCloseCase").hide();
+    }
+
 }
 
 function ClearModalParty() {
@@ -2825,7 +2832,7 @@ function StartBuildingNewCase() {
     CurrentCase.Documents = [];
     CurrentCase.Connections = [];
 
-    ClearModalCase();
+    ClearModalCase(true);
 
     BindCaseParties([]);
     BindCaseNotes([]);
