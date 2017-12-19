@@ -808,7 +808,7 @@ function AfterBindCases() {
             $(element).find("td:first-child").hide();
 
 
-            var buttonsHTML = "<td style='width: 90px;'><div class='btn-group pull-right'>";
+            var buttonsHTML = "<td style='width: 120px;'><div class='btn-group pull-right'>";
             buttonsHTML +=
                         "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Pregledaj / izmijeni podatke o predmetu' onclick='EditCase(" + tempId.toString() + "); return false;'>"
                         + "<span class='glyphicon glyphicon-pencil'></span>"
@@ -819,12 +819,12 @@ function AfterBindCases() {
                         + "<span class='glyphicon glyphicon-file'></span>"
                         + "</button>";
 
-            //if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
-            //    buttonsHTML +=
-            //                "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši predmet' onclick='DeleteCase(" + tempId.toString() + "); return false;'>"
-            //                + "<span class='glyphicon glyphicon-remove'></span>"
-            //                + "</button>";
-            //}
+            if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
+                buttonsHTML +=
+                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši predmet' onclick='DeleteCase(" + tempId.toString() + "); return false;'>"
+                            + "<span class='glyphicon glyphicon-remove'></span>"
+                            + "</button>";
+            }
 
             buttonsHTML += "</div></td>";
             $(element).append(buttonsHTML);
@@ -832,6 +832,36 @@ function AfterBindCases() {
             $(element).dblclick(function () {
                 EditCase(tempId);
             });
+        }
+    });
+}
+
+function DeleteCase(id) {
+    $(Predmeti).each(function (index, obj) {
+        if (obj.Id == id) {
+            ShowPrompt(
+                "Da li ste sigurni da želite izbrisati predmet?",
+                "<span style='font-style: italic; color: gray;'>" + obj.NasBroj + "</span>",
+                function () {
+                    ShowLoaderCenter();
+                    $.ajax({
+                        url: AppPath + "api/predmet?Id=" + id.toString() + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
+                        type: "DELETE",
+                        success: function () {
+                            LoadCases();
+                            HideLoaderCenter();
+                            ShowAlert("success", "Uspješno izbrisan predmet.");
+                        },
+                        error: function () {
+                            HideLoaderCenter();
+                            ShowAlert("danger", "Greška pri brisanju predmeta.");
+                        }
+                    });
+                },
+                function () { }
+            );
+
+            return false; // break loop
         }
     });
 }
