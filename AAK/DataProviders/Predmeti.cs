@@ -150,12 +150,10 @@ namespace AAK.DataProviders
                     {
                         lp.PredmetId = predmet.Id;
 
-                        temp = (from LicePredmet tempLP in existingLicePredmeti
-                                where tempLP.LiceId == lp.LiceId && tempLP.PredmetId == lp.PredmetId && tempLP.UlogaId == lp.UlogaId
-                                select tempLP).FirstOrDefault();
-
-                        if (temp == null)
+                        if (lp.Id == -1)
                             LicePredmet_Insert(lp);
+                        else
+                            LicePredmet_Update(lp);
                     }
                 }
                 #endregion
@@ -333,6 +331,20 @@ namespace AAK.DataProviders
             collection.AddParameter<bool>("isProtivnaStranka", licePredmet.IsProtivnaStranka);
             collection.AddParameter<string>("broj", licePredmet.Broj);
             return DBUtility.Utility.ExecuteStoredProcedure<int>("LicePredmet_Insert", ref collection);
+        }
+
+
+        public static void LicePredmet_Update(LicePredmet licePredmet)
+        {
+            DBUtility.ParameterCollection collection = new DBUtility.ParameterCollection();
+            collection.AddParameter<int>("predmetId", licePredmet.PredmetId);
+            collection.AddParameter<int>("liceId", licePredmet.LiceId);
+            collection.AddParameter<int>("ulogaId", licePredmet.UlogaId);
+            collection.AddParameter<bool>("isNasaStranka", licePredmet.IsNasaStranka);
+            collection.AddParameter<bool>("isProtivnaStranka", licePredmet.IsProtivnaStranka);
+            collection.AddParameter<string>("broj", licePredmet.Broj);
+            collection.AddParameter<int>("id", licePredmet.Id);
+            DBUtility.Utility.ExecuteStoredProcedureVoid("LicePredmet_Update", ref collection);
         }
 
         public static void LicePredmet_Delete(int id)

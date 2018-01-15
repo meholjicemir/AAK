@@ -465,6 +465,7 @@ function AfterBindCaseActivities() {
             }
 
             $(element).dblclick(function () {
+                Predmeti = null;
                 EditCase(tempCaseId);
             });
         }
@@ -674,6 +675,9 @@ function LoadCases(caseId, callback, filter, isCaseJustSaved) {
 
     if (caseId == undefined)
         caseId = null;
+
+    if (caseId != null)
+        $("#txtCasesFilterNasBroj").val("");
 
     $.get(AppPath + "api/predmet", {
         UserId: CurrentUser.Id,
@@ -2884,7 +2888,8 @@ function AppendPartyToCase() {
                 GlavnaStranka: $("#ddlCase_GlavnaStranka option:selected").text(),
                 IsNasaStranka: $("#ddlCase_GlavnaStranka").val() == "ns",
                 IsProtivnaStranka: $("#ddlCase_GlavnaStranka").val() == "ps",
-                Broj: $("#ddlCase_UlogaOrdinalNo").val()
+                Broj: $("#ddlCase_UlogaOrdinalNo").val(),
+                Id: CurrentCase.Parties[editIndex].Id
             };
 
             $("#btnAppendPartyToCase").removeAttr("edit_index");
@@ -3175,7 +3180,8 @@ function AppendDocumentToCase() {
                 Note: $("#txtCase_Document_Note").val(),
                 DocumentName: $("#aCase_Document_DocumentLink").html(),
                 GoogleDriveDocId: $("#aCase_Document_DocumentLink").attr("google_drive_doc_id"),
-                CaseId: CurrentCase.Id
+                CaseId: CurrentCase.Id,
+                Id: CurrentCase.Documents[editIndex].Id
             };
 
             $("#btnAppendDocumentToCase").removeAttr("edit_index");
