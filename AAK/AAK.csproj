@@ -35,12 +35,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DBUtility, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -241,22 +243,30 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AdvancedSearchController.cs" />
     <Compile Include="Controllers\CaseActivityController.cs" />
+    <Compile Include="Controllers\CaseActivityDeleteController.cs" />
     <Compile Include="Controllers\CodeTableController.cs" />
+    <Compile Include="Controllers\CodeTableDeleteController.cs" />
     <Compile Include="Controllers\ConnectionController.cs" />
     <Compile Include="Controllers\DocumentController.cs" />
     <Compile Include="Controllers\ExpenseController.cs" />
     <Compile Include="Controllers\LabelConnectionController.cs" />
+    <Compile Include="Controllers\LabelConnectionDeleteController.cs" />
     <Compile Include="Controllers\LabelController.cs" />
+    <Compile Include="Controllers\LabelDeleteController.cs" />
     <Compile Include="Controllers\LiceController.cs" />
+    <Compile Include="Controllers\LiceDeleteController.cs" />
     <Compile Include="Controllers\LicePredmetController.cs" />
     <Compile Include="Controllers\NoteController.cs" />
     <Compile Include="Controllers\PartyCasesController.cs" />
     <Compile Include="Controllers\PredmetController.cs" />
+    <Compile Include="Controllers\PredmetDeleteController.cs" />
     <Compile Include="Controllers\RadnjaController.cs" />
     <Compile Include="Controllers\RadnjaHomeController.cs" />
     <Compile Include="Controllers\SudController.cs" />
+    <Compile Include="Controllers\SudDeleteController.cs" />
     <Compile Include="Controllers\TemplateController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\UserDeleteController.cs" />
     <Compile Include="Controllers\UserGroupController.cs" />
     <Compile Include="DataProviders\CaseActivities.cs" />
     <Compile Include="DataProviders\CodeTables.cs" />
@@ -330,8 +340,6 @@
     <Content Include="Templates\Dopis poreznoj upravi radi dostave podataka o zaposlenju ili penziji.docx" />
     <Content Include="Templates\Dopis stranci kojim se dostavlja poziv za plaćanje takse.docx" />
     <Content Include="Templates\Dopis stranci kojim se traži plaćanje vještačenja.docx" />
-    <Content Include="Templates\Dopis Uni Credit banci kojim se traži stanje sa naplatom protiv kantona.docx" />
-    <Content Include="Templates\Dopis Union banci Sarajevo kojim se traži stanje sa naplatom protiv Federacije BiH.docx" />
     <Content Include="Templates\Memorandum.docx" />
     <Content Include="Templates\Naslovna strana za spis.docx" />
     <Content Include="Templates\Obavijest o godišnjem odmoru društva.docx" />
@@ -366,16 +374,13 @@
     <Content Include="Templates\Tužba.docx" />
     <Content Include="Templates\Urgencija Kantonalnom sudu za rad na predmetu - na ruke predsjednika suda.docx" />
     <Content Include="Templates\Urgencija Kantonalnom sudu za rad na predmetu - zbirna na ruke predsjednika suda.docx" />
-    <Content Include="Templates\Urgencija Općinskom sudu za zakazivanje ročišta - na ruke predsjednika suda - PRESIGNACIJE.docx" />
     <Content Include="Templates\Urgencija Općinskom sudu za zakazivanje ročišta - na ruke predsjednika suda.docx" />
     <Content Include="Templates\Urgencija Općinskom sudu za zakazivanje ročišta.docx" />
     <Content Include="Templates\Vansudski zahtjev.docx" />
     <Content Include="Templates\Zahtjev za dostavu dokumentacije od osiguranja.docx" />
     <Content Include="Templates\Zahtjev za dostavu izvoda iz sudskog registra.docx" />
     <Content Include="Templates\Zahtjev za dostavu zemljišnoknjižnog izvoda.docx" />
-    <Content Include="Templates\Zahtjev za isključenje sudije Šemse Jogunović.docx" />
     <Content Include="Templates\Zahtjev za izdavanjem jedinstvenog pristupnog koda.docx" />
-    <Content Include="Templates\Zahtjev za izdavanjem jednog jedinstvenog pristupnog koda uz tužbu ili prijedlog.docx" />
     <Content Include="Templates\Zahtjev za izdavanjem krivične presude.docx" />
     <Content Include="Templates\Zahtjev za izdavanjem posjedovnog lista iz katastra.docx" />
     <Content Include="Templates\Zahtjev za izdavanjem presude iz arhive.docx" />
@@ -385,6 +390,13 @@
     <Content Include="Templates\Žalba na presudu kojom je odbijen tužbeni zahtjev djelimično.docx" />
     <Content Include="Templates\Žalba na presudu kojom je odbijen tužbeni zahtjev u cijelosti.docx" />
     <Content Include="Templates\Žalba na presudu zbog propuštanja zbog prigovora litispendencije.docx" />
+    <Content Include="Templates\Prijedlog za izvršenje sa zahtjevom za utvrđivanje imovine izvršenika.docx" />
+    <Content Include="Templates\Dopis banci kojim se traži stanje sa naplatom protiv izvršenika.docx" />
+    <Content Include="Templates\Vansudski zahtjev za naknadu štete iz saobraćajne nezgode.docx" />
+    <Content Include="Templates\Zahtjev optuženog za uvid u spis i kopiranje dokaza iz spisa tužilaštva.docx" />
+    <Content Include="Templates\Zahtjev oštećenog za uvid u spis i kopiranje dokaza iz spisa tužilaštva.docx" />
+    <Content Include="Templates\Zahtjev za izdavanjem jedinstvenog pristupnog koda uz podnesak kojim se pokreće sudski postupak.docx" />
+    <Content Include="Templates\Zahtjev za utvrđivanje imovine izvršenika.docx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

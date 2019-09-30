@@ -21,24 +21,42 @@ namespace GoogleCalendarIntegration
 
         private static CalendarService GetService()
         {
-            var credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                           new ClientSecrets
-                           {
-                               ClientId = ConfigurationManager.AppSettings["Google_ClientId"].ToString(),
-                               ClientSecret = ConfigurationManager.AppSettings["Google_ClientSecret"].ToString(),
-                           },
-                           new[] { CalendarService.Scope.Calendar },
-                           "user",
-                           CancellationToken.None).Result;
-
-            // Create the service.
-            var service = new CalendarService(new BaseClientService.Initializer
+            try
             {
-                HttpClientInitializer = credential,
-                ApplicationName = "Calendar API Sample",
-            });
+                var folder = ConfigurationManager.AppSettings["GoogleIntegrationFolder"].ToString();
 
-            return service;
+                var credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
+                               new ClientSecrets
+                               {
+                                   ClientId = ConfigurationManager.AppSettings["Google_ClientId"].ToString(),
+                                   ClientSecret = ConfigurationManager.AppSettings["Google_ClientSecret"].ToString(),
+                               },
+                               new[] { CalendarService.Scope.Calendar },
+                               "user",
+                               CancellationToken.None,
+                               new FileDataStore(folder)).Result;
+
+                // Create the service.
+                var service = new CalendarService(new BaseClientService.Initializer
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = "Calendar API Sample",
+                });
+
+                return service;
+            }
+            catch (Exception ex)
+            {
+                LoggerUtility.Logger.LogException(ex, "GoogleCalendarIntegration.Utility.GetService");
+                if (ex.InnerException != null)
+                {
+                    LoggerUtility.Logger.LogException(ex.InnerException, "GoogleCalendarIntegration.Utility.GetService.InnerException");
+                    if (ex.InnerException.InnerException != null)
+                        LoggerUtility.Logger.LogException(ex.InnerException.InnerException, "GoogleCalendarIntegration.Utility.GetService.InnerException.InnerException");
+                }
+
+                throw ex;
+            }
         }
 
         private static CalendarService GetService2(int userId)
@@ -109,11 +127,11 @@ namespace GoogleCalendarIntegration
                     },
                     Reminders = new Event.RemindersData()
                     {
-                        UseDefault = false,
-                        Overrides = new EventReminder[] {
-                            new EventReminder() { Method = "email", Minutes = 24 * 60 },
-                            new EventReminder() { Method = "sms", Minutes = 10 },
-                        }
+                        UseDefault = true//,
+                        //Overrides = new EventReminder[] {
+                        //    new EventReminder() { Method = "email", Minutes = 24 * 60 },
+                        //    new EventReminder() { Method = "sms", Minutes = 10 },
+                        //}
                     }
                 };
 

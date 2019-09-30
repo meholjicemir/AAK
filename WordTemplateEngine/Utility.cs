@@ -181,6 +181,47 @@ namespace WordTemplateEngine
 
         }
 
+        private static void SeparateTags_v2(ref IEnumerable<Text> texts)
+        {
+            for (int i = 0; i < texts.Count(); i++)
+            {
+                string tempText = texts.ElementAt<Text>(i).Text;
+
+                if (!tempText.Contains('{'))
+                    continue;
+
+                if (tempText.Contains('{') && tempText.IndexOf('{') > 0)
+                {
+                    AddTextBefore(ref texts, i, tempText.Substring(0, tempText.IndexOf('{')));
+                    texts.ElementAt<Text>(i + 1).Text = tempText.Substring(tempText.IndexOf('{'));
+                    tempText = texts.ElementAt<Text>(i + 1).Text;
+                }
+                else if (tempText.Contains('{') && tempText.IndexOf('{') != tempText.LastIndexOf('{'))
+                {
+                    AddTextBefore(ref texts, i, tempText.Substring(0, tempText.LastIndexOf('{')));
+                    texts.ElementAt<Text>(i + 1).Text = tempText.Substring(tempText.LastIndexOf('{'));
+                    tempText = texts.ElementAt<Text>(i + 1).Text;
+                    i--;
+                }
+            }
+
+            for (int i = 0; i < texts.Count(); i++)
+            {
+                string tempText = texts.ElementAt<Text>(i).Text;
+
+                if (!tempText.Contains('}'))
+                    continue;
+
+                if (tempText.Contains('}') && tempText.LastIndexOf('}') != tempText.Length - 1)
+                {
+                    AddTextAfter(ref texts, i, tempText.Substring(tempText.LastIndexOf('}') + 1));
+                    texts.ElementAt<Text>(i).Text = tempText.Substring(0, tempText.LastIndexOf('}') + 1);
+                    tempText = texts.ElementAt<Text>(i).Text;
+                    i--;
+                }
+            }
+        }
+
         /// <summary>
         /// Separates tags so that "{" is allways at the beginning and that "}" is always at the end of individual string.
         /// Normal text tags (without "{" or "}") stay unchanged.
@@ -190,6 +231,9 @@ namespace WordTemplateEngine
         /// <returns></returns>
         private static void SeparateTags(ref IEnumerable<Text> texts)
         {
+            SeparateTags_v2(ref texts);
+            return;
+
             for (int i = 0; i < texts.Count(); i++)
             {
                 string tempText = texts.ElementAt<Text>(i).Text.Trim(); // optimizing

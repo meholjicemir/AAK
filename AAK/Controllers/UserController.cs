@@ -37,6 +37,8 @@ namespace AAK.Controllers
         {
             try
             {
+                //CheckForInternetConnection();
+
                 if (user.FirstName.Equals(string.Empty) && user.LastName.Equals(string.Empty))
                 {
                     // Getting user for login
@@ -105,6 +107,26 @@ namespace AAK.Controllers
             {
                 LoggerUtility.Logger.LogException(ex, "User_Delete");
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+            }
+        }
+
+        private static bool CheckForInternetConnection()
+        {
+            try
+            {
+                LoggerUtility.Logger.LogMessage("CheckForInternetConnection", "Checking for connection...");
+                using (var client = new WebClient())
+                using (client.OpenRead("http://clients3.google.com/generate_204"))
+                {
+                    LoggerUtility.Logger.LogMessage("CheckForInternetConnection", "Connection successful...");
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerUtility.Logger.LogMessage("CheckForInternetConnection", "Problem with connection...");
+                LoggerUtility.Logger.LogException(ex, "CheckForInternetConnection");
+                return false;
             }
         }
     }

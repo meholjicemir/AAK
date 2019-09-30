@@ -31,5 +31,11 @@ namespace AAK.Controllers
                 return Request.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
             }
         }
+
+        [HttpPost]
+        public HttpResponseMessage TestMethod(User user)
+        {
+            return Request.CreateResponse<User>(HttpStatusCode.OK, user);
+        }
     }
 }

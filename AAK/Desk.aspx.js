@@ -481,8 +481,8 @@ function DeleteCaseActivity(id) {
                 function () {
                     ShowLoaderCenter();
                     $.ajax({
-                        url: AppPath + "api/caseactivity?Id=" + id.toString() + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
-                        type: "DELETE",
+                        url: AppPath + "api/caseactivitydelete?Id=" + id.toString() + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
+                        type: "GET",
                         success: function () {
                             LoadCaseActivities();
                             HideLoaderCenter();
@@ -635,10 +635,10 @@ function ApplyLabel(_contentType, isCaseEdit) {
 function DeleteLabelConnection(element, labelId, contentType, contentId) {
     ShowLoaderCenter()
     $.ajax({
-        url: AppPath + "api/labelConnection?LabelId="
+        url: AppPath + "api/labelConnectiondelete?LabelId="
             + labelId.toString() + "&ContentType=" + contentType + "&ContentId=" + contentId.toString()
             + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
-        type: "DELETE",
+        type: "GET",
         success: function () {
             for (var i = 0; i < Predmeti.length; i++)
                 if (Predmeti[i].Id == contentId) {
@@ -849,8 +849,8 @@ function DeleteCase(id) {
                 function () {
                     ShowLoaderCenter();
                     $.ajax({
-                        url: AppPath + "api/predmet?Id=" + id.toString() + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
-                        type: "DELETE",
+                        url: AppPath + "api/predmetdelete?Id=" + id.toString() + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
+                        type: "GET",
                         success: function () {
                             LoadCases();
                             HideLoaderCenter();
@@ -1176,9 +1176,9 @@ function DeleteUser(id) {
                 function () {
                     ShowLoaderCenter();
                     $.ajax({
-                        url: AppPath + "api/user?Id=" + id.toString()
+                        url: AppPath + "api/userdelete?Id=" + id.toString()
                             + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
-                        type: "DELETE",
+                        type: "GET",
                         success: function () {
                             LoadUsers();
                             HideLoaderCenter();
@@ -1362,9 +1362,9 @@ function DeleteLabel(id) {
                 function () {
                     ShowLoaderCenter();
                     $.ajax({
-                        url: AppPath + "api/label?Id=" + id.toString()
+                        url: AppPath + "api/labeldelete?Id=" + id.toString()
                             + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
-                        type: "DELETE",
+                        type: "GET",
                         success: function () {
                             LoadLabels();
                             HideLoaderCenter();
@@ -1538,9 +1538,9 @@ function DeleteSud(id) {
                 function () {
                     ShowLoaderCenter();
                     $.ajax({
-                        url: AppPath + "api/sud?Id=" + id.toString()
+                        url: AppPath + "api/suddelete?Id=" + id.toString()
                             + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
-                        type: "DELETE",
+                        type: "GET",
                         success: function () {
                             LoadSudovi();
                             HideLoaderCenter();
@@ -2488,9 +2488,9 @@ function DeleteCodeTableRecord(id) {
                 function () {
                     ShowLoaderCenter();
                     $.ajax({
-                        url: AppPath + "api/codetable?TableName=" + CurrentCodeTable.TableName + "&Id=" + id.toString()
+                        url: AppPath + "api/codetabledelete?TableName=" + CurrentCodeTable.TableName + "&Id=" + id.toString()
                             + "&Token=" + CurrentUser.Token + "&Email=" + CurrentUser.Email,
-                        type: "DELETE",
+                        type: "GET",
                         success: function () {
                             LoadCodeTableUI(CurrentCodeTable.Element, CurrentCodeTable.Title, CurrentCodeTable.TableName, CurrentCodeTable.ColumnName);
                             HideLoaderCenter();
@@ -2831,9 +2831,9 @@ function DeleteParty(id) {
                 function () {
                     ShowLoaderCenter();
                     $.ajax({
-                        url: AppPath + "api/lice?Id=" + id.toString()
+                        url: AppPath + "api/licedelete?Id=" + id.toString()
                             + "&Token=" + CurrentUser.Token + "&ValidationEmail=" + CurrentUser.Email,
-                        type: "DELETE",
+                        type: "GET",
                         success: function () {
                             LoadParties();
                             HideLoaderCenter();

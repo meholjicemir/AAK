@@ -11,8 +11,8 @@
   DTS:LocaleID="5146"
   DTS:ObjectName="Package"
   DTS:PackageType="5"
-  DTS:VersionBuild="32"
-  DTS:VersionGUID="{B8C00273-64C9-4680-8589-92C79DAD8F10}">
+  DTS:VersionBuild="38"
+  DTS:VersionGUID="{6C64DE62-FE3B-4EA4-B20A-EA4D883930D9}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -24,6 +24,16 @@
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:ConnectionString="Data Source=D:\Temp\djonko_be.accdb;Provider=Microsoft.ACE.OLEDB.12.0;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[D:\Temp\djonko_m_be.accdb]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{0C5E0E38-783B-43F1-BFFA-4B4BDAD9462F}"
+      DTS:ObjectName="D:\Temp\djonko_m_be.accdb">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=D:\Temp\djonko_m_be.accdb;Provider=Microsoft.ACE.OLEDB.12.0;" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
     <DTS:ConnectionManager
@@ -86,6 +96,16 @@
           DTS:ConnectionString="Data Source=EMIRPC\SQL2012;Initial Catalog=AdvokatDB;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;" />
       </DTS:ObjectData>
     </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[EMIRPC\SQL2012.AdvokatDBTest]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{27D66A0C-85A6-43E3-B436-6C45B5C5BB06}"
+      DTS:ObjectName="EMIRPC\SQL2012.AdvokatDBTest">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=EMIRPC\SQL2012;Initial Catalog=AdvokatDBTest;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
   </DTS:ConnectionManagers>
   <DTS:Variables />
   <DTS:Executables>
@@ -119,7 +139,7 @@
                 <property
                   dataType="System.String"
                   description="Specifies the name of the database object used to open a rowset."
-                  name="OpenRowset">[Biljeske]</property>
+                  name="OpenRowset">[dbo].[Biljeske]</property>
                 <property
                   dataType="System.String"
                   description="Specifies the variable that contains the name of the database object used to open a rowset."
@@ -162,8 +182,8 @@
               <connections>
                 <connection
                   refId="Package\Biljeske\OLE DB Destination.Connections[OleDbConnection]"
-                  connectionManagerID="Package.ConnectionManagers[EMIRPC\SQL2012.AdvokatDB]"
-                  connectionManagerRefId="Package.ConnectionManagers[EMIRPC\SQL2012.AdvokatDB]"
+                  connectionManagerID="Package.ConnectionManagers[EMIRPC\SQL2012.AdvokatDBTest]"
+                  connectionManagerRefId="Package.ConnectionManagers[EMIRPC\SQL2012.AdvokatDBTest]"
                   description="The OLE DB runtime connection used to access the database."
                   name="OleDbConnection" />
               </connections>
@@ -199,13 +219,6 @@
                       cachedName="Biljeska"
                       externalMetadataColumnId="Package\Biljeske\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Biljeska]"
                       lineageId="Package\Biljeske\OLE DB Source.Outputs[OLE DB Source Output].Columns[Biljeska]" />
-                    <inputColumn
-                      refId="Package\Biljeske\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[IzradjenaOd]"
-                      cachedDataType="wstr"
-                      cachedLength="255"
-                      cachedName="IzradjenaOd"
-                      externalMetadataColumnId="Package\Biljeske\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[IzradjenaOd]"
-                      lineageId="Package\Biljeske\OLE DB Source.Outputs[OLE DB Source Output].Columns[IzradjenaOd]" />
                   </inputColumns>
                   <externalMetadataColumns
                     isUsed="True">
@@ -222,14 +235,14 @@
                       dataType="nText"
                       name="Biljeska" />
                     <externalMetadataColumn
+                      refId="Package\Biljeske\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PredmetId]"
+                      dataType="i4"
+                      name="PredmetId" />
+                    <externalMetadataColumn
                       refId="Package\Biljeske\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[IzradjenaOd]"
                       dataType="wstr"
                       length="255"
                       name="IzradjenaOd" />
-                    <externalMetadataColumn
-                      refId="Package\Biljeske\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PredmetId]"
-                      dataType="i4"
-                      name="PredmetId" />
                   </externalMetadataColumns>
                 </input>
               </inputs>
@@ -561,13 +574,6 @@
                       cachedName="Biljeske"
                       externalMetadataColumnId="Package\Dokumenti\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Biljeske]"
                       lineageId="Package\Dokumenti\OLE DB Source.Outputs[OLE DB Source Output].Columns[Biljeske]" />
-                    <inputColumn
-                      refId="Package\Dokumenti\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Predato]"
-                      cachedDataType="wstr"
-                      cachedLength="255"
-                      cachedName="Predato"
-                      externalMetadataColumnId="Package\Dokumenti\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Predato]"
-                      lineageId="Package\Dokumenti\OLE DB Source.Outputs[OLE DB Source Output].Columns[Predato]" />
                   </inputColumns>
                   <externalMetadataColumns
                     isUsed="True">
@@ -589,10 +595,26 @@
                       dataType="nText"
                       name="Biljeske" />
                     <externalMetadataColumn
-                      refId="Package\Dokumenti\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Predato]"
+                      refId="Package\Dokumenti\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[TipDokumentaId]"
+                      dataType="i4"
+                      name="TipDokumentaId" />
+                    <externalMetadataColumn
+                      refId="Package\Dokumenti\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[PredatoUzDokumentiId]"
+                      dataType="i4"
+                      name="PredatoUzDokumentiId" />
+                    <externalMetadataColumn
+                      refId="Package\Dokumenti\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[document_link]"
+                      dataType="nText"
+                      name="document_link" />
+                    <externalMetadataColumn
+                      refId="Package\Dokumenti\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[is_deleted]"
+                      dataType="bool"
+                      name="is_deleted" />
+                    <externalMetadataColumn
+                      refId="Package\Dokumenti\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[google_drive_doc_id]"
                       dataType="wstr"
                       length="255"
-                      name="Predato" />
+                      name="google_drive_doc_id" />
                   </externalMetadataColumns>
                 </input>
               </inputs>
@@ -929,13 +951,6 @@
                       externalMetadataColumnId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Ime]"
                       lineageId="Package\Lica\OLE DB Source.Outputs[OLE DB Source Output].Columns[Ime]" />
                     <inputColumn
-                      refId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Mldb]"
-                      cachedDataType="wstr"
-                      cachedLength="255"
-                      cachedName="Mldb"
-                      externalMetadataColumnId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Mldb]"
-                      lineageId="Package\Lica\OLE DB Source.Outputs[OLE DB Source Output].Columns[Mldb]" />
-                    <inputColumn
                       refId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[ZakonskiZastupnik]"
                       cachedDataType="wstr"
                       cachedLength="255"
@@ -970,13 +985,6 @@
                       cachedName="Grad"
                       externalMetadataColumnId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Grad]"
                       lineageId="Package\Lica\OLE DB Source.Outputs[OLE DB Source Output].Columns[Grad]" />
-                    <inputColumn
-                      refId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Drzava]"
-                      cachedDataType="wstr"
-                      cachedLength="255"
-                      cachedName="Drzava"
-                      externalMetadataColumnId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Drzava]"
-                      lineageId="Package\Lica\OLE DB Source.Outputs[OLE DB Source Output].Columns[Drzava]" />
                     <inputColumn
                       refId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Telefon]"
                       cachedDataType="wstr"
@@ -1027,11 +1035,6 @@
                       length="255"
                       name="Ime" />
                     <externalMetadataColumn
-                      refId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Mldb]"
-                      dataType="wstr"
-                      length="255"
-                      name="Mldb" />
-                    <externalMetadataColumn
                       refId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[ZakonskiZastupnik]"
                       dataType="wstr"
                       length="255"
@@ -1057,11 +1060,6 @@
                       length="255"
                       name="Grad" />
                     <externalMetadataColumn
-                      refId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Drzava]"
-                      dataType="wstr"
-                      length="255"
-                      name="Drzava" />
-                    <externalMetadataColumn
                       refId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Telefon]"
                       dataType="wstr"
                       length="255"
@@ -1081,6 +1079,34 @@
                       dataType="wstr"
                       length="255"
                       name="JMBG_IDBroj" />
+                    <externalMetadataColumn
+                      refId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[IsMinor]"
+                      dataType="bool"
+                      name="IsMinor" />
+                    <externalMetadataColumn
+                      refId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[created_by]"
+                      dataType="i4"
+                      name="created_by" />
+                    <externalMetadataColumn
+                      refId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[created]"
+                      dataType="dbTimeStamp"
+                      name="created" />
+                    <externalMetadataColumn
+                      refId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[modified_by]"
+                      dataType="i4"
+                      name="modified_by" />
+                    <externalMetadataColumn
+                      refId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[modified]"
+                      dataType="dbTimeStamp"
+                      name="modified" />
+                    <externalMetadataColumn
+                      refId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[DrzavaId]"
+                      dataType="i4"
+                      name="DrzavaId" />
+                    <externalMetadataColumn
+                      refId="Package\Lica\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[is_deleted]"
+                      dataType="bool"
+                      name="is_deleted" />
                   </externalMetadataColumns>
                 </input>
               </inputs>
@@ -1632,13 +1658,6 @@
                       cachedName="Broj"
                       externalMetadataColumnId="Package\Lica_Predmet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Broj]"
                       lineageId="Package\Lica_Predmet\OLE DB Source.Outputs[OLE DB Source Output].Columns[Broj]" />
-                    <inputColumn
-                      refId="Package\Lica_Predmet\OLE DB Destination.Inputs[OLE DB Destination Input].Columns[Uloga]"
-                      cachedDataType="wstr"
-                      cachedLength="255"
-                      cachedName="Uloga"
-                      externalMetadataColumnId="Package\Lica_Predmet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Uloga]"
-                      lineageId="Package\Lica_Predmet\OLE DB Source.Outputs[OLE DB Source Output].Columns[Uloga]" />
                   </inputColumns>
                   <externalMetadataColumns
                     isUsed="True">
@@ -1660,10 +1679,17 @@
                       length="255"
                       name="Broj" />
                     <externalMetadataColumn
-                      refId="Package\Lica_Predmet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[Uloga]"
-                      dataType="wstr"
-                      length="255"
-                      name="Uloga" />
+                      refId="Package\Lica_Predmet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[is_nasa_stranka]"
+                      dataType="bool"
+                      name="is_nasa_stranka" />
+                    <externalMetadataColumn
+                      refId="Package\Lica_Predmet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[is_protivna_stranka]"
+                      dataType="bool"
+                      name="is_protivna_stranka" />
+                    <externalMetadataColumn
+                      refId="Package\Lica_Predmet\OLE DB Destination.Inputs[OLE DB Destination Input].ExternalColumns[UlogaId]"
+                      dataType="i4"
+                      name="UlogaId" />
                   </externalMetadataColumns>
                 </input>
               </inputs>
@@ -5233,7 +5259,7 @@
         <NodeLayout
           Size="117,42"
           Id="Package\Biljeske"
-          TopLeft="43,18" />
+          TopLeft="43,17" />
         <NodeLayout
           Size="132,42"
           Id="Package\Dokumenti"
@@ -5249,7 +5275,7 @@
         <NodeLayout
           Size="168,42"
           Id="Package\OdlukeNaCekanju"
-          TopLeft="85,337" />
+          TopLeft="88,337" />
         <NodeLayout
           Size="121,42"
           Id="Package\Predmet"
@@ -5277,7 +5303,7 @@
     design-time-name="Package\Biljeske">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="177,42"
           Id="Package\Biljeske\OLE DB Destination"
@@ -5317,9 +5343,7 @@
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -5480,6 +5504,19 @@
     </LayoutInfo>
   </TaskHost>
   <PipelineComponentMetadata
+    design-time-name="Package\Lica\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
+  <PipelineComponentMetadata
     design-time-name="Package\Lica\OLE DB Source">
     <Properties>
       <Property>
@@ -5574,7 +5611,7 @@
     design-time-name="Package\OdlukeNaCekanju">
     <LayoutInfo>
       <GraphLayout
-        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
+        Capacity="4" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
         <NodeLayout
           Size="157,42"
           Id="Package\OdlukeNaCekanju\OLE DB Source"
@@ -5614,9 +5651,7 @@
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="0,0,0,0"
-              RelativePosition="Any" />
+            <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
       </GraphLayout>
@@ -5776,6 +5811,19 @@
       </GraphLayout>
     </LayoutInfo>
   </TaskHost>
+  <PipelineComponentMetadata
+    design-time-name="Package\Radnje\OLE DB Destination">
+    <Properties>
+      <Property>
+        <Name>DataSourceViewID</Name>
+      </Property>
+      <Property>
+        <Name>TableInfoObjectType</Name>
+        <Value
+          type="q2:string">Table</Value>
+      </Property>
+    </Properties>
+  </PipelineComponentMetadata>
   <PipelineComponentMetadata
     design-time-name="Package\Radnje\OLE DB Source">
     <Properties>
@@ -6010,32 +6058,6 @@
   </PipelineComponentMetadata>
   <PipelineComponentMetadata
     design-time-name="Package\Veze\OLE DB Source">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-      <Property>
-        <Name>TableInfoObjectType</Name>
-        <Value
-          type="q2:string">Table</Value>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <PipelineComponentMetadata
-    design-time-name="Package\Lica\OLE DB Destination">
-    <Properties>
-      <Property>
-        <Name>DataSourceViewID</Name>
-      </Property>
-      <Property>
-        <Name>TableInfoObjectType</Name>
-        <Value
-          type="q2:string">Table</Value>
-      </Property>
-    </Properties>
-  </PipelineComponentMetadata>
-  <PipelineComponentMetadata
-    design-time-name="Package\Radnje\OLE DB Destination">
     <Properties>
       <Property>
         <Name>DataSourceViewID</Name>
