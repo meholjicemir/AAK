@@ -45,10 +45,28 @@ function updateSigninStatus(isSignedIn) {
     if (isSignedIn) {
         authorizeButton.style.display = 'none';
         signoutButton.style.display = 'block';
+        // if (gapi.auth2.getAuthInstance().currentUser.Ab == undefined) {
+        // authorizeButton.style.display = 'block';
+        // signoutButton.style.display = 'none';
+        // initClient();
+        // }
+        // else {
+        var email = "";
+        var token = "";
+        var accessToken = "";
 
-        var email = gapi.auth2.getAuthInstance().currentUser.Ab.w3.U3;
-        var token = gapi.auth2.getAuthInstance().currentUser.Ab.Zi.id_token;
-        ValidateUser(email, token, gapi.auth2.getAuthInstance().currentUser.Ab.Zi.access_token);
+        if (gapi.auth2.getAuthInstance().currentUser.je != undefined) {
+            email = gapi.auth2.getAuthInstance().currentUser.je.Rt != undefined ? gapi.auth2.getAuthInstance().currentUser.je.Rt.Au : gapi.auth2.getAuthInstance().currentUser.je.Qt.zu;
+            token = gapi.auth2.getAuthInstance().currentUser.je.uc.id_token;
+            accessToken = gapi.auth2.getAuthInstance().currentUser.je.uc.access_token;
+        }
+        else {
+            email = gapi.auth2.getAuthInstance().currentUser.ie.Qt.zu;
+            token = gapi.auth2.getAuthInstance().currentUser.ie.uc.id_token;
+            accessToken = gapi.auth2.getAuthInstance().currentUser.ie.uc.access_token;
+        }
+        ValidateUser(email, token, accessToken);
+        // }
     } else {
         authorizeButton.style.display = 'block';
         signoutButton.style.display = 'none';

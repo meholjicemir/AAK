@@ -41,7 +41,7 @@
 
     <div id="divGoogleSignIn">
         <img src="Images/logocms.png" alt="Logo" />
-        <h1>BAZA PODATAKA</h1>
+        <h1></h1>
         <hr />
         <!--Add buttons to initiate auth sequence and sign out-->
         <center>
@@ -49,7 +49,7 @@
         <button id="signout-button" class="btn btn-default" style="display: none;">Odjavi se</button>
         </center>
 
-        <script src="Scripts/google.min.js"></script>
+        <script src="Scripts/google.js?v=7"></script>
         <script async defer src="https://apis.google.com/js/api.js"
             onload="this.onload=function(){};handleClientLoad()"
             onreadystatechange="if (this.readyState === 'complete') this.onload()">
@@ -1088,7 +1088,7 @@
         <img id="imgUserPicture" height="50" width="50" alt="Slika korisnika" src="" data-toggle="tooltip" title="Slika korisnika" />
     </div>
     <div class="pull-right" style="position: fixed; bottom: 0; right: 0; margin: 2px; font-size: xx-small; z-index: 1000;">
-        <span class="pull-right">v2.1.0</span>
+        <span class="pull-right">v2.1.12</span>
     </div>
 </body>
 </html>

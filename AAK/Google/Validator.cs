@@ -26,7 +26,13 @@ namespace AAK.Google
         public static bool ValidateToken(ref User user)
         {
             //TEMP
-            //if (user.Email.ToLowerInvariant().Equals("meholjic.emir@gmail.com") || user.Email.ToLowerInvariant().Equals("mersad18@gmail.com") || user.Email.ToLowerInvariant().Equals("jasminadonko@gmail.com"))
+            //if (
+            //        user.Email.ToLowerInvariant().Equals("meholjic.emir@gmail.com")
+            //        || user.Email.ToLowerInvariant().Equals("mersad18@gmail.com")
+            //        || user.Email.ToLowerInvariant().Equals("jasminadonko@gmail.com")
+            //        || user.Email.ToLowerInvariant().Equals("medina.addonko@gmail.com")
+            //    )
+
             //    return true;
 
             try
