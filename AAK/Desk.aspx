@@ -49,7 +49,7 @@
         <button id="signout-button" class="btn btn-default" style="display: none;">Odjavi se</button>
         </center>
 
-        <script src="Scripts/google.js?v=7"></script>
+        <script src="Scripts/google.min.js?v=15"></script>
         <script async defer src="https://apis.google.com/js/api.js"
             onload="this.onload=function(){};handleClientLoad()"
             onreadystatechange="if (this.readyState === 'complete') this.onload()">

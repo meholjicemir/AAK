@@ -51,20 +51,22 @@ function updateSigninStatus(isSignedIn) {
         // initClient();
         // }
         // else {
-        var email = "";
-        var token = "";
-        var accessToken = "";
+        var currUsr = gapi.auth2.getAuthInstance().currentUser;
 
-        if (gapi.auth2.getAuthInstance().currentUser.je != undefined) {
-            email = gapi.auth2.getAuthInstance().currentUser.je.Rt != undefined ? gapi.auth2.getAuthInstance().currentUser.je.Rt.Au : gapi.auth2.getAuthInstance().currentUser.je.Qt.zu;
-            token = gapi.auth2.getAuthInstance().currentUser.je.uc.id_token;
-            accessToken = gapi.auth2.getAuthInstance().currentUser.je.uc.access_token;
-        }
-        else {
-            email = gapi.auth2.getAuthInstance().currentUser.ie.Qt.zu;
-            token = gapi.auth2.getAuthInstance().currentUser.ie.uc.id_token;
-            accessToken = gapi.auth2.getAuthInstance().currentUser.ie.uc.access_token;
-        }
+        var email = findVal(currUsr, "email");
+        var token = findVal(currUsr, "id_token");
+        var accessToken = findVal(currUsr, "access_token");
+
+        //if (gapi.auth2.getAuthInstance().currentUser.je != undefined) {
+        //    email = gapi.auth2.getAuthInstance().currentUser.je.Rt != undefined ? gapi.auth2.getAuthInstance().currentUser.je.Rt.Au : gapi.auth2.getAuthInstance().currentUser.je.Qt.zu;
+        //    token = gapi.auth2.getAuthInstance().currentUser.je.uc.id_token;
+        //    accessToken = gapi.auth2.getAuthInstance().currentUser.je.uc.access_token;
+        //}
+        //else {
+        //    email = gapi.auth2.getAuthInstance().currentUser.ie.Qt.zu;
+        //    token = gapi.auth2.getAuthInstance().currentUser.ie.uc.id_token;
+        //    accessToken = gapi.auth2.getAuthInstance().currentUser.ie.uc.access_token;
+        //}
         ValidateUser(email, token, accessToken);
         // }
     } else {
@@ -217,4 +219,19 @@ function pickerCallback(data) {
 function onPickerApiLoad() {
     pickerApiLoaded = true;
     createPicker();
+}
+
+function findVal(object, key) {
+    var value;
+    Object.keys(object).some(function (k) {
+        if (k === key || (key === "email" && object[k] != undefined && object[k] != null && object[k].toString().endsWith("@gmail.com"))) {
+            value = object[k];
+            return true;
+        }
+        if (object[k] && typeof object[k] === 'object') {
+            value = findVal(object[k], key);
+            return value !== undefined;
+        }
+    });
+    return value;
 }
