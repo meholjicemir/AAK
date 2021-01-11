@@ -68,47 +68,47 @@ function ValidateUser(email, token, access_token) {
         Email: email,
         Token: token
     })
-    .done(function (data) {
-        if (data.Id > 0) {
-            SetupHistoryHandling();
+        .done(function (data) {
+            if (data.Id > 0) {
+                SetupHistoryHandling();
 
-            CurrentUser = {
-                Id: data.Id,
-                Email: data.Email,
-                UserGroupCodes: data.UserGroupCodes,
-                FirstName: data.FirstName,
-                LastName: data.LastName,
-                //GoogleDriveLocalFolderPath: data.GoogleDriveLocalFolderPath,
-                PictureLink: data.PictureLink,
-                Token: data.Token,
-                AccessToken: access_token
-            };
+                CurrentUser = {
+                    Id: data.Id,
+                    Email: data.Email,
+                    UserGroupCodes: data.UserGroupCodes,
+                    FirstName: data.FirstName,
+                    LastName: data.LastName,
+                    //GoogleDriveLocalFolderPath: data.GoogleDriveLocalFolderPath,
+                    PictureLink: data.PictureLink,
+                    Token: data.Token,
+                    AccessToken: access_token
+                };
 
-            $("#imgUserPicture")
+                $("#imgUserPicture")
                     .attr("title", CurrentUser.FirstName + " " + CurrentUser.LastName + " (" + CurrentUser.Email + ")")
                     .attr("alt", CurrentUser.FirstName + " " + CurrentUser.LastName);
 
-            if (CurrentUser.PictureLink != undefined && CurrentUser.PictureLink != null && CurrentUser.PictureLink.length > 0)
-                $("#imgUserPicture").attr("src", CurrentUser.PictureLink)
+                if (CurrentUser.PictureLink != undefined && CurrentUser.PictureLink != null && CurrentUser.PictureLink.length > 0)
+                    $("#imgUserPicture").attr("src", CurrentUser.PictureLink)
 
-            $("#imgUserPicture").show();
+                $("#imgUserPicture").show();
 
-            RenderApp(data);
+                RenderApp(data);
+                HideLoaderCenter();
+            }
+            else {
+                HideLoaderCenter();
+                ShowAlert("danger", "Prijava nije uspjela.", true, undefined, $("#divGoogleSignInAlert"));
+            }
+        })
+        .fail(function (jqXHR) {
+            if (jqXHR.status == 403)
+                ShowAlert("danger", "Prijava nije uspjela.", true, undefined, $("#divGoogleSignInAlert"));
+            else
+                ShowAlert("danger", "Greška prilikom prijave. Probajte ponovo ili kontaktirajte administratora.", true, undefined, $("#divGoogleSignInAlert"));
+            ShowAlert("danger", "Prijava nije uspjela.");
             HideLoaderCenter();
-        }
-        else {
-            HideLoaderCenter();
-            ShowAlert("danger", "Prijava nije uspjela.", true, undefined, $("#divGoogleSignInAlert"));
-        }
-    })
-    .fail(function (jqXHR) {
-        if (jqXHR.status == 403)
-            ShowAlert("danger", "Prijava nije uspjela.", true, undefined, $("#divGoogleSignInAlert"));
-        else
-            ShowAlert("danger", "Greška prilikom prijave. Probajte ponovo ili kontaktirajte administratora.", true, undefined, $("#divGoogleSignInAlert"));
-        ShowAlert("danger", "Prijava nije uspjela.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function RenderApp(user) {
@@ -258,59 +258,59 @@ function LoadRadnje() {
         Token: CurrentUser.Token,
         Email: CurrentUser.Email
     })
-    .done(function (data) {
-        if (data != null && data.length > 0) {
-            Radnje = data;
-            $(data).each(function (index, _radnja) {
+        .done(function (data) {
+            if (data != null && data.length > 0) {
+                Radnje = data;
+                $(data).each(function (index, _radnja) {
 
-                if (new Date(_radnja.DatumRadnje).setHours(0, 0, 0, 0) === Date.parse(tomorrowDate))
-                    _radnja.Color = "#00b6ee";
-                else if (new Date(_radnja.DatumRadnje).setHours(0, 0, 0, 0) === Date.parse(todayDate))
-                    _radnja.Color = "#21b04b";
-                else
-                    _radnja.Color = "white";
+                    if (new Date(_radnja.DatumRadnje).setHours(0, 0, 0, 0) === Date.parse(tomorrowDate))
+                        _radnja.Color = "#00b6ee";
+                    else if (new Date(_radnja.DatumRadnje).setHours(0, 0, 0, 0) === Date.parse(todayDate))
+                        _radnja.Color = "#21b04b";
+                    else
+                        _radnja.Color = "white";
 
-                if (Date.parse(_radnja.DatumRadnje))
-                    _radnja.DatumRadnje = moment(_radnja.DatumRadnje).format("DD.MM.YYYY HH:mm");
+                    if (Date.parse(_radnja.DatumRadnje))
+                        _radnja.DatumRadnje = moment(_radnja.DatumRadnje).format("DD.MM.YYYY HH:mm");
 
-                _radnja.DatumRadnje = _radnja.DatumRadnje.replace(" 00:00", "");
+                    _radnja.DatumRadnje = _radnja.DatumRadnje.replace(" 00:00", "");
 
-                _radnja.VrstaRadnjeName_DatumRadnje = "<strong style='text-decoration:underline;'>" + _radnja.VrstaRadnjeName + "</strong><br>" + (_radnja.DatumRadnje || "");
-                _radnja.CaseNasBroj_CaseFullName_Biljeska = "<strong>" + _radnja.CaseFullName + "</strong><br><strong style='font-style: italic;'>" + _radnja.Biljeske + "</strong>";
+                    _radnja.VrstaRadnjeName_DatumRadnje = "<strong style='text-decoration:underline;'>" + _radnja.VrstaRadnjeName + "</strong><br>" + (_radnja.DatumRadnje || "");
+                    _radnja.CaseNasBroj_CaseFullName_Biljeska = "<strong>" + _radnja.CaseFullName + "</strong><br><strong style='font-style: italic;'>" + _radnja.Biljeske + "</strong>";
 
-                if (index == data.length - 1) {
-                    $("#tblRadnje").bootstrapTable({
-                        data: data,
-                        columns: _columns,
-                        showHeader: true,
-                        escape: false,
-                        onPostBody: function () {
-                            AfterBindRadnje();
-                            return false;
-                        }
-                    });
-                    HideLoaderCenter();
-                }
-            });
-        }
-        else {
-            $("#tblRadnje").bootstrapTable({
-                data: [],
-                striped: true,
-                showColumns: true,
-                columns: _columns,
-                escape: false
-            });
+                    if (index == data.length - 1) {
+                        $("#tblRadnje").bootstrapTable({
+                            data: data,
+                            columns: _columns,
+                            showHeader: true,
+                            escape: false,
+                            onPostBody: function () {
+                                AfterBindRadnje();
+                                return false;
+                            }
+                        });
+                        HideLoaderCenter();
+                    }
+                });
+            }
+            else {
+                $("#tblRadnje").bootstrapTable({
+                    data: [],
+                    striped: true,
+                    showColumns: true,
+                    columns: _columns,
+                    escape: false
+                });
+                HideLoaderCenter();
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom učitavanja radnji. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-        }
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom učitavanja radnji. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function AfterBindRadnje() {
@@ -338,6 +338,7 @@ function AfterBindRadnje() {
             }
 
             $(element).dblclick(function () {
+                Predmeti = null;
                 EditCase(tempCaseId);
             });
         }
@@ -372,58 +373,58 @@ function LoadCaseActivities() {
         Token: CurrentUser.Token,
         Email: CurrentUser.Email
     })
-    .done(function (data) {
-        if (data != null && data.length > 0) {
-            CaseActivities = data;
-            $(data).each(function (index, _caseActivity) {
+        .done(function (data) {
+            if (data != null && data.length > 0) {
+                CaseActivities = data;
+                $(data).each(function (index, _caseActivity) {
 
-                _caseActivity.ForAllUsersString = _caseActivity.ForAllUsers === true ? "Da" : "Ne";
+                    _caseActivity.ForAllUsersString = _caseActivity.ForAllUsers === true ? "Da" : "Ne";
 
-                if (Date.parse(_caseActivity.ActivityDate) === Date.parse(tomorrowDate))
-                    _caseActivity.Color = "#00b6ee";
-                else if (Date.parse(_caseActivity.ActivityDate) === Date.parse(todayDate))
-                    _caseActivity.Color = "#21b04b";
-                else if (Date.parse(_caseActivity.ActivityDate) < Date.parse(todayDate))
-                    _caseActivity.Color = "#ff0000";
-                else
-                    _caseActivity.Color = "white";
+                    if (Date.parse(_caseActivity.ActivityDate) === Date.parse(tomorrowDate))
+                        _caseActivity.Color = "#00b6ee";
+                    else if (Date.parse(_caseActivity.ActivityDate) === Date.parse(todayDate))
+                        _caseActivity.Color = "#21b04b";
+                    else if (Date.parse(_caseActivity.ActivityDate) < Date.parse(todayDate))
+                        _caseActivity.Color = "#ff0000";
+                    else
+                        _caseActivity.Color = "white";
 
-                if (Date.parse(_caseActivity.ActivityDate))
-                    _caseActivity.ActivityDate = moment(_caseActivity.ActivityDate).format("DD.MM.YYYY");
+                    if (Date.parse(_caseActivity.ActivityDate))
+                        _caseActivity.ActivityDate = moment(_caseActivity.ActivityDate).format("DD.MM.YYYY");
 
-                if (index == data.length - 1) {
-                    $("#tblCaseActivities").bootstrapTable({
-                        data: data,
-                        showColumns: true,
-                        columns: _columns,
-                        escape: false,
-                        onPostBody: function () {
-                            AfterBindCaseActivities();
-                            return false;
-                        }
-                    });
-                    HideLoaderCenter();
-                }
-            });
-        }
-        else {
-            $("#tblCaseActivities").bootstrapTable({
-                data: [],
-                striped: true,
-                showColumns: true,
-                columns: _columns,
-                escape: false
-            });
+                    if (index == data.length - 1) {
+                        $("#tblCaseActivities").bootstrapTable({
+                            data: data,
+                            showColumns: true,
+                            columns: _columns,
+                            escape: false,
+                            onPostBody: function () {
+                                AfterBindCaseActivities();
+                                return false;
+                            }
+                        });
+                        HideLoaderCenter();
+                    }
+                });
+            }
+            else {
+                $("#tblCaseActivities").bootstrapTable({
+                    data: [],
+                    striped: true,
+                    showColumns: true,
+                    columns: _columns,
+                    escape: false
+                });
+                HideLoaderCenter();
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom učitavanja pozvanih predmeta. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-        }
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom učitavanja pozvanih predmeta. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function AfterBindCaseActivities() {
@@ -456,9 +457,9 @@ function AfterBindCaseActivities() {
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
                 var buttonsHTML = "<td style='width: 50px;'><div class='btn-group pull-right'>";
                 buttonsHTML +=
-                            "<button class='btn btn-default btn-sm custom-table-button-check' data-toggle='tooltip' title='Završeno / Izbriši' onclick='DeleteCaseActivity(" + tempId.toString() + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-ok'></span>"
-                            + "</button>";
+                    "<button class='btn btn-default btn-sm custom-table-button-check' data-toggle='tooltip' title='Završeno / Izbriši' onclick='DeleteCaseActivity(" + tempId.toString() + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-ok'></span>"
+                    + "</button>";
                 buttonsHTML += "</div></td>";
 
                 $(element).append(buttonsHTML);
@@ -505,23 +506,23 @@ function DeleteCaseActivity(id) {
     });
 }
 
-var menuCases_DataLoaded = false;
-function MenuCases_LoadDataOnly() {
-    if (menuCases_DataLoaded === false) {
+var menuCases_DataLoadingCounter = 0;
+function MenuCases_LoadDataOnly(callback) {
+    if (menuCases_DataLoadingCounter === 0) {
         // Load code table data
-        LoadCodeTableData("vLica_Id_Naziv", $("#ddlCase_Lice"), "Naziv");
 
-        $("#ddlCase_Kategorija").html("<option>-----</option>");
-        LoadCodeTableData("KategorijePredmeta", $("#ddlCase_Kategorija"));
+        menuCases_DataLoadingCounter += 10;
 
-        LoadCodeTableData("Sudovi", $("#ddlCase_Sud"), "Sud");
-        LoadCodeTableData("Sudije", $("#ddlCase_Sudija"));
-        LoadCodeTableData("Uloge", $("#ddlCase_Uloga"));
-        LoadCodeTableData("Uloge", $("#ddlCase_UlogaLica"));
-        LoadCodeTableData("VrstePredmeta", $("#ddlCase_VrstaPredmeta"));
-        LoadCodeTableData("NaciniOkoncanja", $("#ddlCase_NacinOkoncanja"));
-        LoadCodeTableData("VrsteTroskova", $("#ddlCase_ExpenseVrstaTroska"));
-        LoadCodeTableData("VrsteRadnji", $("#ddlCase_Radnja_VrstaRadnje"));
+        LoadCodeTableData("vLica_Id_Naziv", $("#ddlCase_Lice"), "Naziv", function () { menuCases_DataLoadingCounter--; });
+        LoadCodeTableData("KategorijePredmeta", $("#ddlCase_Kategorija"), undefined, function () { menuCases_DataLoadingCounter--; });
+        LoadCodeTableData("Sudovi", $("#ddlCase_Sud"), "Sud", function () { menuCases_DataLoadingCounter--; });
+        LoadCodeTableData("Sudije", $("#ddlCase_Sudija"), undefined, function () { menuCases_DataLoadingCounter--; });
+        LoadCodeTableData("Uloge", $("#ddlCase_Uloga"), undefined, function () { menuCases_DataLoadingCounter--; });
+        LoadCodeTableData("Uloge", $("#ddlCase_UlogaLica"), undefined, function () { menuCases_DataLoadingCounter--; });
+        LoadCodeTableData("VrstePredmeta", $("#ddlCase_VrstaPredmeta"), undefined, function () { menuCases_DataLoadingCounter--; });
+        LoadCodeTableData("NaciniOkoncanja", $("#ddlCase_NacinOkoncanja"), undefined, function () { menuCases_DataLoadingCounter--; });
+        LoadCodeTableData("VrsteTroskova", $("#ddlCase_ExpenseVrstaTroska"), undefined, function () { menuCases_DataLoadingCounter--; });
+        LoadCodeTableData("VrsteRadnji", $("#ddlCase_Radnja_VrstaRadnje"), undefined, function () { menuCases_DataLoadingCounter--; });
         //LoadCodeTableData("TipoviDokumenata", $("#ddlCase_Document_TipDokumenta"));
 
         SetUpStanjeAutocomplete();
@@ -529,11 +530,15 @@ function MenuCases_LoadDataOnly() {
         SetUpCaseConnectionAutocomplete();
         SetUpTipDokumentaAutocomplete();
 
+        $("#ddlCase_Kategorija").html("<option>-----</option>");
+
         $("#ddlCase_Uspjeh").html('<option value="" selected="selected"></option>');
         for (var i = 0; i <= 100; i++)
             $("#ddlCase_Uspjeh").append($("<option " + (i == 0 ? "selected='selected'" : "") + "></option>").attr("value", i.toString() + '%').text(i.toString() + '%'));
-        menuCases_DataLoaded = true;
     }
+
+    if (callback != undefined)
+        callback();
 }
 
 function MenuCases() {
@@ -579,57 +584,57 @@ function ApplyLabel(_contentType, isCaseEdit) {
     };
 
     $.post(AppPath + "api/labelConnection", reqObj)
-    .done(function (data) {
-        if (data) {
+        .done(function (data) {
+            if (data) {
 
-            $(data).each(function (index, _labelConnection) {
-                switch (_contentType) {
-                    case "case":
-                        for (var i = 0; i < Predmeti.length; i++) {
-                            if (Predmeti[i].Id == _labelConnection.ContentId) {
-                                if (Predmeti[i].LabelIds && Predmeti[i].LabelIds.length > 0) {
-                                    var tempLabelIds = Predmeti[i].LabelIds.split(',');
-                                    if (tempLabelIds.indexOf(_labelConnection.LabelId.toString()) == -1) {
-                                        tempLabelIds.push(_labelConnection.LabelId.toString());
-                                        tempLabelIds.sort();
-                                        Predmeti[i].LabelIds = tempLabelIds.join();
+                $(data).each(function (index, _labelConnection) {
+                    switch (_contentType) {
+                        case "case":
+                            for (var i = 0; i < Predmeti.length; i++) {
+                                if (Predmeti[i].Id == _labelConnection.ContentId) {
+                                    if (Predmeti[i].LabelIds && Predmeti[i].LabelIds.length > 0) {
+                                        var tempLabelIds = Predmeti[i].LabelIds.split(',');
+                                        if (tempLabelIds.indexOf(_labelConnection.LabelId.toString()) == -1) {
+                                            tempLabelIds.push(_labelConnection.LabelId.toString());
+                                            tempLabelIds.sort();
+                                            Predmeti[i].LabelIds = tempLabelIds.join();
+                                        }
                                     }
-                                }
-                                else
-                                    Predmeti[i].LabelIds = _labelConnection.LabelId.toString();
-                                $("span[name='spanContentLabels_" + _contentType + "_" + _labelConnection.ContentId.toString() + "']").html(
-                                    BuildLabelsHTML(Predmeti[i].LabelIds, _contentType, _labelConnection.ContentId, isCaseEdit)
+                                    else
+                                        Predmeti[i].LabelIds = _labelConnection.LabelId.toString();
+                                    $("span[name='spanContentLabels_" + _contentType + "_" + _labelConnection.ContentId.toString() + "']").html(
+                                        BuildLabelsHTML(Predmeti[i].LabelIds, _contentType, _labelConnection.ContentId, isCaseEdit)
                                     );
-                                break;
+                                    break;
+                                }
                             }
-                        }
-                        break;
-                    default:
-                        ShowAlert("danger", "Problem pri dodavanju oznake.");
-                        return;
-                }
-            });
-            $("#ddlLabels").val("");
-            SelectedCases = [];
-            $("#tblCases").find("input[type='checkbox']").each(function (index, element) {
-                if ($(element).prop("checked"))
-                    $(element).trigger("click");
-            });
-            $("#divOznake").hide();
+                            break;
+                        default:
+                            ShowAlert("danger", "Problem pri dodavanju oznake.");
+                            return;
+                    }
+                });
+                $("#ddlLabels").val("");
+                SelectedCases = [];
+                $("#tblCases").find("input[type='checkbox']").each(function (index, element) {
+                    if ($(element).prop("checked"))
+                        $(element).trigger("click");
+                });
+                $("#divOznake").hide();
+                HideLoaderCenter();
+            }
+            else {
+                HideLoaderCenter();
+                ShowAlert("danger", "Problem pri dodavanju oznake.");
+            }
+        })
+        .fail(function (response) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom dodavanja oznake. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-        }
-        else {
-            HideLoaderCenter();
-            ShowAlert("danger", "Problem pri dodavanju oznake.");
-        }
-    })
-    .fail(function (response) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom dodavanja oznake. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function DeleteLabelConnection(element, labelId, contentType, contentId) {
@@ -688,116 +693,116 @@ function LoadCases(caseId, callback, filter, isCaseJustSaved) {
         Token: CurrentUser.Token,
         Email: CurrentUser.Email
     })
-    .done(function (data) {
-        if (data != null && data.length > 0) {
-            Predmeti = data;
-            $(data).each(function (index, _case) {
-                if (Date.parse(_case.Iniciran))
-                    _case.Iniciran = moment(_case.Iniciran).format("DD.MM.YYYY");
+        .done(function (data) {
+            if (data != null && data.length > 0) {
+                Predmeti = data;
+                $(data).each(function (index, _case) {
+                    if (Date.parse(_case.Iniciran))
+                        _case.Iniciran = moment(_case.Iniciran).format("DD.MM.YYYY");
 
-                if (Date.parse(_case.DatumStanjaPredmeta))
-                    _case.DatumStanjaPredmeta = moment(_case.DatumStanjaPredmeta).format("DD.MM.YYYY");
+                    if (Date.parse(_case.DatumStanjaPredmeta))
+                        _case.DatumStanjaPredmeta = moment(_case.DatumStanjaPredmeta).format("DD.MM.YYYY");
 
-                if (Date.parse(_case.SkontroDatum))
-                    _case.SkontroDatum = moment(_case.SkontroDatum).format("DD.MM.YYYY");
+                    if (Date.parse(_case.SkontroDatum))
+                        _case.SkontroDatum = moment(_case.SkontroDatum).format("DD.MM.YYYY");
 
-                if (Date.parse(_case.DatumArhiviranja))
-                    _case.DatumArhiviranja = moment(_case.DatumArhiviranja).format("DD.MM.YYYY");
+                    if (Date.parse(_case.DatumArhiviranja))
+                        _case.DatumArhiviranja = moment(_case.DatumArhiviranja).format("DD.MM.YYYY");
 
-                if (_case.VrijednostSpora != null)
-                    _case.VrijednostSporaString = GetMoneyFormat(_case.VrijednostSpora);
+                    if (_case.VrijednostSpora != null)
+                        _case.VrijednostSporaString = GetMoneyFormat(_case.VrijednostSpora);
 
-                _case.PrivremeniZastupniciString = _case.PrivremeniZastupnici ? "Da" : "Ne";
-                _case.PristupPredmetuString = _case.PristupPredmetu ? "Da" : "Ne";
+                    _case.PrivremeniZastupniciString = _case.PrivremeniZastupnici ? "Da" : "Ne";
+                    _case.PristupPredmetuString = _case.PristupPredmetu ? "Da" : "Ne";
 
-                _case.NasBrojName = "<strong>" + _case.NasBroj + "</strong>";
+                    _case.NasBrojName = "<strong>" + _case.NasBroj + "</strong>";
 
-                if (Labels != null)
-                    _case.Labels = BuildLabelsHTML(_case.LabelIds, "case", _case.Id);
+                    if (Labels != null)
+                        _case.Labels = BuildLabelsHTML(_case.LabelIds, "case", _case.Id);
 
-                switch (_case.KategorijaPredmetaId) {
-                    case 5:
-                        // OTVOREN
-                        _case.KategorijaPredmetaName = "<span style='color: #00b6ee; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
-                        break;
-                    case 8:
-                        // ARHIVIRAN
-                        _case.KategorijaPredmetaName = "<span style='color: #ff0000; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
-                        break;
-                    case 10:
-                        //PO ŽALBI/PRIGOVORU
-                        _case.KategorijaPredmetaName = "<span style='color: #21b04b; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
-                        break;
-                    default:
-                        _case.KategorijaPredmetaName = "<span style='color: black; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
-                        break;
-                }
+                    switch (_case.KategorijaPredmetaId) {
+                        case 5:
+                            // OTVOREN
+                            _case.KategorijaPredmetaName = "<span style='color: #00b6ee; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
+                            break;
+                        case 8:
+                            // ARHIVIRAN
+                            _case.KategorijaPredmetaName = "<span style='color: #ff0000; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
+                            break;
+                        case 10:
+                            //PO ŽALBI/PRIGOVORU
+                            _case.KategorijaPredmetaName = "<span style='color: #21b04b; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
+                            break;
+                        default:
+                            _case.KategorijaPredmetaName = "<span style='color: black; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
+                            break;
+                    }
 
-                if (index == data.length - 1) {
-                    $("#tblCases").bootstrapTable({
-                        data: data,
-                        striped: true,
-                        showColumns: true,
-                        columns: _columnsCases,
-                        escape: false,
-                        clickToSelect: false,
-                        onPostBody: function () {
-                            AfterBindCases();
-                            if (isCaseJustSaved !== true && $("#txtCasesFilterNasBroj").val() != null && $("#txtCasesFilterNasBroj").val() != "")
-                                EditCase(data[0].Id);
-                            else if (callback != undefined && typeof (callback) == "function")
-                                callback();
-                            return false;
-                        },
-                        onCheck: function (row, element) {
-                            SelectedCases.push(row);
-                            $("#divOznake").show();
-                        },
-                        onUncheck: function (row, element) {
-                            $(SelectedCases).each(function (index, _selectedCase) {
-                                if (_selectedCase.Id == row.Id) {
-                                    SelectedCases.splice(index, 1);
+                    if (index == data.length - 1) {
+                        $("#tblCases").bootstrapTable({
+                            data: data,
+                            striped: true,
+                            showColumns: true,
+                            columns: _columnsCases,
+                            escape: false,
+                            clickToSelect: false,
+                            onPostBody: function () {
+                                AfterBindCases();
+                                if (isCaseJustSaved !== true && $("#txtCasesFilterNasBroj").val() != null && $("#txtCasesFilterNasBroj").val() != "")
+                                    EditCase(data[0].Id);
+                                else if (callback != undefined && typeof (callback) == "function")
+                                    callback();
+                                return false;
+                            },
+                            onCheck: function (row, element) {
+                                SelectedCases.push(row);
+                                $("#divOznake").show();
+                            },
+                            onUncheck: function (row, element) {
+                                $(SelectedCases).each(function (index, _selectedCase) {
+                                    if (_selectedCase.Id == row.Id) {
+                                        SelectedCases.splice(index, 1);
 
-                                    if (SelectedCases.length == 0)
-                                        $("#divOznake").hide();
+                                        if (SelectedCases.length == 0)
+                                            $("#divOznake").hide();
 
-                                    return false;
-                                }
-                            });
-                        },
-                        onCheckAll: function (rows) {
-                            $(Predmeti).each(function (index, _case) {
-                                SelectedCases.push(_case);
-                            });
-                            $("#divOznake").show();
-                        },
-                        onUncheckAll: function (rows) {
-                            SelectedCases = [];
-                            $("#divOznake").hide();
-                        }
-                    });
-                    HideLoaderCenter();
-                }
-            });
-        }
-        else {
-            $("#tblCases").bootstrapTable({
-                data: [],
-                striped: true,
-                showColumns: true,
-                columns: _columnsCases,
-                escape: false
-            });
+                                        return false;
+                                    }
+                                });
+                            },
+                            onCheckAll: function (rows) {
+                                $(Predmeti).each(function (index, _case) {
+                                    SelectedCases.push(_case);
+                                });
+                                $("#divOznake").show();
+                            },
+                            onUncheckAll: function (rows) {
+                                SelectedCases = [];
+                                $("#divOznake").hide();
+                            }
+                        });
+                        HideLoaderCenter();
+                    }
+                });
+            }
+            else {
+                $("#tblCases").bootstrapTable({
+                    data: [],
+                    striped: true,
+                    showColumns: true,
+                    columns: _columnsCases,
+                    escape: false
+                });
+                HideLoaderCenter();
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom učitavanja predmeta. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-        }
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom učitavanja predmeta. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function AfterBindCases() {
@@ -814,20 +819,20 @@ function AfterBindCases() {
 
             var buttonsHTML = "<td style='width: 120px;'><div class='btn-group pull-right'>";
             buttonsHTML +=
-                        "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Pregledaj / izmijeni podatke o predmetu' onclick='EditCase(" + tempId.toString() + "); return false;'>"
-                        + "<span class='glyphicon glyphicon-pencil'></span>"
-                        + "</button>";
+                "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Pregledaj / izmijeni podatke o predmetu' onclick='EditCase(" + tempId.toString() + "); return false;'>"
+                + "<span class='glyphicon glyphicon-pencil'></span>"
+                + "</button>";
 
             buttonsHTML +=
-                        "<button class='btn btn-default btn-sm custom-table-button-template' data-toggle='tooltip' title='Generiši dokument iz predloška' onclick='GenerateTemplateForCase(" + tempId.toString() + "); return false;'>"
-                        + "<span class='glyphicon glyphicon-file'></span>"
-                        + "</button>";
+                "<button class='btn btn-default btn-sm custom-table-button-template' data-toggle='tooltip' title='Generiši dokument iz predloška' onclick='GenerateTemplateForCase(" + tempId.toString() + "); return false;'>"
+                + "<span class='glyphicon glyphicon-file'></span>"
+                + "</button>";
 
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
                 buttonsHTML +=
-                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši predmet' onclick='DeleteCase(" + tempId.toString() + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-remove'></span>"
-                            + "</button>";
+                    "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši predmet' onclick='DeleteCase(" + tempId.toString() + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-remove'></span>"
+                    + "</button>";
             }
 
             buttonsHTML += "</div></td>";
@@ -954,50 +959,50 @@ function LoadParties(queryStringPartyId) {
         Token: CurrentUser.Token,
         Email: CurrentUser.Email
     })
-    .done(function (data) {
-        if (data != null && data.length > 0) {
-            Lica = data;
-            $(data).each(function (index, _party) {
-                if (Date.parse(_party.Created))
-                    _party.Created = moment(_party.Created).format("DD.MM.YYYY");
+        .done(function (data) {
+            if (data != null && data.length > 0) {
+                Lica = data;
+                $(data).each(function (index, _party) {
+                    if (Date.parse(_party.Created))
+                        _party.Created = moment(_party.Created).format("DD.MM.YYYY");
 
-                if (Date.parse(_party.Modified))
-                    _party.Modified = moment(_party.Modified).format("DD.MM.YYYY");
+                    if (Date.parse(_party.Modified))
+                        _party.Modified = moment(_party.Modified).format("DD.MM.YYYY");
 
-                _party.IsMinorString = _party.IsMinor ? "Da" : "Ne";
+                    _party.IsMinorString = _party.IsMinor ? "Da" : "Ne";
 
-                if (index == data.length - 1) {
-                    $("#tblParties").bootstrapTable({
-                        data: data,
-                        striped: true,
-                        showColumns: true,
-                        columns: _columns,
-                        onPostBody: function () {
-                            AfterBindParties(queryStringPartyId);
-                            return false;
-                        }
-                    });
-                    HideLoaderCenter();
-                }
-            });
-        }
-        else {
-            $("#tblParties").bootstrapTable({
-                data: [],
-                striped: true,
-                showColumns: true,
-                columns: _columns,
-            });
+                    if (index == data.length - 1) {
+                        $("#tblParties").bootstrapTable({
+                            data: data,
+                            striped: true,
+                            showColumns: true,
+                            columns: _columns,
+                            onPostBody: function () {
+                                AfterBindParties(queryStringPartyId);
+                                return false;
+                            }
+                        });
+                        HideLoaderCenter();
+                    }
+                });
+            }
+            else {
+                $("#tblParties").bootstrapTable({
+                    data: [],
+                    striped: true,
+                    showColumns: true,
+                    columns: _columns,
+                });
+                HideLoaderCenter();
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom učitavanja stranki. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-        }
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom učitavanja stranki. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function AfterBindParties(queryStringPartyId) {
@@ -1015,14 +1020,14 @@ function AfterBindParties(queryStringPartyId) {
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
                 var buttonsHTML = "<td style='width: 100px;'><div class='btn-group pull-right'>";
                 buttonsHTML +=
-                            "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Izmijeni podatke o stranci' onclick='EditParty(" + tempId.toString() + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-pencil'></span>"
-                            + "</button>";
+                    "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Izmijeni podatke o stranci' onclick='EditParty(" + tempId.toString() + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-pencil'></span>"
+                    + "</button>";
 
                 buttonsHTML +=
-                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši stranku' onclick='DeleteParty(" + tempId.toString() + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-remove'></span>"
-                            + "</button>";
+                    "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši stranku' onclick='DeleteParty(" + tempId.toString() + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-remove'></span>"
+                    + "</button>";
                 buttonsHTML += "</div></td>";
 
                 $(element).append(buttonsHTML);
@@ -1072,38 +1077,38 @@ function LoadUsers() {
         Token: CurrentUser.Token,
         Email: CurrentUser.Email
     })
-    .done(function (data) {
-        if (data != null && data.length > 0) {
-            Users = data;
-            $("#tblUsers").bootstrapTable({
-                data: data,
-                striped: true,
-                columns: _columns,
-                search: true,
-                onPostBody: function () {
-                    AfterBindUsers();
-                    return false;
-                }
-            });
+        .done(function (data) {
+            if (data != null && data.length > 0) {
+                Users = data;
+                $("#tblUsers").bootstrapTable({
+                    data: data,
+                    striped: true,
+                    columns: _columns,
+                    search: true,
+                    onPostBody: function () {
+                        AfterBindUsers();
+                        return false;
+                    }
+                });
+                HideLoaderCenter();
+            }
+            else {
+                $("#tblUsers").bootstrapTable({
+                    data: [],
+                    striped: true,
+                    columns: _columns,
+                    search: true
+                });
+                HideLoaderCenter();
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom učitavanja korisnika. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-        }
-        else {
-            $("#tblUsers").bootstrapTable({
-                data: [],
-                striped: true,
-                columns: _columns,
-                search: true
-            });
-            HideLoaderCenter();
-        }
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom učitavanja korisnika. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function AfterBindUsers() {
@@ -1121,14 +1126,14 @@ function AfterBindUsers() {
             if (CurrentUser.UserGroupCodes.indexOf("user_admin") >= 0) {
                 var buttonsHTML = "<td style='width: 100px;'><div class='btn-group pull-right'>";
                 buttonsHTML +=
-                            "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Izmijeni korisnika' onclick='EditUser(" + tempId.toString() + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-pencil'></span>"
-                            + "</button>";
+                    "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Izmijeni korisnika' onclick='EditUser(" + tempId.toString() + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-pencil'></span>"
+                    + "</button>";
 
                 buttonsHTML +=
-                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši korisnika' onclick='DeleteUser(" + tempId.toString() + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-remove'></span>"
-                            + "</button>";
+                    "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši korisnika' onclick='DeleteUser(" + tempId.toString() + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-remove'></span>"
+                    + "</button>";
                 buttonsHTML += "</div></td>";
 
                 $(element).append(buttonsHTML);
@@ -1231,75 +1236,75 @@ function LoadLabels(inCasesModule, inAdvancedSearchModule) {
         Token: CurrentUser.Token,
         Email: CurrentUser.Email
     })
-    .done(function (data) {
-        if (data != null && data.length > 0) {
-            Labels = data;
+        .done(function (data) {
+            if (data != null && data.length > 0) {
+                Labels = data;
 
-            if (inCasesModule) {
-                $("#ddlLabels").html('<option value="" selected="selected">----</option>');
-                $("#ddlCase_Labels").html("");
-                $(Labels).each(function (index, _label) {
-                    $("#ddlLabels").append($("<option></option>").attr("value", _label.Id).text(_label.Name));
-                    $("#ddlCase_Labels").append($("<option></option>").attr("value", _label.Id).text(_label.Name));
-                });
-                HideLoaderCenter();
-            }
-            else if (inAdvancedSearchModule) {
-                if (Labels && Labels.length > 0)
+                if (inCasesModule) {
+                    $("#ddlLabels").html('<option value="" selected="selected">----</option>');
+                    $("#ddlCase_Labels").html("");
                     $(Labels).each(function (index, _label) {
-                        $("#ddlCase_Search_Labels").append($("<option></option>").attr("value", _label.Id).text(_label.Name));
-                        if (index == Labels.length - 1)
-                            SetMultiSelect($("#ddlCase_Search_Labels"), "Sve oznake", false);
+                        $("#ddlLabels").append($("<option></option>").attr("value", _label.Id).text(_label.Name));
+                        $("#ddlCase_Labels").append($("<option></option>").attr("value", _label.Id).text(_label.Name));
                     });
-                else
-                    SetMultiSelect($("#ddlCase_Search_Labels"), "Sve oznake");
+                    HideLoaderCenter();
+                }
+                else if (inAdvancedSearchModule) {
+                    if (Labels && Labels.length > 0)
+                        $(Labels).each(function (index, _label) {
+                            $("#ddlCase_Search_Labels").append($("<option></option>").attr("value", _label.Id).text(_label.Name));
+                            if (index == Labels.length - 1)
+                                SetMultiSelect($("#ddlCase_Search_Labels"), "Sve oznake", false);
+                        });
+                    else
+                        SetMultiSelect($("#ddlCase_Search_Labels"), "Sve oznake");
 
-                HideLoaderCenter();
+                    HideLoaderCenter();
+                }
+                else {
+                    $("#ddlCase_Labels").html("");
+                    $(Labels).each(function (index, _label) {
+                        $("#ddlCase_Labels").append($("<option></option>").attr("value", _label.Id).text(_label.Name));
+                        _label.Colors = "<div style='padding:3px; display:inline-block; background-color:" + _label.BackgroundColor + "; color:" + _label.FontColor + "'>" + _label.Name + "</div>";
+
+                        if (index == Labels.length - 1) {
+                            $("#tblLabels").bootstrapTable({
+                                data: data,
+                                striped: true,
+                                showColumns: true,
+                                columns: _columns,
+                                search: true,
+                                escape: false,
+                                onPostBody: function () {
+                                    AfterBindLabels();
+                                    return false;
+                                }
+                            });
+                            HideLoaderCenter();
+                        }
+                    });
+                }
             }
             else {
-                $("#ddlCase_Labels").html("");
-                $(Labels).each(function (index, _label) {
-                    $("#ddlCase_Labels").append($("<option></option>").attr("value", _label.Id).text(_label.Name));
-                    _label.Colors = "<div style='padding:3px; display:inline-block; background-color:" + _label.BackgroundColor + "; color:" + _label.FontColor + "'>" + _label.Name + "</div>";
-
-                    if (index == Labels.length - 1) {
-                        $("#tblLabels").bootstrapTable({
-                            data: data,
-                            striped: true,
-                            showColumns: true,
-                            columns: _columns,
-                            search: true,
-                            escape: false,
-                            onPostBody: function () {
-                                AfterBindLabels();
-                                return false;
-                            }
-                        });
-                        HideLoaderCenter();
-                    }
-                });
+                if (!inCasesModule) {
+                    $("#tblLabels").bootstrapTable({
+                        data: [],
+                        striped: true,
+                        showColumns: true,
+                        columns: _columns,
+                        search: true
+                    });
+                }
+                HideLoaderCenter();
             }
-        }
-        else {
-            if (!inCasesModule) {
-                $("#tblLabels").bootstrapTable({
-                    data: [],
-                    striped: true,
-                    showColumns: true,
-                    columns: _columns,
-                    search: true
-                });
-            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom učitavanja oznaka. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-        }
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom učitavanja oznaka. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function AfterBindLabels() {
@@ -1317,14 +1322,14 @@ function AfterBindLabels() {
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
                 var buttonsHTML = "<td style='width: 100px;'><div class='btn-group pull-right'>";
                 buttonsHTML +=
-                            "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Izmijeni oznaku' onclick='EditLabel(" + tempId.toString() + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-pencil'></span>"
-                            + "</button>";
+                    "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Izmijeni oznaku' onclick='EditLabel(" + tempId.toString() + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-pencil'></span>"
+                    + "</button>";
 
                 buttonsHTML +=
-                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši oznaku' onclick='DeleteLabel(" + tempId.toString() + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-remove'></span>"
-                            + "</button>";
+                    "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši oznaku' onclick='DeleteLabel(" + tempId.toString() + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-remove'></span>"
+                    + "</button>";
                 buttonsHTML += "</div></td>";
 
                 $(element).append(buttonsHTML);
@@ -1425,51 +1430,51 @@ function LoadSudovi() {
         Token: CurrentUser.Token,
         Email: CurrentUser.Email
     })
-    .done(function (data) {
-        if (data != null && data.length > 0) {
-            Sudovi = data;
-            $(data).each(function (index, _sud) {
+        .done(function (data) {
+            if (data != null && data.length > 0) {
+                Sudovi = data;
+                $(data).each(function (index, _sud) {
 
-                if (Date.parse(_sud.Created))
-                    _sud.Created = moment(_sud.Created).format("DD.MM.YYYY");
+                    if (Date.parse(_sud.Created))
+                        _sud.Created = moment(_sud.Created).format("DD.MM.YYYY");
 
-                if (Date.parse(_sud.Modified))
-                    _sud.Modified = moment(_sud.Modified).format("DD.MM.YYYY");
+                    if (Date.parse(_sud.Modified))
+                        _sud.Modified = moment(_sud.Modified).format("DD.MM.YYYY");
 
-                if (index == data.length - 1) {
-                    $("#tblSudovi").bootstrapTable({
-                        data: data,
-                        striped: true,
-                        showColumns: true,
-                        columns: _columns,
-                        search: true,
-                        onPostBody: function () {
-                            AfterBindSudovi();
-                            return false;
-                        }
-                    });
-                    HideLoaderCenter();
-                }
-            });
-        }
-        else {
-            $("#tblSudovi").bootstrapTable({
-                data: [],
-                striped: true,
-                showColumns: true,
-                columns: _columns,
-                search: true
-            });
+                    if (index == data.length - 1) {
+                        $("#tblSudovi").bootstrapTable({
+                            data: data,
+                            striped: true,
+                            showColumns: true,
+                            columns: _columns,
+                            search: true,
+                            onPostBody: function () {
+                                AfterBindSudovi();
+                                return false;
+                            }
+                        });
+                        HideLoaderCenter();
+                    }
+                });
+            }
+            else {
+                $("#tblSudovi").bootstrapTable({
+                    data: [],
+                    striped: true,
+                    showColumns: true,
+                    columns: _columns,
+                    search: true
+                });
+                HideLoaderCenter();
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom učitavanja sudova. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-        }
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom učitavanja sudova. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function AfterBindSudovi() {
@@ -1487,14 +1492,14 @@ function AfterBindSudovi() {
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
                 var buttonsHTML = "<td style='width: 100px;'><div class='btn-group pull-right'>";
                 buttonsHTML +=
-                            "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Izmijeni podatke o sudu' onclick='EditSud(" + tempId.toString() + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-pencil'></span>"
-                            + "</button>";
+                    "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Izmijeni podatke o sudu' onclick='EditSud(" + tempId.toString() + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-pencil'></span>"
+                    + "</button>";
 
                 buttonsHTML +=
-                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši sud' onclick='DeleteSud(" + tempId.toString() + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-remove'></span>"
-                            + "</button>";
+                    "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši sud' onclick='DeleteSud(" + tempId.toString() + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-remove'></span>"
+                    + "</button>";
                 buttonsHTML += "</div></td>";
 
                 $(element).append(buttonsHTML);
@@ -1580,23 +1585,23 @@ function SaveCaseActivity() {
             Token: CurrentUser.Token,
             Email: CurrentUser.Email
         })
-        .done(function (data) {
-            if (data && data > 0) {
-                LoadCaseActivities();
+            .done(function (data) {
+                if (data && data > 0) {
+                    LoadCaseActivities();
+                    HideLoaderCenter();
+                }
+                else {
+                    HideLoaderCenter();
+                    ShowAlert("danger", "Greška pri spašavanju pozivanja predmeta.");
+                }
+            })
+            .fail(function (jqXHR) {
+                if (jqXHR.status == 403)
+                    AlertUserSessionError();
+                else
+                    ShowAlert("danger", "Greška prilikom spašavanja pozivanja predmeta. Probajte ponovo ili kontaktirajte administratora.");
                 HideLoaderCenter();
-            }
-            else {
-                HideLoaderCenter();
-                ShowAlert("danger", "Greška pri spašavanju pozivanja predmeta.");
-            }
-        })
-        .fail(function (jqXHR) {
-            if (jqXHR.status == 403)
-                AlertUserSessionError();
-            else
-                ShowAlert("danger", "Greška prilikom spašavanja pozivanja predmeta. Probajte ponovo ili kontaktirajte administratora.");
-            HideLoaderCenter();
-        });
+            });
     }
 }
 
@@ -1652,33 +1657,33 @@ function SaveCase() {
     }
 
     $.post(AppPath + "api/predmet", reqObj)
-    .done(function (data) {
-        if (data && data > 0) {
-            ShowAlert("success", "Uspješno spašen predmet.");
+        .done(function (data) {
+            if (data && data > 0) {
+                ShowAlert("success", "Uspješno spašen predmet.");
 
-            UpdateRadnje_GoogleEvents();
+                UpdateRadnje_GoogleEvents();
 
-            if ($("#cbCase_CaseActivity_SaveNew").prop("checked"))
-                SaveCaseActivity();
+                if ($("#cbCase_CaseActivity_SaveNew").prop("checked"))
+                    SaveCaseActivity();
 
+                HideLoaderCenter();
+                if (CurrentModule == "home") // Case activities loaded in SaveCaseActivity()
+                    LoadRadnje();
+                else if (CurrentModule == "cases")
+                    LoadCases(undefined, undefined, undefined, true);
+            }
+            else {
+                HideLoaderCenter();
+                ShowAlert("danger", "Greška pri spašavanju predmeta.");
+            }
+        })
+        .fail(function (jqXHR) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom spašavanja predmeta. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-            if (CurrentModule == "home") // Case activities loaded in SaveCaseActivity()
-                LoadRadnje();
-            else if (CurrentModule == "cases")
-                LoadCases(undefined, undefined, undefined, true);
-        }
-        else {
-            HideLoaderCenter();
-            ShowAlert("danger", "Greška pri spašavanju predmeta.");
-        }
-    })
-    .fail(function (jqXHR) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom spašavanja predmeta. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function UpdateRadnje_GoogleEvents() {
@@ -1688,25 +1693,25 @@ function UpdateRadnje_GoogleEvents() {
         Token: CurrentUser.Token,
         Email: CurrentUser.Email
     })
-    .done(function (data) {
-        CurrentCase.Radnje = data;
+        .done(function (data) {
+            CurrentCase.Radnje = data;
 
-        $(CurrentCase.Radnje).each(function (index, _radnja) {
-            if (_radnja.CreateCalendarEvent
-                && (_radnja.GoogleEventId == undefined || _radnja.GoogleEventId == null || _radnja.GoogleEventId == ""))
-                CreateGoogleCalendarEvent(_radnja, UpdateRadnja_GoogleEventId);
-        });
+            $(CurrentCase.Radnje).each(function (index, _radnja) {
+                if (_radnja.CreateCalendarEvent
+                    && (_radnja.GoogleEventId == undefined || _radnja.GoogleEventId == null || _radnja.GoogleEventId == ""))
+                    CreateGoogleCalendarEvent(_radnja, UpdateRadnja_GoogleEventId);
+            });
 
-        $(CurrentCase.DeletedRadnje).each(function (index, _radnja) {
-            DeleteGoogleCalendarEvent(_radnja.GoogleEventId);
+            $(CurrentCase.DeletedRadnje).each(function (index, _radnja) {
+                DeleteGoogleCalendarEvent(_radnja.GoogleEventId);
+            });
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom učitavanja radnji. Probajte ponovo ili kontaktirajte administratora.");
         });
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom učitavanja radnji. Probajte ponovo ili kontaktirajte administratora.");
-    });
 }
 
 function UpdateRadnja_GoogleEventId(radnja) {
@@ -1716,14 +1721,14 @@ function UpdateRadnja_GoogleEventId(radnja) {
         Token: CurrentUser.Token,
         Email: CurrentUser.Email
     })
-    .done(function (data) {
-    })
-    .fail(function (jqXHR) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom kreiranja radnje u Google kalendaru. Kontaktirajte administratora.");
-    });
+        .done(function (data) {
+        })
+        .fail(function (jqXHR) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom kreiranja radnje u Google kalendaru. Kontaktirajte administratora.");
+        });
 }
 
 
@@ -1817,10 +1822,13 @@ function EditCase(id) {
     $("#btnSaveCase").hide();
     $("#btnSaveAndCloseCase").hide();
 
-    if (Predmeti == null) {
-        MenuCases_LoadDataOnly();
-        LoadCases(id, function () { EditCase(id); });
-    }
+    if (Predmeti == null)
+        MenuCases_LoadDataOnly(
+            function () {
+                LoadCases(id, function () {
+                    EditCase(id);
+                });
+            });
     else {
         var caseFound = false;
         $(Predmeti).each(function (index, obj) {
@@ -1886,20 +1894,20 @@ function EditCase(id) {
                     Token: CurrentUser.Token,
                     Email: CurrentUser.Email
                 })
-                .done(function (data) {
-                    CurrentCase.Parties = data;
-                    BindCaseParties(CurrentCase.Parties);
-                    HideLoaderCenter();
-                    HandleAllLoadedFlag();
-                })
-                .fail(function (jqXHR, textStatus, errorThrown) {
-                    if (jqXHR.status == 403)
-                        AlertUserSessionError();
-                    else
-                        ShowAlert("danger", "Greška prilikom učitavanja stranki. Probajte ponovo ili kontaktirajte administratora.");
-                    HideLoaderCenter();
-                    HandleAllLoadedFlag();
-                });
+                    .done(function (data) {
+                        CurrentCase.Parties = data;
+                        BindCaseParties(CurrentCase.Parties);
+                        HideLoaderCenter();
+                        HandleAllLoadedFlag();
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        if (jqXHR.status == 403)
+                            AlertUserSessionError();
+                        else
+                            ShowAlert("danger", "Greška prilikom učitavanja stranki. Probajte ponovo ili kontaktirajte administratora.");
+                        HideLoaderCenter();
+                        HandleAllLoadedFlag();
+                    });
 
                 ShowLoaderCenter();
                 allLoadedFlag++;
@@ -1908,20 +1916,20 @@ function EditCase(id) {
                     Token: CurrentUser.Token,
                     Email: CurrentUser.Email
                 })
-                .done(function (data) {
-                    CurrentCase.Notes = data;
-                    BindCaseNotes(CurrentCase.Notes);
-                    HideLoaderCenter();
-                    HandleAllLoadedFlag();
-                })
-                .fail(function (jqXHR, textStatus, errorThrown) {
-                    if (jqXHR.status == 403)
-                        AlertUserSessionError();
-                    else
-                        ShowAlert("danger", "Greška prilikom učitavanja bilješki. Probajte ponovo ili kontaktirajte administratora.");
-                    HideLoaderCenter();
-                    HandleAllLoadedFlag();
-                });
+                    .done(function (data) {
+                        CurrentCase.Notes = data;
+                        BindCaseNotes(CurrentCase.Notes);
+                        HideLoaderCenter();
+                        HandleAllLoadedFlag();
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        if (jqXHR.status == 403)
+                            AlertUserSessionError();
+                        else
+                            ShowAlert("danger", "Greška prilikom učitavanja bilješki. Probajte ponovo ili kontaktirajte administratora.");
+                        HideLoaderCenter();
+                        HandleAllLoadedFlag();
+                    });
 
                 ShowLoaderCenter();
                 allLoadedFlag++;
@@ -1930,20 +1938,20 @@ function EditCase(id) {
                     Token: CurrentUser.Token,
                     Email: CurrentUser.Email
                 })
-                .done(function (data) {
-                    CurrentCase.Expenses = data;
-                    BindCaseExpenses(CurrentCase.Expenses);
-                    HideLoaderCenter();
-                    HandleAllLoadedFlag();
-                })
-                .fail(function (jqXHR, textStatus, errorThrown) {
-                    if (jqXHR.status == 403)
-                        AlertUserSessionError();
-                    else
-                        ShowAlert("danger", "Greška prilikom učitavanja troškova. Probajte ponovo ili kontaktirajte administratora.");
-                    HideLoaderCenter();
-                    HandleAllLoadedFlag();
-                });
+                    .done(function (data) {
+                        CurrentCase.Expenses = data;
+                        BindCaseExpenses(CurrentCase.Expenses);
+                        HideLoaderCenter();
+                        HandleAllLoadedFlag();
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        if (jqXHR.status == 403)
+                            AlertUserSessionError();
+                        else
+                            ShowAlert("danger", "Greška prilikom učitavanja troškova. Probajte ponovo ili kontaktirajte administratora.");
+                        HideLoaderCenter();
+                        HandleAllLoadedFlag();
+                    });
 
                 ShowLoaderCenter();
                 allLoadedFlag++;
@@ -1953,21 +1961,21 @@ function EditCase(id) {
                     Token: CurrentUser.Token,
                     Email: CurrentUser.Email
                 })
-                .done(function (data) {
-                    CurrentCase.Radnje = data;
-                    CurrentCase.DeletedRadnje = [];
-                    BindCaseRadnje(CurrentCase.Radnje);
-                    HideLoaderCenter();
-                    HandleAllLoadedFlag();
-                })
-                .fail(function (jqXHR, textStatus, errorThrown) {
-                    if (jqXHR.status == 403)
-                        AlertUserSessionError();
-                    else
-                        ShowAlert("danger", "Greška prilikom učitavanja radnji. Probajte ponovo ili kontaktirajte administratora.");
-                    HideLoaderCenter();
-                    HandleAllLoadedFlag();
-                });
+                    .done(function (data) {
+                        CurrentCase.Radnje = data;
+                        CurrentCase.DeletedRadnje = [];
+                        BindCaseRadnje(CurrentCase.Radnje);
+                        HideLoaderCenter();
+                        HandleAllLoadedFlag();
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        if (jqXHR.status == 403)
+                            AlertUserSessionError();
+                        else
+                            ShowAlert("danger", "Greška prilikom učitavanja radnji. Probajte ponovo ili kontaktirajte administratora.");
+                        HideLoaderCenter();
+                        HandleAllLoadedFlag();
+                    });
 
                 ShowLoaderCenter();
                 allLoadedFlag++;
@@ -1977,20 +1985,20 @@ function EditCase(id) {
                     Token: CurrentUser.Token,
                     Email: CurrentUser.Email
                 })
-                .done(function (data) {
-                    CurrentCase.Documents = data;
-                    BindCaseDocuments(CurrentCase.Documents);
-                    HideLoaderCenter();
-                    HandleAllLoadedFlag();
-                })
-                .fail(function (jqXHR, textStatus, errorThrown) {
-                    if (jqXHR.status == 403)
-                        AlertUserSessionError();
-                    else
-                        ShowAlert("danger", "Greška prilikom učitavanja dokumenata. Probajte ponovo ili kontaktirajte administratora.");
-                    HideLoaderCenter();
-                    HandleAllLoadedFlag();
-                });
+                    .done(function (data) {
+                        CurrentCase.Documents = data;
+                        BindCaseDocuments(CurrentCase.Documents);
+                        HideLoaderCenter();
+                        HandleAllLoadedFlag();
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        if (jqXHR.status == 403)
+                            AlertUserSessionError();
+                        else
+                            ShowAlert("danger", "Greška prilikom učitavanja dokumenata. Probajte ponovo ili kontaktirajte administratora.");
+                        HideLoaderCenter();
+                        HandleAllLoadedFlag();
+                    });
 
                 ShowLoaderCenter();
                 allLoadedFlag++;
@@ -2000,20 +2008,20 @@ function EditCase(id) {
                     Token: CurrentUser.Token,
                     Email: CurrentUser.Email
                 })
-                .done(function (data) {
-                    CurrentCase.Connections = data;
-                    BindCaseConnections(CurrentCase.Connections);
-                    HideLoaderCenter();
-                    HandleAllLoadedFlag();
-                })
-                .fail(function (jqXHR, textStatus, errorThrown) {
-                    if (jqXHR.status == 403)
-                        AlertUserSessionError();
-                    else
-                        ShowAlert("danger", "Greška prilikom učitavanja veza. Probajte ponovo ili kontaktirajte administratora.");
-                    HideLoaderCenter();
-                    HandleAllLoadedFlag();
-                });
+                    .done(function (data) {
+                        CurrentCase.Connections = data;
+                        BindCaseConnections(CurrentCase.Connections);
+                        HideLoaderCenter();
+                        HandleAllLoadedFlag();
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        if (jqXHR.status == 403)
+                            AlertUserSessionError();
+                        else
+                            ShowAlert("danger", "Greška prilikom učitavanja veza. Probajte ponovo ili kontaktirajte administratora.");
+                        HideLoaderCenter();
+                        HandleAllLoadedFlag();
+                    });
 
                 $("#btnGenerateTemplateForCase").click(function () {
                     GenerateTemplateForCase(CurrentCase.Id);
@@ -2053,24 +2061,24 @@ function GenerateTemplate() {
         Token: CurrentUser.Token,
         Email: CurrentUser.Email
     })
-    .done(function (data) {
-        if (data && data.length > 0) {
-            window.location = AppPath + "/Temp/" + CurrentUser.Id.toString() + "/" + data;
-            ShowAlert("success", "Uspješno generisan dokument.");
+        .done(function (data) {
+            if (data && data.length > 0) {
+                window.location = AppPath + "/Temp/" + CurrentUser.Id.toString() + "/" + data;
+                ShowAlert("success", "Uspješno generisan dokument.");
+                HideLoaderCenter();
+            }
+            else {
+                HideLoaderCenter();
+                ShowAlert("danger", "Greška pri generisanju dokumenta.");
+            }
+        })
+        .fail(function (jqXHR) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom generisanja dokumenta. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-        }
-        else {
-            HideLoaderCenter();
-            ShowAlert("danger", "Greška pri generisanju dokumenta.");
-        }
-    })
-    .fail(function (jqXHR) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom generisanja dokumenta. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function LoadTemplates(callback) {
@@ -2080,27 +2088,27 @@ function LoadTemplates(callback) {
         Token: CurrentUser.Token,
         Email: CurrentUser.Email
     })
-    .done(function (data) {
-        if (data != null && data.length > 0) {
-            Templates = data;
-            $("#ddlTemplates").html('<option value="">-----</option>');
-            $(Templates).each(function (index, _template) {
-                $("#ddlTemplates").append($("<option></option>").attr("value", _template.Name).text(_template.Name.replace(".docx", "")));
-                if (index == Templates.length - 1) {
-                    if (callback != undefined && typeof (callback) == "function")
-                        callback();
-                }
-            });
-        }
-        HideLoaderCenter();
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom učitavanja predložaka. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        .done(function (data) {
+            if (data != null && data.length > 0) {
+                Templates = data;
+                $("#ddlTemplates").html('<option value="">-----</option>');
+                $(Templates).each(function (index, _template) {
+                    $("#ddlTemplates").append($("<option></option>").attr("value", _template.Name).text(_template.Name.replace(".docx", "")));
+                    if (index == Templates.length - 1) {
+                        if (callback != undefined && typeof (callback) == "function")
+                            callback();
+                    }
+                });
+            }
+            HideLoaderCenter();
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom učitavanja predložaka. Probajte ponovo ili kontaktirajte administratora.");
+            HideLoaderCenter();
+        });
 }
 
 function ClearModalUser() {
@@ -2135,24 +2143,24 @@ function SaveUser() {
         reqObj.Id = tempId;
 
     $.post(AppPath + "api/user", reqObj)
-    .done(function (data) {
-        if (data && data > 0) {
-            ShowAlert("success", "Uspješno spašen korisnik.");
+        .done(function (data) {
+            if (data && data > 0) {
+                ShowAlert("success", "Uspješno spašen korisnik.");
+                HideLoaderCenter();
+                LoadUsers();
+            }
+            else {
+                HideLoaderCenter();
+                ShowAlert("danger", "Greška pri spašavanju korisnika.");
+            }
+        })
+        .fail(function (jqXHR) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom spašavanja korisnika. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-            LoadUsers();
-        }
-        else {
-            HideLoaderCenter();
-            ShowAlert("danger", "Greška pri spašavanju korisnika.");
-        }
-    })
-    .fail(function (jqXHR) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom spašavanja korisnika. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function ClearModalLabel() {
@@ -2184,24 +2192,24 @@ function SaveLabel() {
         reqObj.Id = tempId;
 
     $.post(AppPath + "api/label", reqObj)
-    .done(function (data) {
-        if (data && data > 0) {
-            ShowAlert("success", "Uspješno spašena oznaka.");
+        .done(function (data) {
+            if (data && data > 0) {
+                ShowAlert("success", "Uspješno spašena oznaka.");
+                HideLoaderCenter();
+                LoadLabels(false);
+            }
+            else {
+                HideLoaderCenter();
+                ShowAlert("danger", "Greška pri spašavanju oznake.");
+            }
+        })
+        .fail(function (jqXHR) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom spašavanja oznake. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-            LoadLabels(false);
-        }
-        else {
-            HideLoaderCenter();
-            ShowAlert("danger", "Greška pri spašavanju oznake.");
-        }
-    })
-    .fail(function (jqXHR) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom spašavanja oznake. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function ClearModalSud() {
@@ -2243,24 +2251,24 @@ function SaveSud() {
     }
 
     $.post(AppPath + "api/sud", reqObj)
-    .done(function (data) {
-        if (data && data > 0) {
-            ShowAlert("success", "Uspješno spašen sud.");
+        .done(function (data) {
+            if (data && data > 0) {
+                ShowAlert("success", "Uspješno spašen sud.");
+                HideLoaderCenter();
+                LoadSudovi();
+            }
+            else {
+                HideLoaderCenter();
+                ShowAlert("danger", "Greška pri spašavanju suda.");
+            }
+        })
+        .fail(function (jqXHR) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom spašavanja suda. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-            LoadSudovi();
-        }
-        else {
-            HideLoaderCenter();
-            ShowAlert("danger", "Greška pri spašavanju suda.");
-        }
-    })
-    .fail(function (jqXHR) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom spašavanja suda. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function LoadUserGroups() {
@@ -2270,33 +2278,33 @@ function LoadUserGroups() {
         Token: CurrentUser.Token,
         Email: CurrentUser.Email
     })
-    .done(function (data) {
-        if (data) {
-            $("#ddlUser_UserGroups").html("");
-            $(data).each(function (index, obj) {
-                $("#ddlUser_UserGroups").append($("<option></option>").attr("value", obj.Code).text(obj.Name));
-                if (index == data.length - 1) {
-                    $("#ddlUser_UserGroups").multiselect({
-                        includeSelectAllOption: false,
-                        allSelectedText: "Sve grupe",
-                        //selectAllText: "Odaberi sve / ništa",
-                        nonSelectedText: "Ništa nije odabrano",
-                        maxHeight: 200
-                    });
-                }
-            });
+        .done(function (data) {
+            if (data) {
+                $("#ddlUser_UserGroups").html("");
+                $(data).each(function (index, obj) {
+                    $("#ddlUser_UserGroups").append($("<option></option>").attr("value", obj.Code).text(obj.Name));
+                    if (index == data.length - 1) {
+                        $("#ddlUser_UserGroups").multiselect({
+                            includeSelectAllOption: false,
+                            allSelectedText: "Sve grupe",
+                            //selectAllText: "Odaberi sve / ništa",
+                            nonSelectedText: "Ništa nije odabrano",
+                            maxHeight: 200
+                        });
+                    }
+                });
+                HideLoaderCenter();
+            }
+            else
+                HideLoaderCenter();
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom učitavanja korisničkih grupa. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-        }
-        else
-            HideLoaderCenter();
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom učitavanja korisničkih grupa. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function SetMultiSelect(element, _allSelectedText, _includeSelectAllOption) {
@@ -2323,35 +2331,43 @@ function LoadCodeTableData(tableName, dropDown, columnName, callback) {
         Token: CurrentUser.Token,
         Email: CurrentUser.Email
     })
-    .done(function (data) {
-        if (data) {
-            $(data).each(function (index, obj) {
-                if (tableName == "VrsteRadnji")
-                    dropDown.append($("<option></option>")
-                        .attr("value", obj.Id)
-                        .attr("has_star", (obj.Name.indexOf('*') > -1))
-                        .text(obj.Name.replace('*', '')));
-                else
-                    dropDown.append($("<option></option>")
-                        .attr("value", obj.Id)
-                        .text(obj.Name));
-                if (index == data.length - 1) {
-                    if (callback != undefined && typeof (callback) == "function")
-                        callback();
-                }
-            });
+        .done(function (data) {
+            if (data) {
+                $(data).each(function (index, obj) {
+                    if (tableName == "VrsteRadnji")
+                        dropDown.append($("<option></option>")
+                            .attr("value", obj.Id)
+                            .attr("has_star", (obj.Name.indexOf('*') > -1))
+                            .text(obj.Name.replace('*', '')));
+                    else
+                        dropDown.append($("<option></option>")
+                            .attr("value", obj.Id)
+                            .text(obj.Name));
+                    if (index == data.length - 1) {
+                        if (callback != undefined && typeof (callback) == "function")
+                            callback();
+                    }
+                });
+
+                if (data.length == 0 && callback != undefined && typeof (callback) == "function")
+                    callback();
+                HideLoaderCenter();
+            }
+            else {
+                if (callback != undefined && typeof (callback) == "function")
+                    callback();
+                HideLoaderCenter();
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom učitavanja podataka kodne tabele. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-        }
-        else
-            HideLoaderCenter();
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom učitavanja podataka kodne tabele. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+            if (callback != undefined && typeof (callback) == "function")
+                callback();
+        });
 }
 
 function LoadCodeTableUI(element, title, tableName, columnName, remark) {
@@ -2398,41 +2414,41 @@ function LoadCodeTableUI(element, title, tableName, columnName, remark) {
         Token: CurrentUser.Token,
         Email: CurrentUser.Email
     })
-    .done(function (data) {
-        if (data) {
-            CurrentCodeTable.Data = data;
-            var _columns = [
-                { field: 'Id' },
-                { field: 'OrdinalNo', width: 100 },
-                { field: 'Name' }
-            ];
+        .done(function (data) {
+            if (data) {
+                CurrentCodeTable.Data = data;
+                var _columns = [
+                    { field: 'Id' },
+                    { field: 'OrdinalNo', width: 100 },
+                    { field: 'Name' }
+                ];
 
-            $("#tblCodeTableData").bootstrapTable("destroy");
-            $("#tblCodeTableData").bootstrapTable({
-                data: data,
-                striped: true,
-                showRefresh: false,
-                columns: _columns,
-                search: true,
-                showHeader: false,
-                onPostBody: function () {
-                    AfterBindCodeTableData();
-                    return false;
-                }
-            });
+                $("#tblCodeTableData").bootstrapTable("destroy");
+                $("#tblCodeTableData").bootstrapTable({
+                    data: data,
+                    striped: true,
+                    showRefresh: false,
+                    columns: _columns,
+                    search: true,
+                    showHeader: false,
+                    onPostBody: function () {
+                        AfterBindCodeTableData();
+                        return false;
+                    }
+                });
 
+                HideLoaderCenter();
+            }
+            else
+                HideLoaderCenter();
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom učitavanja kodne tabele. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-        }
-        else
-            HideLoaderCenter();
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom učitavanja kodne tabele. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function AfterBindCodeTableData() {
@@ -2443,14 +2459,14 @@ function AfterBindCodeTableData() {
         if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
             var buttonsHTML = "<td style='width: 100px;'><div class='btn-group pull-right'>";
             buttonsHTML +=
-                        "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Izmijeni' onclick='EditCodeTableRecord(" + tempId.toString() + "); return false;'>"
-                        + "<span class='glyphicon glyphicon-pencil'></span>"
-                        + "</button>";
+                "<button class='btn btn-default btn-sm custom-table-button-edit' data-toggle='tooltip' title='Izmijeni' onclick='EditCodeTableRecord(" + tempId.toString() + "); return false;'>"
+                + "<span class='glyphicon glyphicon-pencil'></span>"
+                + "</button>";
 
             buttonsHTML +=
-                        "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši' onclick='DeleteCodeTableRecord(" + tempId.toString() + "); return false;'>"
-                        + "<span class='glyphicon glyphicon-remove'></span>"
-                        + "</button>";
+                "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši' onclick='DeleteCodeTableRecord(" + tempId.toString() + "); return false;'>"
+                + "<span class='glyphicon glyphicon-remove'></span>"
+                + "</button>";
             buttonsHTML += "</div></td>";
 
             $(element).append(buttonsHTML);
@@ -2530,24 +2546,24 @@ function SaveCodeTableRecord() {
         reqObj.Id = tempId;
 
     $.post(AppPath + "api/codetable", reqObj)
-    .done(function (data) {
-        if (data && data > 0) {
-            LoadCodeTableUI(CurrentCodeTable.Element, CurrentCodeTable.Title, CurrentCodeTable.TableName, CurrentCodeTable.ColumnName);
+        .done(function (data) {
+            if (data && data > 0) {
+                LoadCodeTableUI(CurrentCodeTable.Element, CurrentCodeTable.Title, CurrentCodeTable.TableName, CurrentCodeTable.ColumnName);
+                HideLoaderCenter();
+                ShowAlert("success", "Uspješno spašen podatak.");
+            }
+            else {
+                HideLoaderCenter();
+                ShowAlert("danger", "Greška pri spašavanju podatka.");
+            }
+        })
+        .fail(function (jqXHR) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom spašavanja podatka. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-            ShowAlert("success", "Uspješno spašen podatak.");
-        }
-        else {
-            HideLoaderCenter();
-            ShowAlert("danger", "Greška pri spašavanju podatka.");
-        }
-    })
-    .fail(function (jqXHR) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom spašavanja podatka. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function ClearModalCase(isNewCase) {
@@ -2702,26 +2718,26 @@ function SaveParty() {
     }
 
     $.post(AppPath + "api/lice", reqObj)
-    .done(function (data) {
-        if (data && data > 0) {
-            ShowAlert("success", "Uspješno spašena stranka.");
-            $("#ddlCase_Lice").html('<option value="-1">-----</option>');
-            LoadCodeTableData("vLica_Id_Naziv", $("#ddlCase_Lice"), "Naziv");
+        .done(function (data) {
+            if (data && data > 0) {
+                ShowAlert("success", "Uspješno spašena stranka.");
+                $("#ddlCase_Lice").html('<option value="-1">-----</option>');
+                LoadCodeTableData("vLica_Id_Naziv", $("#ddlCase_Lice"), "Naziv");
+                HideLoaderCenter();
+                LoadParties();
+            }
+            else {
+                HideLoaderCenter();
+                ShowAlert("danger", "Greška pri spašavanju stranke.");
+            }
+        })
+        .fail(function (jqXHR) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom spašavanja stranke. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-            LoadParties();
-        }
-        else {
-            HideLoaderCenter();
-            ShowAlert("danger", "Greška pri spašavanju stranke.");
-        }
-    })
-    .fail(function (jqXHR) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom spašavanja stranke. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function EditParty(id) {
@@ -2770,35 +2786,35 @@ function LoadPartyCases(id) {
         Token: CurrentUser.Token,
         Email: CurrentUser.Email
     })
-    .done(function (data) {
-        if (data != null && data.length > 0) {
-            $("#tblPartyCases").bootstrapTable({
-                data: data,
-                striped: true,
-                columns: _columns,
-                onPostBody: function () {
-                    AfterBindPartyCases();
-                    return false;
-                }
-            });
+        .done(function (data) {
+            if (data != null && data.length > 0) {
+                $("#tblPartyCases").bootstrapTable({
+                    data: data,
+                    striped: true,
+                    columns: _columns,
+                    onPostBody: function () {
+                        AfterBindPartyCases();
+                        return false;
+                    }
+                });
+                HideLoaderCenter();
+            }
+            else {
+                $("#tblPartyCases").bootstrapTable({
+                    data: [],
+                    striped: true,
+                    columns: _columns,
+                });
+                HideLoaderCenter();
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else
+                ShowAlert("danger", "Greška prilikom učitavanja predmeta stranke. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-        }
-        else {
-            $("#tblPartyCases").bootstrapTable({
-                data: [],
-                striped: true,
-                columns: _columns,
-            });
-            HideLoaderCenter();
-        }
-    })
-    .fail(function (jqXHR, textStatus, errorThrown) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else
-            ShowAlert("danger", "Greška prilikom učitavanja predmeta stranke. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function AfterBindPartyCases() {
@@ -2814,6 +2830,7 @@ function AfterBindPartyCases() {
                 $("#modalParty").modal("toggle");
                 ShowLoaderCenter();
                 setTimeout(function () {
+                    Predmeti = null;
                     EditCase(tempId);
                     HideLoaderCenter();
                 }, 1000);
@@ -2951,18 +2968,18 @@ function AfterBindCaseParties() {
         else if (CurrentCase.Parties.length > 0) {
             var buttonsHTML = "<td style='width: 140px;'><div class='btn-group pull-right'>";
             buttonsHTML +=
-                            "<button class='btn btn-default btn-sm' data-toggle='tooltip' title='Otvori stranku' onclick='OpenCasePartyInNewTab(" + (index - 1) + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-eye-open'></span>"
-                            + "</button>";
+                "<button class='btn btn-default btn-sm' data-toggle='tooltip' title='Otvori stranku' onclick='OpenCasePartyInNewTab(" + (index - 1) + "); return false;'>"
+                + "<span class='glyphicon glyphicon-eye-open'></span>"
+                + "</button>";
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
                 buttonsHTML +=
-                            "<button class='btn btn-warning btn-sm' data-toggle='tooltip' title='Izmijeni stranku' onclick='EditCaseParty(" + (index - 1) + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-pencil'></span>"
-                            + "</button>";
+                    "<button class='btn btn-warning btn-sm' data-toggle='tooltip' title='Izmijeni stranku' onclick='EditCaseParty(" + (index - 1) + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-pencil'></span>"
+                    + "</button>";
                 buttonsHTML +=
-                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši stranku' onclick='DeleteCaseParty(" + (index - 1) + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-remove'></span>"
-                            + "</button>";
+                    "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši stranku' onclick='DeleteCaseParty(" + (index - 1) + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-remove'></span>"
+                    + "</button>";
 
             }
             buttonsHTML += "</div></td>";
@@ -3076,9 +3093,9 @@ function AfterBindCaseNotes() {
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
                 var buttonsHTML = "<td style='width: 50px;'><div class='btn-group pull-right'>";
                 buttonsHTML +=
-                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši bilješku' onclick='DeleteCaseNote(" + (index - 1) + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-remove'></span>"
-                            + "</button>";
+                    "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši bilješku' onclick='DeleteCaseNote(" + (index - 1) + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-remove'></span>"
+                    + "</button>";
                 buttonsHTML += "</div></td>";
 
                 $(element).append(buttonsHTML);
@@ -3151,9 +3168,9 @@ function AfterBindCaseConnections() {
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
                 var buttonsHTML = "<td style='width: 50px;'><div class='btn-group pull-right'>";
                 buttonsHTML +=
-                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši vezu' onclick='DeleteCaseConnection(" + (index - 1) + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-remove'></span>"
-                            + "</button>";
+                    "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši vezu' onclick='DeleteCaseConnection(" + (index - 1) + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-remove'></span>"
+                    + "</button>";
                 buttonsHTML += "</div></td>";
 
                 $(element).append(buttonsHTML);
@@ -3266,21 +3283,21 @@ function AfterBindCaseDocuments() {
 
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
                 buttonsHTML +=
-                            "<button class='btn btn-default btn-sm' data-toggle='tooltip' title='Kopiraj dokument (moguće ga je zalijepiti u drugi predmet)' onclick='CopyCaseDocument(" + (index - 1) + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-copy'></span>"
-                            + "</button>";
+                    "<button class='btn btn-default btn-sm' data-toggle='tooltip' title='Kopiraj dokument (moguće ga je zalijepiti u drugi predmet)' onclick='CopyCaseDocument(" + (index - 1) + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-copy'></span>"
+                    + "</button>";
                 buttonsHTML +=
-                            "<button class='btn btn-default btn-sm' data-toggle='tooltip' title='Iskoristi ponovo' onclick='ReuseCaseDocument(" + (index - 1) + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-repeat'></span>"
-                            + "</button>";
+                    "<button class='btn btn-default btn-sm' data-toggle='tooltip' title='Iskoristi ponovo' onclick='ReuseCaseDocument(" + (index - 1) + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-repeat'></span>"
+                    + "</button>";
                 buttonsHTML +=
-                            "<button class='btn btn-warning btn-sm' data-toggle='tooltip' title='Izmijeni dokument' onclick='EditCaseDocument(" + (index - 1) + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-pencil'></span>"
-                            + "</button>";
+                    "<button class='btn btn-warning btn-sm' data-toggle='tooltip' title='Izmijeni dokument' onclick='EditCaseDocument(" + (index - 1) + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-pencil'></span>"
+                    + "</button>";
                 buttonsHTML +=
-                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši dokument' onclick='DeleteCaseDocument(" + (index - 1) + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-remove'></span>"
-                            + "</button>";
+                    "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši dokument' onclick='DeleteCaseDocument(" + (index - 1) + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-remove'></span>"
+                    + "</button>";
             }
 
             buttonsHTML += "</div></td>";
@@ -3444,13 +3461,13 @@ function AfterBindCaseRadnje() {
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
 
                 buttonsHTML +=
-                            "<button class='btn btn-warning btn-sm' data-toggle='tooltip' title='Izmijeni radnju' onclick='EditCaseRadnja(" + (index - 1) + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-pencil'></span>"
-                            + "</button>";
+                    "<button class='btn btn-warning btn-sm' data-toggle='tooltip' title='Izmijeni radnju' onclick='EditCaseRadnja(" + (index - 1) + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-pencil'></span>"
+                    + "</button>";
                 buttonsHTML +=
-                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši radnju' onclick='DeleteCaseRadnja(" + (index - 1) + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-remove'></span>"
-                            + "</button>";
+                    "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši radnju' onclick='DeleteCaseRadnja(" + (index - 1) + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-remove'></span>"
+                    + "</button>";
             }
 
             buttonsHTML += "</div></td>";
@@ -3583,13 +3600,13 @@ function AfterBindCaseExpenses() {
             if (CurrentUser.UserGroupCodes.indexOf("office_admin") >= 0) {
                 var buttonsHTML = "<td style='width: 90px;'><div class='btn-group pull-right'>";
                 buttonsHTML +=
-                            "<button class='btn btn-warning btn-sm' data-toggle='tooltip' title='Izmijeni trošak' onclick='EditCaseExpense(" + (index - 1) + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-pencil'></span>"
-                            + "</button>";
+                    "<button class='btn btn-warning btn-sm' data-toggle='tooltip' title='Izmijeni trošak' onclick='EditCaseExpense(" + (index - 1) + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-pencil'></span>"
+                    + "</button>";
                 buttonsHTML +=
-                            "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši trošak' onclick='DeleteCaseExpense(" + (index - 1) + "); return false;'>"
-                            + "<span class='glyphicon glyphicon-remove'></span>"
-                            + "</button>";
+                    "<button class='btn btn-default btn-sm custom-table-button-delete' data-toggle='tooltip' title='Izbriši trošak' onclick='DeleteCaseExpense(" + (index - 1) + "); return false;'>"
+                    + "<span class='glyphicon glyphicon-remove'></span>"
+                    + "</button>";
                 buttonsHTML += "</div></td>";
 
                 $(element).append(buttonsHTML);
@@ -3706,22 +3723,22 @@ function SetUpStanjeAutocomplete() {
                 Token: CurrentUser.Token,
                 Email: CurrentUser.Email
             })
-            .done(function (data) {
-                response($.map(data, function (item) {
-                    return {
-                        label: item.Name,
-                        value: item.Name
-                    };
-                }));
-                $("#spinner_txtCase_StanjePredmeta").hide();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                if (jqXHR.status == 403)
-                    AlertUserSessionError();
-                else
-                    ShowAlert("danger", "Greška prilikom učitavanja stanja predmeta za odabir. Probajte ponovo ili kontaktirajte administratora.");
-                HideLoaderCenter();
-            });
+                .done(function (data) {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.Name,
+                            value: item.Name
+                        };
+                    }));
+                    $("#spinner_txtCase_StanjePredmeta").hide();
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status == 403)
+                        AlertUserSessionError();
+                    else
+                        ShowAlert("danger", "Greška prilikom učitavanja stanja predmeta za odabir. Probajte ponovo ili kontaktirajte administratora.");
+                    HideLoaderCenter();
+                });
         },
         delay: 500,
         appendTo: ".case-column-for-stanje"
@@ -3740,22 +3757,22 @@ function SetUpTipDokumentaAutocomplete() {
                 Token: CurrentUser.Token,
                 Email: CurrentUser.Email
             })
-            .done(function (data) {
-                response($.map(data, function (item) {
-                    return {
-                        label: item.Name,
-                        value: item.Name
-                    };
-                }));
-                $("#spinner_txtCase_Document_TipDokumenta").hide();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                if (jqXHR.status == 403)
-                    AlertUserSessionError();
-                else
-                    ShowAlert("danger", "Greška prilikom učitavanja tipova dokumenata za odabir. Probajte ponovo ili kontaktirajte administratora.");
-                HideLoaderCenter();
-            });
+                .done(function (data) {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.Name,
+                            value: item.Name
+                        };
+                    }));
+                    $("#spinner_txtCase_Document_TipDokumenta").hide();
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status == 403)
+                        AlertUserSessionError();
+                    else
+                        ShowAlert("danger", "Greška prilikom učitavanja tipova dokumenata za odabir. Probajte ponovo ili kontaktirajte administratora.");
+                    HideLoaderCenter();
+                });
         },
         delay: 500,
         appendTo: "#divDokumenti"
@@ -3774,22 +3791,22 @@ function SetUpPredatoUzAutocomplete() {
                 Token: CurrentUser.Token,
                 Email: CurrentUser.Email
             })
-            .done(function (data) {
-                response($.map(data, function (item) {
-                    return {
-                        label: item.Name,
-                        value: item.Name
-                    };
-                }));
-                $("#spinner_txtCase_Document_PredatoUz").hide();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                if (jqXHR.status == 403)
-                    AlertUserSessionError();
-                else
-                    ShowAlert("danger", "Greška prilikom učitavanja 'predato uz' podataka za odabir. Probajte ponovo ili kontaktirajte administratora.");
-                HideLoaderCenter();
-            });
+                .done(function (data) {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.Name,
+                            value: item.Name
+                        };
+                    }));
+                    $("#spinner_txtCase_Document_PredatoUz").hide();
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status == 403)
+                        AlertUserSessionError();
+                    else
+                        ShowAlert("danger", "Greška prilikom učitavanja 'predato uz' podataka za odabir. Probajte ponovo ili kontaktirajte administratora.");
+                    HideLoaderCenter();
+                });
         },
         delay: 500,
         appendTo: "#divDokumenti"
@@ -3808,23 +3825,23 @@ function SetUpCaseConnectionAutocomplete() {
                 Token: CurrentUser.Token,
                 Email: CurrentUser.Email
             })
-            .done(function (data) {
-                response($.map(data, function (item) {
-                    return {
-                        label: item.Name,
-                        value: item.Name,
-                        caseId: item.Id
-                    };
-                }));
-                $("#spinner_txtCase_Connection_ConnectionCase").hide();
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                if (jqXHR.status == 403)
-                    AlertUserSessionError();
-                else
-                    ShowAlert("danger", "Greška prilikom učitavanja predmeta za dodavanje veza. Probajte ponovo ili kontaktirajte administratora.");
-                HideLoaderCenter();
-            });
+                .done(function (data) {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.Name,
+                            value: item.Name,
+                            caseId: item.Id
+                        };
+                    }));
+                    $("#spinner_txtCase_Connection_ConnectionCase").hide();
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status == 403)
+                        AlertUserSessionError();
+                    else
+                        ShowAlert("danger", "Greška prilikom učitavanja predmeta za dodavanje veza. Probajte ponovo ili kontaktirajte administratora.");
+                    HideLoaderCenter();
+                });
         },
         delay: 500,
         appendTo: "#divVeze",
@@ -3856,11 +3873,11 @@ function BuildLabelsHTML(labelIds, contentType, contentId, skipBreakLines) {
             for (var indexLabels = 0; indexLabels < Labels.length; indexLabels++) {
                 if (Labels[indexLabels].Id == parseInt(labelIdsArray[i])) {
                     resultHTML += "<span class='label' style='font-size:0.8em; margin:2px; cursor:pointer; background-color:" + Labels[indexLabels].BackgroundColor + ";color:" + Labels[indexLabels].FontColor + "' onclick='LoadCases(undefined, undefined, \"oznaka:" + Labels[indexLabels].Name + "\"); return false;'>"
-                            + Labels[indexLabels].Name
-                            + "&nbsp;&nbsp;<span data-toggle='tooltip' title='Izbriši oznaku' onclick='(function(e, element) { e.preventDefault(); e.stopPropagation(); DeleteLabelConnection(element," + labelIdsArray[i].toString() + ",\"case\"," + contentId.toString() + "); return false; })(event, this)' style='cursor:pointer; border-left:2px solid " + Labels[indexLabels].FontColor + "; font-weight:bold;'>"
-                                + "&nbsp;&nbsp;X"
-                            + "</span>"
-                    + "</span>" + (skipBreakLines === true ? "<span></span>" : "<br>");
+                        + Labels[indexLabels].Name
+                        + "&nbsp;&nbsp;<span data-toggle='tooltip' title='Izbriši oznaku' onclick='(function(e, element) { e.preventDefault(); e.stopPropagation(); DeleteLabelConnection(element," + labelIdsArray[i].toString() + ",\"case\"," + contentId.toString() + "); return false; })(event, this)' style='cursor:pointer; border-left:2px solid " + Labels[indexLabels].FontColor + "; font-weight:bold;'>"
+                        + "&nbsp;&nbsp;X"
+                        + "</span>"
+                        + "</span>" + (skipBreakLines === true ? "<span></span>" : "<br>");
                     break;
                 }
             }
@@ -3896,7 +3913,7 @@ function LogOut() {
     CurrentCase = null;
     SelectedCases = [];
     CaseDocumentClipboard = null;
-    menuCases_DataLoaded = false
+    menuCases_DataLoadingCounter = 0;
 
     DeactivateAllMenuItems();
     $(".menu-item").hide();
@@ -4002,90 +4019,90 @@ function ExecuteAdvancedSearch(exportToExcel) {
     }
 
     $.post(AppPath + "api/advancedSearch", reqObj)
-    .done(function (data) {
-        if (data != null && data.length > 0) {
-            if (exportToExcel === true) {
-                document.getElementById('iframeDownload').src = document.location.href.split('?')[0].toLowerCase().replace("/desk.aspx", "") + "/Temp/" + CurrentUser.Id.toString() + "/" + data;
-                HideLoaderCenter();
+        .done(function (data) {
+            if (data != null && data.length > 0) {
+                if (exportToExcel === true) {
+                    document.getElementById('iframeDownload').src = document.location.href.split('?')[0].toLowerCase().replace("/desk.aspx", "") + "/Temp/" + CurrentUser.Id.toString() + "/" + data;
+                    HideLoaderCenter();
+                }
+                else {
+                    $(data).each(function (index, _case) {
+                        if (Date.parse(_case.Iniciran))
+                            _case.Iniciran = moment(_case.Iniciran).format("DD.MM.YYYY");
+
+                        if (Date.parse(_case.DatumStanjaPredmeta))
+                            _case.DatumStanjaPredmeta = moment(_case.DatumStanjaPredmeta).format("DD.MM.YYYY");
+
+                        if (Date.parse(_case.DatumArhiviranja))
+                            _case.DatumArhiviranja = moment(_case.DatumArhiviranja).format("DD.MM.YYYY");
+
+                        if (_case.VrijednostSpora != null)
+                            _case.VrijednostSporaString = GetMoneyFormat(_case.VrijednostSpora);
+
+                        _case.PrivremeniZastupniciString = _case.PrivremeniZastupnici ? "Da" : "Ne";
+                        _case.PristupPredmetuString = _case.PristupPredmetu ? "Da" : "Ne";
+
+                        _case.NasBrojName = "<strong>" + _case.NasBroj + "</strong>";
+
+                        if (Labels != null)
+                            _case.Labels = BuildLabelsHTML(_case.LabelIds, "case", _case.Id);
+
+                        switch (_case.KategorijaPredmetaId) {
+                            case 5:
+                                // OTVOREN
+                                _case.KategorijaPredmetaName = "<span style='color: #00b6ee; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
+                                break;
+                            case 7:
+                                // ARHIVIRAN
+                                _case.KategorijaPredmetaName = "<span style='color: #ff0000; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
+                                break;
+                            case 9:
+                                //PO ŽALBI/PRIGOVORU
+                                _case.KategorijaPredmetaName = "<span style='color: #21b04b; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
+                                break;
+                            default:
+                                _case.KategorijaPredmetaName = "<span style='color: black; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
+                                break;
+                        }
+
+                        if (index == data.length - 1) {
+                            $("#tblCasesSearch").bootstrapTable({
+                                data: data,
+                                striped: true,
+                                showColumns: true,
+                                columns: $.extend(true, [], _columnsCases).splice(2, 18),
+                                escape: false,
+                                clickToSelect: false
+                            });
+                            $("#divAdvancedSearchResults").show();
+                            HideLoaderCenter();
+                        }
+                    });
+                }
             }
             else {
-                $(data).each(function (index, _case) {
-                    if (Date.parse(_case.Iniciran))
-                        _case.Iniciran = moment(_case.Iniciran).format("DD.MM.YYYY");
-
-                    if (Date.parse(_case.DatumStanjaPredmeta))
-                        _case.DatumStanjaPredmeta = moment(_case.DatumStanjaPredmeta).format("DD.MM.YYYY");
-
-                    if (Date.parse(_case.DatumArhiviranja))
-                        _case.DatumArhiviranja = moment(_case.DatumArhiviranja).format("DD.MM.YYYY");
-
-                    if (_case.VrijednostSpora != null)
-                        _case.VrijednostSporaString = GetMoneyFormat(_case.VrijednostSpora);
-
-                    _case.PrivremeniZastupniciString = _case.PrivremeniZastupnici ? "Da" : "Ne";
-                    _case.PristupPredmetuString = _case.PristupPredmetu ? "Da" : "Ne";
-
-                    _case.NasBrojName = "<strong>" + _case.NasBroj + "</strong>";
-
-                    if (Labels != null)
-                        _case.Labels = BuildLabelsHTML(_case.LabelIds, "case", _case.Id);
-
-                    switch (_case.KategorijaPredmetaId) {
-                        case 5:
-                            // OTVOREN
-                            _case.KategorijaPredmetaName = "<span style='color: #00b6ee; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
-                            break;
-                        case 7:
-                            // ARHIVIRAN
-                            _case.KategorijaPredmetaName = "<span style='color: #ff0000; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
-                            break;
-                        case 9:
-                            //PO ŽALBI/PRIGOVORU
-                            _case.KategorijaPredmetaName = "<span style='color: #21b04b; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
-                            break;
-                        default:
-                            _case.KategorijaPredmetaName = "<span style='color: black; font-weight: bold;'>" + _case.KategorijaPredmetaName + "</span>";
-                            break;
-                    }
-
-                    if (index == data.length - 1) {
-                        $("#tblCasesSearch").bootstrapTable({
-                            data: data,
-                            striped: true,
-                            showColumns: true,
-                            columns: $.extend(true, [], _columnsCases).splice(2, 18),
-                            escape: false,
-                            clickToSelect: false
-                        });
-                        $("#divAdvancedSearchResults").show();
-                        HideLoaderCenter();
-                    }
-                });
+                if (exportToExcel !== true) {
+                    $("#tblCasesSearch").bootstrapTable({
+                        data: [],
+                        striped: true,
+                        showColumns: true,
+                        columns: $.extend(true, [], _columnsCases).splice(2, 18),
+                        escape: false
+                    });
+                    $("#divAdvancedSearchResults").show();
+                }
+                HideLoaderCenter();
             }
-        }
-        else {
-            if (exportToExcel !== true) {
-                $("#tblCasesSearch").bootstrapTable({
-                    data: [],
-                    striped: true,
-                    showColumns: true,
-                    columns: $.extend(true, [], _columnsCases).splice(2, 18),
-                    escape: false
-                });
-                $("#divAdvancedSearchResults").show();
-            }
+        })
+        .fail(function (response) {
+            if (jqXHR.status == 403)
+                AlertUserSessionError();
+            else if (exportToExcel === true)
+                ShowAlert("danger", "Greška prilikom printanja u Excel tabelu. Probajte ponovo ili kontaktirajte administratora.");
+            else
+                ShowAlert("danger", "Greška prilikom napredne pretrage. Probajte ponovo ili kontaktirajte administratora.");
             HideLoaderCenter();
-        }
-    })
-    .fail(function (response) {
-        if (jqXHR.status == 403)
-            AlertUserSessionError();
-        else if (exportToExcel === true)
-            ShowAlert("danger", "Greška prilikom printanja u Excel tabelu. Probajte ponovo ili kontaktirajte administratora.");
-        else
-            ShowAlert("danger", "Greška prilikom napredne pretrage. Probajte ponovo ili kontaktirajte administratora.");
-        HideLoaderCenter();
-    });
+        });
 }
 
 function PrintAdvancedSearchResults() {
@@ -4094,7 +4111,7 @@ function PrintAdvancedSearchResults() {
     newWin.document.open();
 
     var styles = '<link rel="stylesheet" href="Libraries/Bootstrap/css/bootstrap.min.css" />'
-                + '<link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-table/dist/bootstrap-table.min.css" />';
+        + '<link rel="stylesheet" href="Libraries/Bootstrap/bootstrap-table/dist/bootstrap-table.min.css" />';
 
     newWin.document.write('<html><head>' + styles + '</head><body onload="window.print()">' + divToPrint.innerHTML + '</body></html>');
     newWin.document.close();
